@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"composite": true,
+		"module": "commonjs",
+		"outDir": "./build/",
+		"resolveJsonModule": true,
+		"rootDir": "./source/",
+		"strict": true,
+		"target": "esnext"
+	},
+	"include": [],
+	"references": [
+		{
+			"path": "./source/codepage/"
+		},
+		{
+			"path": "./source/lib/"
+		},
+		{
+			"path": "./source/pdf/"
+		},
+		{
+			"path": "./source/truetype/"
+		}
+	]
+}

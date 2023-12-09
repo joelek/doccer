@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"lib": [
+			"esnext"
+		]
+	},
+	"extends": "../../tsconfig.json",
+	"include": [
+		"./",
+		"./cp_pdfdoc.json"
+	],
+	"references": [
+		{
+			"path": "../codepage/"
+		},
+		{
+			"path": "../truetype/"
+		}
+	]
+}
