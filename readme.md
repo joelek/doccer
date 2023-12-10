@@ -36,6 +36,8 @@ NB: This project targets TypeScript 4 in strict mode.
 
 * Add support for work-break.
 * Add support for fractional widths and heights.
+* Add support for percentage-based border-radius.
+* Add support for percentage-based border-width.
 * Add tests for codepage subproject.
 * Improve PDF serialization.
 * Create schema for extensible document format.
