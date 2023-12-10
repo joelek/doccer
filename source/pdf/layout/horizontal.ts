@@ -26,17 +26,6 @@ export class HorizontalLayoutNode extends ParentNode {
 		];
 	}
 
-	protected getGap(target_size: Partial<Size>): number {
-		if (this.style.gap[1] === "%") {
-			if (target_size.w == null) {
-				throw new Error(`Unexpected relative length within intrinsic length!`);
-			}
-			return this.style.gap[0] * 0.01 * target_size.w;
-		} else {
-			return this.style.gap[0];
-		}
-	}
-
 	constructor(style?: Partial<NodeStyle & HorizontalLayoutStyle>, ...children: Array<ChildNode>) {
 		super(style, ...children);
 		style = style ?? {};
@@ -58,7 +47,7 @@ export class HorizontalLayoutNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
-		let gap = this.getGap(target_size);
+		let gap = this.getComputedValue(this.style.gap, target_size.w);
 		let content_segment_size: Size = {
 			w: 0,
 			h: Math.max(0, segment_size.h)

@@ -185,6 +185,17 @@ export abstract class Node {
 		}
 	}
 
+	protected getComputedValue(value: [number, "%"?], relative_to: number | undefined): number {
+		if (value[1] === "%") {
+			if (relative_to == null) {
+				throw new Error(`Unexpected relative length within intrinsic length!`);
+			}
+			return value[0] * 0.01 * relative_to;
+		} else {
+			return value[0];
+		}
+	}
+
 	constructor(style?: Partial<NodeStyle>) {
 		style = style ?? {};
 		let height = style.height ?? "intrinsic";

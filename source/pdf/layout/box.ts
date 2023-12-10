@@ -81,17 +81,6 @@ export class BoxNode extends ParentNode {
 		];
 	}
 
-	protected getPadding(target_size: Partial<Size>): number {
-		if (this.style.padding[1] === "%") {
-			if (target_size.w == null) {
-				throw new Error(`Unexpected relative length within intrinsic length!`);
-			}
-			return this.style.padding[0] * 0.01 * target_size.w;
-		} else {
-			return this.style.padding[0];
-		}
-	}
-
 	constructor(style?: Partial<NodeStyle & BoxStyle>, ...children: Array<ChildNode>) {
 		super(style, ...children);
 		style = style ?? {};
@@ -123,7 +112,7 @@ export class BoxNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
-		let padding = this.getPadding(target_size);
+		let padding = this.getComputedValue(this.style.padding, target_size.w);
 		let inset_top = this.style.border_width + padding;
 		let inset_right = this.style.border_width + padding;
 		let inset_left = this.style.border_width + padding;
