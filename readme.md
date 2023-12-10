@@ -35,7 +35,6 @@ NB: This project targets TypeScript 4 in strict mode.
 ## Roadmap
 
 * Add support for work-break.
-* Add support for percentage-based gaps and paddings.
 * Add support for fractional widths and heights.
 * Add tests for codepage subproject.
 * Fix issues with pdf serialization.
