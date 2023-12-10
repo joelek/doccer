@@ -1802,7 +1802,7 @@ wtf.test(`TextNode should support font size.`, (assert) => {
 });
 
 wtf.test(`TextNode should support gutter.`, (assert) => {
-	let node = new TextNode("aa bb", TYPESETTER, { columns: 2, gutter: 2, width: 6 });
+	let node = new TextNode("aa bb", TYPESETTER, { columns: 2, gutter: [2], width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1857,6 +1857,81 @@ wtf.test(`TextNode should support gutter.`, (assert) => {
 							},
 							"prefix": [
 								"(bb) Tj"
+							]
+						}
+					]
+				}
+			],
+			"prefix": [
+				"BT",
+				"/F1 1 Tf",
+				"1 TL",
+				"3 Tr",
+				"1 0 0 1 0 -1 cm"
+			],
+			"suffix": [
+				"ET"
+			]
+		}
+	]);
+});
+
+wtf.test(`TextNode should support gutter "20%".`, (assert) => {
+	let node = new TextNode("aaaa bbbb", TYPESETTER, { columns: 2, gutter: [20, "%"], width: 10 });
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 10,
+				"h": 1
+			},
+			"atoms": [
+				{
+					"size": {
+						"w": 4,
+						"h": 1
+					},
+					"position": {
+						"x": 0,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 4,
+								"h": 1
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							},
+							"prefix": [
+								"(aaaa) Tj"
+							]
+						}
+					]
+				},
+				{
+					"size": {
+						"w": 4,
+						"h": 1
+					},
+					"position": {
+						"x": 6,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 4,
+								"h": 1
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							},
+							"prefix": [
+								"(bbbb) Tj"
 							]
 						}
 					]

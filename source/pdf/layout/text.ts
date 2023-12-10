@@ -7,7 +7,7 @@ export type TextStyle = {
 	color: "transparent" | [number, number, number];
 	columns: number;
 	font_size: number;
-	gutter: number;
+	gutter: [number, "%"?];
 	letter_spacing: number;
 	line_anchor: "meanline" | "capline" | "topline" | "bottomline" | "baseline";
 	line_height: number;
@@ -59,7 +59,8 @@ export class TextNode extends ChildNode {
 	}
 
 	protected getColumnWidth(target_size: Partial<Size>): number {
-		return Math.max(0, ((target_size.w ?? Infinity) - (this.style.columns - 1) * this.style.gutter) / this.style.columns);
+		let gutter = this.getComputedValue(this.style.gutter, target_size.w);
+		return Math.max(0, ((target_size.w ?? Infinity) - (this.style.columns - 1) * gutter) / this.style.columns);
 	}
 
 	protected getLineOffsetX(column_width: number, line_width: number): number {
@@ -214,8 +215,8 @@ export class TextNode extends ChildNode {
 		if (font_size < 1) {
 			throw new Error();
 		}
-		let gutter = style.gutter ?? 0;
-		if (gutter < 0) {
+		let gutter = style.gutter ?? [0];
+		if (gutter[0] < 0) {
 			throw new Error();
 		}
 		let letter_spacing = style.letter_spacing ?? 0;
@@ -264,6 +265,7 @@ export class TextNode extends ChildNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
+		let gutter = this.getComputedValue(this.style.gutter, target_size.w);
 		let target_column_width = this.getColumnWidth(target_size);
 		let segments = [] as Array<ParentAtom>;
 		let current_segment: ParentAtom = {
@@ -274,7 +276,7 @@ export class TextNode extends ChildNode {
 			atoms: []
 		};
 		let columns = this.createColumnSegments(segment_size, segment_left, target_size);
-		let gap = 0;
+		let current_gap = 0;
 		for (let column of columns) {
 			if (current_segment.atoms.length < this.style.columns) {
 			} else {
@@ -289,20 +291,20 @@ export class TextNode extends ChildNode {
 					};
 				}
 				segment_left = { ...segment_size };
-				gap = 0;
+				current_gap = 0;
 			}
 			column.size.w = Number.isFinite(target_column_width) ? target_column_width : column.size.w;
 			let positioned_column: PositionedAtom = {
 				...column,
 				position: {
-					x: current_segment.size.w + gap,
+					x: current_segment.size.w + current_gap,
 					y: 0
 				}
 			};
 			current_segment.atoms.push(positioned_column);
 			current_segment.size.w = Math.max(current_segment.size.w, positioned_column.position.x + positioned_column.size.w);
 			current_segment.size.h = Math.max(current_segment.size.h, positioned_column.position.y + positioned_column.size.h);
-			gap = this.style.gutter;
+			current_gap = gutter;
 		}
 		segments.push(current_segment);
 		for (let segment of segments) {
