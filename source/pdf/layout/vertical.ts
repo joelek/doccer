@@ -4,7 +4,7 @@ import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, ParentNode, Posit
 export type VerticalLayoutStyle = {
 	align_x: "left" | "center" | "right";
 	align_y: "top" | "middle" | "bottom";
-	gap: [number, "%"?];
+	gap: Length;
 };
 
 export class VerticalLayoutNode extends ParentNode {
@@ -31,9 +31,15 @@ export class VerticalLayoutNode extends ParentNode {
 		style = style ?? {};
 		let align_x = style.align_x ?? "left";
 		let align_y = style.align_y ?? "top";
-		let gap = style.gap ?? [0];
-		if (gap[0] < 0) {
-			throw new Error();
+		let gap = style.gap ?? 0;
+		if (typeof gap === "number") {
+			if (gap < 0) {
+				throw new Error();
+			}
+		} else {
+			if (gap[0] < 0) {
+				throw new Error();
+			}
 		}
 		this.style = {
 			align_x,

@@ -7,7 +7,7 @@ export type TextStyle = {
 	color: "transparent" | [number, number, number];
 	columns: number;
 	font_size: number;
-	gutter: [number, "%"?];
+	gutter: Length;
 	letter_spacing: number;
 	line_anchor: "meanline" | "capline" | "topline" | "bottomline" | "baseline";
 	line_height: number;
@@ -215,9 +215,15 @@ export class TextNode extends ChildNode {
 		if (font_size < 1) {
 			throw new Error();
 		}
-		let gutter = style.gutter ?? [0];
-		if (gutter[0] < 0) {
-			throw new Error();
+		let gutter = style.gutter ?? 0;
+		if (typeof gutter === "number") {
+			if (gutter < 0) {
+				throw new Error();
+			}
+		} else {
+			if (gutter[0] < 0) {
+				throw new Error();
+			}
 		}
 		let letter_spacing = style.letter_spacing ?? 0;
 		if (letter_spacing < 0) {

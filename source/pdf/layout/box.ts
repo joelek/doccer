@@ -6,7 +6,7 @@ export type BoxStyle = {
 	border_color: "transparent" | [number, number, number];
 	border_radius: number;
 	border_width: number;
-	padding: [number, "%"?];
+	padding: Length;
 };
 
 export class BoxNode extends ParentNode {
@@ -94,9 +94,15 @@ export class BoxNode extends ParentNode {
 		if (border_width < 0) {
 			throw new Error();
 		}
-		let padding = style.padding ?? [0];
-		if (padding[0] < 0) {
-			throw new Error();
+		let padding = style.padding ?? 0;
+		if (typeof padding === "number") {
+			if (padding < 0) {
+				throw new Error();
+			}
+		} else {
+			if (padding[0] < 0) {
+				throw new Error();
+			}
 		}
 		this.style = {
 			background_color,
