@@ -118,10 +118,29 @@ export const Atom = {
 	}
 };
 
-export type Length = number | `${number}%` | "intrinsic" | "extrinsic";
+export type Length = number | [number, "%"?];
 
 export const Length = {
-	getComputedLength(length: Length, relative_to: number | undefined): number | undefined {
+	getComputedLength(length: Length, relative_to: number | undefined): number {
+		if (typeof length === "number") {
+			return length;
+		} else {
+			if (length[1] === "%") {
+				if (relative_to == null) {
+					throw new Error(`Unexpected relative length within intrinsic length!`);
+				}
+				return length[0] * 0.01 * relative_to;
+			} else {
+				return length[0];
+			}
+		}
+	}
+};
+
+export type NodeLength = Length | "intrinsic" | "extrinsic";
+
+export const NodeLength = {
+	getComputedLength(length: NodeLength, relative_to: number | undefined): number | undefined {
 		if (length === "intrinsic") {
 			return;
 		}
@@ -131,32 +150,15 @@ export const Length = {
 			}
 			return relative_to;
 		}
-		if (typeof length === "string") {
-			if (relative_to == null) {
-				throw new Error(`Unexpected relative length within intrinsic length!`);
-			}
-			return Math.max(0, Number.parseFloat(length.slice(0, -1))) * 0.01 * relative_to;
-		}
-		return length;
-	},
-
-	getComputedValue(value: [number, "%"?], relative_to: number | undefined): number {
-		if (value[1] === "%") {
-			if (relative_to == null) {
-				throw new Error(`Unexpected relative length within intrinsic length!`);
-			}
-			return value[0] * 0.01 * relative_to;
-		} else {
-			return value[0];
-		}
+		return Length.getComputedLength(length, relative_to);
 	}
 };
 
 export type NodeStyle = {
-	height: Length;
+	height: NodeLength;
 	overflow: "hidden" | "visible";
 	segmentation: "auto" | "none";
-	width: Length;
+	width: NodeLength;
 };
 
 export abstract class Node {
@@ -217,17 +219,17 @@ export abstract class Node {
 
 	abstract createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom>;
 
-	getHeight(): Length {
+	getHeight(): NodeLength {
 		return this.node_style.height;
 	}
 
-	getWidth(): Length {
+	getWidth(): NodeLength {
 		return this.node_style.width;
 	}
 
 	static getTargetSize(node: Node, parent_target_size?: Partial<Size>): Partial<Size> {
-		let w = Length.getComputedLength(node.getWidth(), parent_target_size?.w);
-		let h = Length.getComputedLength(node.getHeight(), parent_target_size?.h);
+		let w = NodeLength.getComputedLength(node.getWidth(), parent_target_size?.w);
+		let h = NodeLength.getComputedLength(node.getHeight(), parent_target_size?.h);
 		return {
 			w,
 			h

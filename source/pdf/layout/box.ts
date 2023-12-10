@@ -112,7 +112,7 @@ export class BoxNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
-		let padding = Length.getComputedValue(this.style.padding, target_size.w);
+		let padding = Length.getComputedLength(this.style.padding, target_size.w);
 		let inset_top = this.style.border_width + padding;
 		let inset_right = this.style.border_width + padding;
 		let inset_left = this.style.border_width + padding;

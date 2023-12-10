@@ -1090,7 +1090,7 @@ wtf.test(`TextNode should support height.`, (assert) => {
 });
 
 wtf.test(`TextNode should support height "50%".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { height: "50%", width: 6 });
+	let node = new TextNode("aaaa", TYPESETTER, { height: [50, "%"], width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1552,7 +1552,7 @@ wtf.test(`TextNode should support width.`, (assert) => {
 });
 
 wtf.test(`TextNode should support width "50%".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { width: "50%" });
+	let node = new TextNode("aaaa", TYPESETTER, { width: [50, "%"] });
 	let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{

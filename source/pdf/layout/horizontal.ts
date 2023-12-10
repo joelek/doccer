@@ -47,7 +47,7 @@ export class HorizontalLayoutNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
-		let gap = Length.getComputedValue(this.style.gap, target_size.w);
+		let gap = Length.getComputedLength(this.style.gap, target_size.w);
 		let content_segment_size: Size = {
 			w: 0,
 			h: Math.max(0, segment_size.h)

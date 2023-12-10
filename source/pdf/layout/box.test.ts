@@ -42,7 +42,7 @@ wtf.test(`BoxNode should support height.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support height "50%".`, (assert) => {
-	let node = new BoxNode({ height: "50%" });
+	let node = new BoxNode({ height: [50, "%"] });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -245,7 +245,7 @@ wtf.test(`BoxNode should support width.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support width "50%".`, (assert) => {
-	let node = new BoxNode({ width: "50%" });
+	let node = new BoxNode({ width: [50, "%"] });
 	let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{

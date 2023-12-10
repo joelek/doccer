@@ -59,7 +59,7 @@ export class TextNode extends ChildNode {
 	}
 
 	protected getColumnWidth(target_size: Partial<Size>): number {
-		let gutter = Length.getComputedValue(this.style.gutter, target_size.w);
+		let gutter = Length.getComputedLength(this.style.gutter, target_size.w);
 		return Math.max(0, ((target_size.w ?? Infinity) - (this.style.columns - 1) * gutter) / this.style.columns);
 	}
 
@@ -265,7 +265,7 @@ export class TextNode extends ChildNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
-		let gutter = Length.getComputedValue(this.style.gutter, target_size.w);
+		let gutter = Length.getComputedLength(this.style.gutter, target_size.w);
 		let target_column_width = this.getColumnWidth(target_size);
 		let segments = [] as Array<ParentAtom>;
 		let current_segment: ParentAtom = {

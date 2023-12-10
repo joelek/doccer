@@ -395,7 +395,7 @@ wtf.test(`VerticalLayoutNode should support height.`, (assert) => {
 });
 
 wtf.test(`VerticalLayoutNode should support height "50%".`, (assert) => {
-	let node = new VerticalLayoutNode({ height: "50%" });
+	let node = new VerticalLayoutNode({ height: [50, "%"] });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -598,7 +598,7 @@ wtf.test(`VerticalLayoutNode should support width.`, (assert) => {
 });
 
 wtf.test(`VerticalLayoutNode should support width "50%".`, (assert) => {
-	let node = new VerticalLayoutNode({ width: "50%" });
+	let node = new VerticalLayoutNode({ width: [50, "%"] });
 	let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
