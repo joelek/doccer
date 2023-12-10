@@ -1263,7 +1263,7 @@ wtf.test(`HorizontalLayoutNode should support align y "bottom" when there is ver
 });
 
 wtf.test(`HorizontalLayoutNode should support gap.`, (assert) => {
-	let node = new HorizontalLayoutNode({ gap: 1 },
+	let node = new HorizontalLayoutNode({ gap: [1] },
 		new MockNode({ w: 2, h: 0 }),
 		new MockNode({ w: 2, h: 0 })
 	);
@@ -1304,6 +1304,70 @@ wtf.test(`HorizontalLayoutNode should support gap.`, (assert) => {
 					},
 					"position": {
 						"x": 3,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 2,
+								"h": 0
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							}
+						}
+					]
+				}
+			],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`HorizontalLayoutNode should support gap "20%".`, (assert) => {
+	let node = new HorizontalLayoutNode({ gap: [20, "%"], width: 50 },
+		new MockNode({ w: 2, h: 0 }),
+		new MockNode({ w: 2, h: 0 })
+	);
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 50,
+				"h": 0
+			},
+			"atoms": [
+				{
+					"size": {
+						"w": 2,
+						"h": 0
+					},
+					"position": {
+						"x": 0,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 2,
+								"h": 0
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							}
+						}
+					]
+				},
+				{
+					"size": {
+						"w": 2,
+						"h": 0
+					},
+					"position": {
+						"x": 12,
 						"y": 0
 					},
 					"atoms": [

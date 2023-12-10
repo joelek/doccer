@@ -4,7 +4,7 @@ import { Atom, ChildNode, Node, NodeStyle, ParentAtom, ParentNode, PositionedAto
 export type HorizontalLayoutStyle = {
 	align_x: "left" | "center" | "right";
 	align_y: "top" | "middle" | "bottom";
-	gap: number;
+	gap: [number, "%"?];
 };
 
 export class HorizontalLayoutNode extends ParentNode {
@@ -26,13 +26,24 @@ export class HorizontalLayoutNode extends ParentNode {
 		];
 	}
 
+	protected getGap(target_size: Partial<Size>): number {
+		if (this.style.gap[1] === "%") {
+			if (target_size.w == null) {
+				throw new Error(`Unexpected relative length within intrinsic length!`);
+			}
+			return this.style.gap[0] * 0.01 * target_size.w;
+		} else {
+			return this.style.gap[0];
+		}
+	}
+
 	constructor(style?: Partial<NodeStyle & HorizontalLayoutStyle>, ...children: Array<ChildNode>) {
 		super(style, ...children);
 		style = style ?? {};
 		let align_x = style.align_x ?? "left";
 		let align_y = style.align_y ?? "top";
-		let gap = style.gap ?? 0;
-		if (gap < 0) {
+		let gap = style.gap ?? [0];
+		if (gap[0] < 0) {
 			throw new Error();
 		}
 		this.style = {
@@ -47,6 +58,7 @@ export class HorizontalLayoutNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
+		let gap = this.getGap(target_size);
 		let content_segment_size: Size = {
 			w: 0,
 			h: Math.max(0, segment_size.h)
@@ -111,7 +123,7 @@ export class HorizontalLayoutNode extends ParentNode {
 					atoms: []
 				};
 			}
-			let gap = 0;
+			let current_gap = 0;
 			let index = 0;
 			for (let column_rows of columns) {
 				let column_width = column_widths[index];
@@ -121,7 +133,7 @@ export class HorizontalLayoutNode extends ParentNode {
 						h: 0
 					},
 					position: {
-						x: current_segment.size.w + gap,
+						x: current_segment.size.w + current_gap,
 						y: 0
 					},
 					atoms: []
@@ -141,7 +153,7 @@ export class HorizontalLayoutNode extends ParentNode {
 				current_segment.atoms.push(column);
 				current_segment.size.w = Math.max(current_segment.size.w, column.position.x + column.size.w);
 				current_segment.size.h = Math.max(current_segment.size.h, column.position.y + column.size.h);
-				gap = this.style.gap;
+				current_gap = gap;
 				index += 1;
 			}
 		}
