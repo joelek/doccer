@@ -133,10 +133,10 @@ export const Length = {
 	}
 };
 
-export type NodeLength = number | Length | "intrinsic" | "extrinsic";
+export type NodeLength = number | Length | [number, "fr"] | "intrinsic" | "extrinsic";
 
 export const NodeLength = {
-	getComputedLength(length: NodeLength, relative_to: number | undefined): number | undefined {
+	getComputedLength(length: NodeLength, relative_to: number | undefined, fraction_length: number | undefined): number | undefined {
 		if (length === "intrinsic") {
 			return;
 		}
@@ -149,7 +149,17 @@ export const NodeLength = {
 		if (typeof length === "number") {
 			return length;
 		}
+		if (length[1] === "fr") {
+			if (fraction_length == null) {
+				throw new Error(`Unexpected fractional length within intrinsic length!`);
+			}
+			return length[0] * fraction_length;
+		}
 		return Length.getComputedLength(length, relative_to);
+	},
+
+	isFractional(length: NodeLength): length is [number, "fr"] {
+		return Array.isArray(length) && length[1] === "fr";
 	}
 };
 
@@ -226,9 +236,9 @@ export abstract class Node {
 		return this.node_style.width;
 	}
 
-	static getTargetSize(node: Node, parent_target_size?: Partial<Size>): Partial<Size> {
-		let w = NodeLength.getComputedLength(node.getWidth(), parent_target_size?.w);
-		let h = NodeLength.getComputedLength(node.getHeight(), parent_target_size?.h);
+	static getTargetSize(node: Node, parent_target_size: Partial<Size>, fraction_size?: Partial<Size>): Partial<Size> {
+		let w = NodeLength.getComputedLength(node.getWidth(), parent_target_size.w, fraction_size?.w);
+		let h = NodeLength.getComputedLength(node.getHeight(), parent_target_size.h, fraction_size?.h);
 		return {
 			w,
 			h

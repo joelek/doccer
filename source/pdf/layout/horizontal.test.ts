@@ -1,6 +1,23 @@
 import * as wtf from "@joelek/wtf";
-import { Atom, ChildNode, Size } from "./shared";
+import { Atom, ChildNode, NodeStyle, Size } from "./shared";
 import { HorizontalLayoutNode } from "./horizontal";
+
+class MockNode extends ChildNode {
+	constructor(style?: Partial<NodeStyle>) {
+		super(style);
+	}
+
+	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom> {
+		return [
+			{
+				size: {
+					w: target_size?.w ?? 0,
+					h: target_size?.h ?? 0
+				}
+			}
+		];
+	}
+};
 
 class MockSegmentedNode extends ChildNode {
 	protected sizes: Array<Size>;
@@ -41,6 +58,180 @@ class MockRemainingHeightNode extends ChildNode {
 		];
 	}
 };
+
+wtf.test(`HorizontalLayoutNode should support children with fractional widths.`, (assert) => {
+	let node = new HorizontalLayoutNode({ width: 10, gap: [1] },
+		new MockNode({ width: [1, "fr"] }),
+		new MockNode({ width: [2] }),
+		new MockNode({ width: [2, "fr"] })
+	);
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 10,
+				"h": 0
+			},
+			"atoms": [
+				{
+					"size": {
+						"w": 2,
+						"h": 0
+					},
+					"position": {
+						"x": 0,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 2,
+								"h": 0
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							}
+						}
+					]
+				},
+				{
+					"size": {
+						"w": 2,
+						"h": 0
+					},
+					"position": {
+						"x": 3,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 2,
+								"h": 0
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							}
+						}
+					]
+				},
+				{
+					"size": {
+						"w": 4,
+						"h": 0
+					},
+					"position": {
+						"x": 6,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 4,
+								"h": 0
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							}
+						}
+					]
+				}
+			],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`HorizontalLayoutNode should support children with fractional heights.`, (assert) => {
+	let node = new HorizontalLayoutNode({ height: 10, gap: [1] },
+		new MockNode({ height: [1, "fr"] }),
+		new MockNode({ height: [2] }),
+		new MockNode({ height: [2, "fr"] })
+	);
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 2,
+				"h": 10
+			},
+			"atoms": [
+				{
+					"size": {
+						"w": 0,
+						"h": 10
+					},
+					"position": {
+						"x": 0,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 0,
+								"h": 10
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							}
+						}
+					]
+				},
+				{
+					"size": {
+						"w": 0,
+						"h": 2
+					},
+					"position": {
+						"x": 1,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 0,
+								"h": 2
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							}
+						}
+					]
+				},
+				{
+					"size": {
+						"w": 0,
+						"h": 10
+					},
+					"position": {
+						"x": 2,
+						"y": 0
+					},
+					"atoms": [
+						{
+							"size": {
+								"w": 0,
+								"h": 10
+							},
+							"position": {
+								"x": 0,
+								"y": 0
+							}
+						}
+					]
+				}
+			],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
 
 wtf.test(`HorizontalLayoutNode should create one segment when there are no children.`, (assert) => {
 	let node = new HorizontalLayoutNode({});

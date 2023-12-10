@@ -1,5 +1,5 @@
 import * as content from "../content";
-import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, ParentNode, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, PositionedAtom, Size } from "./shared";
 
 export type HorizontalLayoutStyle = {
 	align_x: "left" | "center" | "right";
@@ -62,7 +62,26 @@ export class HorizontalLayoutNode extends ParentNode {
 		};
 		let column_rows = [] as Array<Array<Atom>>;
 		let max_column_rows = 0;
-		for (let child of this.children) {
+		let fraction_size: Partial<Size> = {
+			w: content_target_size.w,
+			h: content_target_size.h
+		};
+		let width_fractions = 0;
+		for (let [index, child] of this.children.entries()) {
+			let width = child.getWidth();
+			if (NodeLength.isFractional(width)) {
+				width_fractions += width[0];
+				continue;
+			}
+			let child_fraction_size: Partial<Size> = {
+				...fraction_size
+			};
+			let height = child.getHeight();
+			if (NodeLength.isFractional(height)) {
+				if (child_fraction_size.h != null) {
+					child_fraction_size.h /= height[0];
+				}
+			}
 			let child_segment_size: Size = {
 				w: 0,
 				h: content_segment_size.h
@@ -71,15 +90,54 @@ export class HorizontalLayoutNode extends ParentNode {
 				w: 0,
 				h: content_segment_left.h
 			};
-			let child_target_size = Node.getTargetSize(child, content_target_size);
+			let child_target_size = Node.getTargetSize(child, content_target_size, child_fraction_size);
 			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
-			column_rows.push(rows);
+			column_rows[index] = rows;
 			max_column_rows = Math.max(max_column_rows, rows.length);
 		}
 		let column_widths = [] as Array<number>;
-		for (let column_row of column_rows) {
-			let column_width = column_row.reduce((max, row) => Math.max(max, row.size.w), 0);
-			column_widths.push(column_width);
+		for (let [index, rows] of column_rows.entries()) {
+			if (rows == null) {
+				continue;
+			}
+			let column_width = rows.reduce((max, row) => Math.max(max, row.size.w), 0);
+			column_widths[index] = column_width;
+			if (fraction_size.w != null) {
+				fraction_size.w = Math.max(0, fraction_size.w - column_width);
+			}
+		}
+		if (fraction_size.w != null) {
+			fraction_size.w -= Math.max(0, this.children.length - 1) * gap;
+			fraction_size.w /= width_fractions;
+		}
+		for (let [index, child] of this.children.entries()) {
+			let width = child.getWidth();
+			if (!NodeLength.isFractional(width)) {
+				continue;
+			}
+			let child_fraction_size: Partial<Size> = {
+				...fraction_size
+			};
+			let height = child.getHeight();
+			if (NodeLength.isFractional(height)) {
+				if (child_fraction_size.h != null) {
+					child_fraction_size.h /= height[0];
+				}
+			}
+			let child_segment_size: Size = {
+				w: 0,
+				h: content_segment_size.h
+			};
+			let child_segment_left: Size = {
+				w: 0,
+				h: content_segment_left.h
+			};
+			let child_target_size = Node.getTargetSize(child, content_target_size, child_fraction_size);
+			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
+			column_rows[index] = rows;
+			max_column_rows = Math.max(max_column_rows, rows.length);
+			let column_width = rows.reduce((max, row) => Math.max(max, row.size.w), 0);
+			column_widths[index] = column_width;
 		}
 		let rows = [] as Array<Array<Array<Atom>>>;
 		if (this.node_style.segmentation === "auto") {
@@ -113,8 +171,7 @@ export class HorizontalLayoutNode extends ParentNode {
 				};
 			}
 			let current_gap = 0;
-			let index = 0;
-			for (let column_rows of columns) {
+			for (let [index, column_rows] of columns.entries()) {
 				let column_width = column_widths[index];
 				let column: ParentAtom & PositionedAtom = {
 					size: {
@@ -143,7 +200,6 @@ export class HorizontalLayoutNode extends ParentNode {
 				current_segment.size.w = Math.max(current_segment.size.w, column.position.x + column.size.w);
 				current_segment.size.h = Math.max(current_segment.size.h, column.position.y + column.size.h);
 				current_gap = gap;
-				index += 1;
 			}
 		}
 		segments.push(current_segment);
