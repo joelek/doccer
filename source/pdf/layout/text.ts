@@ -1,7 +1,7 @@
 import * as truetype from "../../truetype";
 import * as content from "../content";
 import { TextRenderingMode } from "../content";
-import { Atom, ChildNode, Node, NodeStyle, ParentAtom, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, PositionedAtom, Size } from "./shared";
 
 export type TextStyle = {
 	color: "transparent" | [number, number, number];
@@ -59,7 +59,7 @@ export class TextNode extends ChildNode {
 	}
 
 	protected getColumnWidth(target_size: Partial<Size>): number {
-		let gutter = this.getComputedValue(this.style.gutter, target_size.w);
+		let gutter = Length.getComputedValue(this.style.gutter, target_size.w);
 		return Math.max(0, ((target_size.w ?? Infinity) - (this.style.columns - 1) * gutter) / this.style.columns);
 	}
 
@@ -265,7 +265,7 @@ export class TextNode extends ChildNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
-		let gutter = this.getComputedValue(this.style.gutter, target_size.w);
+		let gutter = Length.getComputedValue(this.style.gutter, target_size.w);
 		let target_column_width = this.getColumnWidth(target_size);
 		let segments = [] as Array<ParentAtom>;
 		let current_segment: ParentAtom = {
@@ -308,7 +308,7 @@ export class TextNode extends ChildNode {
 		}
 		segments.push(current_segment);
 		for (let segment of segments) {
-			this.constrainSegmentSize(segment.size, target_size);
+			Size.constrain(segment.size, target_size);
 		}
 		for (let segment of segments) {
 			segment.prefix = this.createPrefixCommands(segment.size);

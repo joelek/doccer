@@ -1,5 +1,5 @@
 import * as content from "../content";
-import { Atom, ChildNode, Node, NodeStyle, ParentAtom, ParentNode, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, ParentNode, PositionedAtom, Size } from "./shared";
 
 export type BoxStyle = {
 	background_color: "transparent" | [number, number, number];
@@ -112,7 +112,7 @@ export class BoxNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
-		let padding = this.getComputedValue(this.style.padding, target_size.w);
+		let padding = Length.getComputedValue(this.style.padding, target_size.w);
 		let inset_top = this.style.border_width + padding;
 		let inset_right = this.style.border_width + padding;
 		let inset_left = this.style.border_width + padding;
@@ -177,7 +177,7 @@ export class BoxNode extends ParentNode {
 		}
 		segments.push(current_segment);
 		for (let segment of segments) {
-			this.constrainSegmentSize(segment.size, content_target_size);
+			Size.constrain(segment.size, content_target_size);
 		}
 		for (let segment of segments) {
 			for (let row of segment.atoms) {

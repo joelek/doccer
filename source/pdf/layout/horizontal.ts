@@ -1,5 +1,5 @@
 import * as content from "../content";
-import { Atom, ChildNode, Node, NodeStyle, ParentAtom, ParentNode, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, ParentNode, PositionedAtom, Size } from "./shared";
 
 export type HorizontalLayoutStyle = {
 	align_x: "left" | "center" | "right";
@@ -47,7 +47,7 @@ export class HorizontalLayoutNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
-		let gap = this.getComputedValue(this.style.gap, target_size.w);
+		let gap = Length.getComputedValue(this.style.gap, target_size.w);
 		let content_segment_size: Size = {
 			w: 0,
 			h: Math.max(0, segment_size.h)
@@ -148,7 +148,7 @@ export class HorizontalLayoutNode extends ParentNode {
 		}
 		segments.push(current_segment);
 		for (let segment of segments) {
-			this.constrainSegmentSize(segment.size, content_target_size);
+			Size.constrain(segment.size, content_target_size);
 		}
 		if (this.style.align_x === "center") {
 			for (let segment of segments) {

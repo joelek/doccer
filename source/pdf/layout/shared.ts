@@ -10,6 +10,19 @@ export type Size = {
 	h: number;
 };
 
+export const Size = {
+	constrain(intrinsic_size: Size, target_size?: Partial<Size>): void {
+		if (target_size != null) {
+			if (target_size.w != null) {
+				intrinsic_size.w = target_size.w;
+			}
+			if (target_size.h != null) {
+				intrinsic_size.h = target_size.h;
+			}
+		}
+	}
+};
+
 export type Rect = Position & Size;
 
 export const Rect = {
@@ -105,9 +118,9 @@ export const Atom = {
 	}
 };
 
-type Length = number | `${number}%` | "intrinsic" | "extrinsic";
+export type Length = number | `${number}%` | "intrinsic" | "extrinsic";
 
-const Length = {
+export const Length = {
 	getComputedLength(length: Length, relative_to: number | undefined): number | undefined {
 		if (length === "intrinsic") {
 			return;
@@ -125,6 +138,17 @@ const Length = {
 			return Math.max(0, Number.parseFloat(length.slice(0, -1))) * 0.01 * relative_to;
 		}
 		return length;
+	},
+
+	getComputedValue(value: [number, "%"?], relative_to: number | undefined): number {
+		if (value[1] === "%") {
+			if (relative_to == null) {
+				throw new Error(`Unexpected relative length within intrinsic length!`);
+			}
+			return value[0] * 0.01 * relative_to;
+		} else {
+			return value[0];
+		}
 	}
 };
 
@@ -172,28 +196,6 @@ export abstract class Node {
 				h: Infinity
 			};
 		};
-	}
-
-	protected constrainSegmentSize(intrinsic_size: Size, target_size?: Partial<Size>): void {
-		if (target_size != null) {
-			if (target_size.w != null) {
-				intrinsic_size.w = target_size.w;
-			}
-			if (target_size.h != null) {
-				intrinsic_size.h = target_size.h;
-			}
-		}
-	}
-
-	protected getComputedValue(value: [number, "%"?], relative_to: number | undefined): number {
-		if (value[1] === "%") {
-			if (relative_to == null) {
-				throw new Error(`Unexpected relative length within intrinsic length!`);
-			}
-			return value[0] * 0.01 * relative_to;
-		} else {
-			return value[0];
-		}
 	}
 
 	constructor(style?: Partial<NodeStyle>) {
