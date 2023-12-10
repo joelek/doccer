@@ -6,7 +6,7 @@ export type BoxStyle = {
 	border_color: "transparent" | [number, number, number];
 	border_radius: number;
 	border_width: number;
-	padding: number;
+	padding: [number, "%"?];
 };
 
 export class BoxNode extends ParentNode {
@@ -81,6 +81,17 @@ export class BoxNode extends ParentNode {
 		];
 	}
 
+	protected getPadding(target_size: Partial<Size>): number {
+		if (this.style.padding[1] === "%") {
+			if (target_size.w == null) {
+				throw new Error(`Unexpected relative length within intrinsic length!`);
+			}
+			return this.style.padding[0] * 0.01 * target_size.w;
+		} else {
+			return this.style.padding[0];
+		}
+	}
+
 	constructor(style?: Partial<NodeStyle & BoxStyle>, ...children: Array<ChildNode>) {
 		super(style, ...children);
 		style = style ?? {};
@@ -94,8 +105,8 @@ export class BoxNode extends ParentNode {
 		if (border_width < 0) {
 			throw new Error();
 		}
-		let padding = style.padding ?? 0;
-		if (padding < 0) {
+		let padding = style.padding ?? [0];
+		if (padding[0] < 0) {
 			throw new Error();
 		}
 		this.style = {
@@ -112,10 +123,11 @@ export class BoxNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
-		let inset_top = this.style.border_width + this.style.padding;
-		let inset_right = this.style.border_width + this.style.padding;
-		let inset_left = this.style.border_width + this.style.padding;
-		let inset_bottom = this.style.border_width + this.style.padding;
+		let padding = this.getPadding(target_size);
+		let inset_top = this.style.border_width + padding;
+		let inset_right = this.style.border_width + padding;
+		let inset_left = this.style.border_width + padding;
+		let inset_bottom = this.style.border_width + padding;
 		let content_segment_size: Size = {
 			w: 0,
 			h: Math.max(0, segment_size.h - inset_top - inset_bottom)

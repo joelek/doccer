@@ -453,15 +453,57 @@ wtf.test(`BoxNode should support border width.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support padding.`, (assert) => {
-	let node = new BoxNode({ padding: 1 });
+	let node = new BoxNode({ padding: [1] },
+		new MockNode({ w: 2, h: 2 })
+	);
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
 			"size": {
-				"w": 2,
-				"h": 2
+				"w": 4,
+				"h": 4
 			},
-			"atoms": [],
+			"atoms": [
+				{
+					"size": {
+						"w": 2,
+						"h": 2
+					},
+					"position": {
+						"x": 1,
+						"y": 1
+					}
+				}
+			],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support padding "20%".`, (assert) => {
+	let node = new BoxNode({ padding: [20, "%"], width: 50 },
+		new MockNode({ w: 2, h: 2 })
+	);
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 50,
+				"h": 22
+			},
+			"atoms": [
+				{
+					"size": {
+						"w": 2,
+						"h": 2
+					},
+					"position": {
+						"x": 10,
+						"y": 10
+					}
+				}
+			],
 			"prefix": [],
 			"suffix": []
 		}
