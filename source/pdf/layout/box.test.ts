@@ -2,7 +2,7 @@ import * as wtf from "@joelek/wtf";
 import { Atom, ChildNode, Size } from "./shared";
 import { BoxNode } from "./box";
 
-class MockNode extends ChildNode {
+class MockSegmentedNode extends ChildNode {
 	protected sizes: Array<Size>;
 
 	constructor(...sizes: Array<Partial<Size>>) {
@@ -75,7 +75,7 @@ wtf.test(`BoxNode should support height "extrinsic".`, (assert) => {
 
 wtf.test(`BoxNode should support height "intrinsic".`, (assert) => {
 	let node = new BoxNode({ height: "intrinsic" },
-		new MockNode({ w: 0, h: 10 })
+		new MockSegmentedNode({ w: 0, h: 10 })
 	);
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
@@ -140,8 +140,8 @@ wtf.test(`BoxNode should support overflow "visible".`, (assert) => {
 
 wtf.test(`BoxNode should support segmentation "auto".`, (assert) => {
 	let node = new BoxNode({ segmentation: "auto" },
-		new MockNode({ w: 0, h: 2 }),
-		new MockNode({ w: 0, h: 2 })
+		new MockSegmentedNode({ w: 0, h: 2 }),
+		new MockSegmentedNode({ w: 0, h: 2 })
 	);
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
 	assert.equals(atoms, [
@@ -190,8 +190,8 @@ wtf.test(`BoxNode should support segmentation "auto".`, (assert) => {
 
 wtf.test(`BoxNode should support segmentation "none".`, (assert) => {
 	let node = new BoxNode({ segmentation: "none" },
-		new MockNode({ w: 0, h: 2 }),
-		new MockNode({ w: 0, h: 2 })
+		new MockSegmentedNode({ w: 0, h: 2 }),
+		new MockSegmentedNode({ w: 0, h: 2 })
 	);
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
 	assert.equals(atoms, [
@@ -278,7 +278,7 @@ wtf.test(`BoxNode should support width "extrinsic".`, (assert) => {
 
 wtf.test(`BoxNode should support width "intrinsic".`, (assert) => {
 	let node = new BoxNode({ width: "intrinsic" },
-		new MockNode({ w: 10, h: 0 })
+		new MockSegmentedNode({ w: 10, h: 0 })
 	);
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
@@ -454,7 +454,7 @@ wtf.test(`BoxNode should support border width.`, (assert) => {
 
 wtf.test(`BoxNode should support padding.`, (assert) => {
 	let node = new BoxNode({ padding: [1] },
-		new MockNode({ w: 2, h: 2 })
+		new MockSegmentedNode({ w: 2, h: 2 })
 	);
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
@@ -483,7 +483,7 @@ wtf.test(`BoxNode should support padding.`, (assert) => {
 
 wtf.test(`BoxNode should support padding "20%".`, (assert) => {
 	let node = new BoxNode({ padding: [20, "%"], width: 50 },
-		new MockNode({ w: 2, h: 2 })
+		new MockSegmentedNode({ w: 2, h: 2 })
 	);
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
