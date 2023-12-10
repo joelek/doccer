@@ -37,4 +37,10 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add support for work-break.
 * Add support for fractional widths and heights.
 * Add tests for codepage subproject.
-* Fix issues with pdf serialization.
+* Improve PDF serialization.
+* Create schema for extensible document format.
+* Create converter from extensible document format to PDF.
+* Add command-line tool.
+* Add ImageNode.
+* Add support for paths.
+* Add support for compound paths.
