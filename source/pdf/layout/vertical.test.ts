@@ -1139,7 +1139,7 @@ wtf.test(`VerticalLayoutNode should support align y "bottom" when there is verti
 });
 
 wtf.test(`VerticalLayoutNode should support gap.`, (assert) => {
-	let node = new VerticalLayoutNode({ gap: 1 },
+	let node = new VerticalLayoutNode({ gap: [1] },
 		new MockNode({ w: 0, h: 2 }),
 		new MockNode({ w: 0, h: 2 })
 	);
@@ -1169,6 +1169,46 @@ wtf.test(`VerticalLayoutNode should support gap.`, (assert) => {
 					"position": {
 						"x": 0,
 						"y": 3
+					}
+				}
+			],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`VerticalLayoutNode should support gap "20%".`, (assert) => {
+	let node = new VerticalLayoutNode({ gap: [20, "%"], height: 50 },
+		new MockNode({ w: 0, h: 2 }),
+		new MockNode({ w: 0, h: 2 })
+	);
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 50
+			},
+			"atoms": [
+				{
+					"size": {
+						"w": 0,
+						"h": 2
+					},
+					"position": {
+						"x": 0,
+						"y": 0
+					}
+				},
+				{
+					"size": {
+						"w": 0,
+						"h": 2
+					},
+					"position": {
+						"x": 0,
+						"y": 12
 					}
 				}
 			],

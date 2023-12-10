@@ -4,7 +4,7 @@ import { Atom, ChildNode, Node, NodeStyle, ParentAtom, ParentNode, PositionedAto
 export type VerticalLayoutStyle = {
 	align_x: "left" | "center" | "right";
 	align_y: "top" | "middle" | "bottom";
-	gap: number;
+	gap: [number, "%"?];
 };
 
 export class VerticalLayoutNode extends ParentNode {
@@ -26,13 +26,24 @@ export class VerticalLayoutNode extends ParentNode {
 		];
 	}
 
+	protected getGap(target_size: Partial<Size>): number {
+		if (this.style.gap[1] === "%") {
+			if (target_size.h == null) {
+				throw new Error(`Unexpected relative length within intrinsic length!`);
+			}
+			return this.style.gap[0] * 0.01 * target_size.h;
+		} else {
+			return this.style.gap[0];
+		}
+	}
+
 	constructor(style?: Partial<NodeStyle & VerticalLayoutStyle>, ...children: Array<ChildNode>) {
 		super(style, ...children);
 		style = style ?? {};
 		let align_x = style.align_x ?? "left";
 		let align_y = style.align_y ?? "top";
-		let gap = style.gap ?? 0;
-		if (gap < 0) {
+		let gap = style.gap ?? [0];
+		if (gap[0] < 0) {
 			throw new Error();
 		}
 		this.style = {
@@ -47,6 +58,7 @@ export class VerticalLayoutNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
+		let gap = this.getGap(target_size);
 		let content_segment_size: Size = {
 			w: 0,
 			h: Math.max(0, segment_size.h)
@@ -67,7 +79,7 @@ export class VerticalLayoutNode extends ParentNode {
 			},
 			atoms: []
 		};
-		let gap = 0;
+		let current_gap = 0;
 		for (let child of this.children) {
 			let child_segment_size: Size = {
 				w: 0,
@@ -75,12 +87,12 @@ export class VerticalLayoutNode extends ParentNode {
 			};
 			let child_segment_left: Size = {
 				w: 0,
-				h: Math.max(0, content_segment_left.h - (current_segment.size.h + gap))
+				h: Math.max(0, content_segment_left.h - (current_segment.size.h + current_gap))
 			};
 			let child_target_size = Node.getTargetSize(child, content_target_size);
 			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
 			for (let row of rows) {
-				if (current_segment.size.h + gap + row.size.h <= content_segment_left.h) {
+				if (current_segment.size.h + current_gap + row.size.h <= content_segment_left.h) {
 				} else {
 					if (current_segment.atoms.length > 0) {
 						segments.push(current_segment);
@@ -91,7 +103,7 @@ export class VerticalLayoutNode extends ParentNode {
 							},
 							atoms: []
 						};
-						gap = 0;
+						current_gap = 0;
 					}
 					content_segment_left = { ...content_segment_size };
 				}
@@ -99,11 +111,11 @@ export class VerticalLayoutNode extends ParentNode {
 					...row,
 					position: {
 						x: 0,
-						y: current_segment.size.h + gap
+						y: current_segment.size.h + current_gap
 					}
 				};
 				current_segment.atoms.push(positioned_row);
-				gap = this.style.gap;
+				current_gap = gap;
 				current_segment.size.w = Math.max(current_segment.size.w, positioned_row.position.x + positioned_row.size.w);
 				current_segment.size.h = Math.max(current_segment.size.h, positioned_row.position.y + positioned_row.size.h);
 			}
