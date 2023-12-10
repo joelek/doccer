@@ -118,26 +118,22 @@ export const Atom = {
 	}
 };
 
-export type Length = number | [number, "%"?];
+export type Length = [number, "%"?];
 
 export const Length = {
 	getComputedLength(length: Length, relative_to: number | undefined): number {
-		if (typeof length === "number") {
-			return length;
-		} else {
-			if (length[1] === "%") {
-				if (relative_to == null) {
-					throw new Error(`Unexpected relative length within intrinsic length!`);
-				}
-				return length[0] * 0.01 * relative_to;
-			} else {
-				return length[0];
+		if (length[1] === "%") {
+			if (relative_to == null) {
+				throw new Error(`Unexpected relative length within intrinsic length!`);
 			}
+			return length[0] * 0.01 * relative_to;
+		} else {
+			return length[0];
 		}
 	}
 };
 
-export type NodeLength = Length | "intrinsic" | "extrinsic";
+export type NodeLength = number | Length | "intrinsic" | "extrinsic";
 
 export const NodeLength = {
 	getComputedLength(length: NodeLength, relative_to: number | undefined): number | undefined {
@@ -149,6 +145,9 @@ export const NodeLength = {
 				throw new Error(`Unexpected relative length within intrinsic length!`);
 			}
 			return relative_to;
+		}
+		if (typeof length === "number") {
+			return length;
 		}
 		return Length.getComputedLength(length, relative_to);
 	}
