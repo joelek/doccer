@@ -67,20 +67,30 @@ export class HorizontalLayoutNode extends ParentNode {
 			h: content_target_size.h
 		};
 		let width_fractions = 0;
+		let height_fractions = 0;
+		for (let child of this.children) {
+			let width = child.getWidth();
+			if (NodeLength.isFractional(width)) {
+				width_fractions = width_fractions + width[0];
+			}
+			let height = child.getHeight();
+			if (NodeLength.isFractional(height)) {
+				height_fractions = Math.max(height_fractions, height[0]);
+			}
+		}
 		for (let [index, child] of this.children.entries()) {
 			let width = child.getWidth();
 			if (NodeLength.isFractional(width)) {
-				width_fractions += width[0];
 				continue;
 			}
 			let child_fraction_size: Partial<Size> = {
 				...fraction_size
 			};
-			let height = child.getHeight();
-			if (NodeLength.isFractional(height)) {
-				if (child_fraction_size.h != null) {
-					child_fraction_size.h /= height[0];
-				}
+			if (child_fraction_size.w != null) {
+				child_fraction_size.w /= width_fractions;
+			}
+			if (child_fraction_size.h != null) {
+				child_fraction_size.h /= height_fractions;
 			}
 			let child_segment_size: Size = {
 				w: 0,
@@ -108,7 +118,6 @@ export class HorizontalLayoutNode extends ParentNode {
 		}
 		if (fraction_size.w != null) {
 			fraction_size.w -= Math.max(0, this.children.length - 1) * gap;
-			fraction_size.w /= width_fractions;
 		}
 		for (let [index, child] of this.children.entries()) {
 			let width = child.getWidth();
@@ -118,11 +127,11 @@ export class HorizontalLayoutNode extends ParentNode {
 			let child_fraction_size: Partial<Size> = {
 				...fraction_size
 			};
-			let height = child.getHeight();
-			if (NodeLength.isFractional(height)) {
-				if (child_fraction_size.h != null) {
-					child_fraction_size.h /= height[0];
-				}
+			if (child_fraction_size.w != null) {
+				child_fraction_size.w /= width_fractions;
+			}
+			if (child_fraction_size.h != null) {
+				child_fraction_size.h /= height_fractions;
 			}
 			let child_segment_size: Size = {
 				w: 0,

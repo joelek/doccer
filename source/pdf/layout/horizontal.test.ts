@@ -163,7 +163,7 @@ wtf.test(`HorizontalLayoutNode should support children with fractional heights.`
 				{
 					"size": {
 						"w": 0,
-						"h": 10
+						"h": 5
 					},
 					"position": {
 						"x": 0,
@@ -173,7 +173,7 @@ wtf.test(`HorizontalLayoutNode should support children with fractional heights.`
 						{
 							"size": {
 								"w": 0,
-								"h": 10
+								"h": 5
 							},
 							"position": {
 								"x": 0,
