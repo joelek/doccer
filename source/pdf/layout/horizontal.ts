@@ -26,6 +26,25 @@ export class HorizontalLayoutNode extends ParentNode {
 		];
 	}
 
+	protected getFractions(): Size {
+		let w = 0;
+		let h = 0;
+		for (let child of this.children) {
+			let width = child.getWidth();
+			if (NodeLength.isFractional(width)) {
+				w = w + width[0];
+			}
+			let height = child.getHeight();
+			if (NodeLength.isFractional(height)) {
+				h = Math.max(h, height[0]);
+			}
+		}
+		return {
+			w,
+			h
+		};
+	}
+
 	constructor(style?: Partial<NodeStyle & HorizontalLayoutStyle>, ...children: Array<ChildNode>) {
 		super(style, ...children);
 		style = style ?? {};
@@ -61,36 +80,23 @@ export class HorizontalLayoutNode extends ParentNode {
 			h: target_size.h == null ? undefined : Math.max(0, target_size.h)
 		};
 		let column_rows = [] as Array<Array<Atom>>;
+		let column_widths = [] as Array<number>;
 		let max_column_rows = 0;
 		let fraction_size: Partial<Size> = {
 			w: content_target_size.w,
 			h: content_target_size.h
 		};
-		let width_fractions = 0;
-		let height_fractions = 0;
-		for (let child of this.children) {
-			let width = child.getWidth();
-			if (NodeLength.isFractional(width)) {
-				width_fractions = width_fractions + width[0];
-			}
-			let height = child.getHeight();
-			if (NodeLength.isFractional(height)) {
-				height_fractions = Math.max(height_fractions, height[0]);
-			}
+		if (fraction_size.w != null) {
+			fraction_size.w = Math.max(0, fraction_size.w - Math.max(0, this.children.length - 1) * gap);
+		}
+		let fractions = this.getFractions();
+		if (fraction_size.h != null) {
+			fraction_size.h /= fractions.h;
 		}
 		for (let [index, child] of this.children.entries()) {
 			let width = child.getWidth();
 			if (NodeLength.isFractional(width)) {
 				continue;
-			}
-			let child_fraction_size: Partial<Size> = {
-				...fraction_size
-			};
-			if (child_fraction_size.w != null) {
-				child_fraction_size.w /= width_fractions;
-			}
-			if (child_fraction_size.h != null) {
-				child_fraction_size.h /= height_fractions;
 			}
 			let child_segment_size: Size = {
 				w: 0,
@@ -100,39 +106,24 @@ export class HorizontalLayoutNode extends ParentNode {
 				w: 0,
 				h: content_segment_left.h
 			};
-			let child_target_size = Node.getTargetSize(child, content_target_size, child_fraction_size);
+			let child_target_size = Node.getTargetSize(child, content_target_size, fraction_size);
 			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
 			column_rows[index] = rows;
-			max_column_rows = Math.max(max_column_rows, rows.length);
-		}
-		let column_widths = [] as Array<number>;
-		for (let [index, rows] of column_rows.entries()) {
-			if (rows == null) {
-				continue;
-			}
 			let column_width = rows.reduce((max, row) => Math.max(max, row.size.w), 0);
 			column_widths[index] = column_width;
 			if (fraction_size.w != null) {
 				fraction_size.w = Math.max(0, fraction_size.w - column_width);
 			}
+			max_column_rows = Math.max(max_column_rows, rows.length);
 		}
 		if (fraction_size.w != null) {
-			fraction_size.w -= Math.max(0, this.children.length - 1) * gap;
+			fraction_size.w /= fractions.w;
 		}
 		for (let [index, child] of this.children.entries()) {
 			let width = child.getWidth();
 			if (!NodeLength.isFractional(width)) {
 				continue;
 			}
-			let child_fraction_size: Partial<Size> = {
-				...fraction_size
-			};
-			if (child_fraction_size.w != null) {
-				child_fraction_size.w /= width_fractions;
-			}
-			if (child_fraction_size.h != null) {
-				child_fraction_size.h /= height_fractions;
-			}
 			let child_segment_size: Size = {
 				w: 0,
 				h: content_segment_size.h
@@ -141,7 +132,7 @@ export class HorizontalLayoutNode extends ParentNode {
 				w: 0,
 				h: content_segment_left.h
 			};
-			let child_target_size = Node.getTargetSize(child, content_target_size, child_fraction_size);
+			let child_target_size = Node.getTargetSize(child, content_target_size, fraction_size);
 			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
 			column_rows[index] = rows;
 			max_column_rows = Math.max(max_column_rows, rows.length);
