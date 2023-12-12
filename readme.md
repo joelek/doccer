@@ -42,4 +42,3 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add command-line tool.
 * Add ImageNode.
 * Add support for compound paths.
-* Fix issue with implicit height not taking border radius into account.
