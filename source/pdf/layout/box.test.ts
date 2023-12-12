@@ -352,7 +352,7 @@ wtf.test(`BoxNode should support border color.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support border radius when clipping.`, (assert) => {
-	let node = new BoxNode({ border_radius: 1, overflow: "hidden", width: 4, height: 4 });
+	let node = new BoxNode({ border_radius: [1], overflow: "hidden", width: 4, height: 4 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -379,8 +379,36 @@ wtf.test(`BoxNode should support border radius when clipping.`, (assert) => {
 	]);
 });
 
+wtf.test(`BoxNode should support border radius "20%" when clipping.`, (assert) => {
+	let node = new BoxNode({ border_radius: [20, "%"], overflow: "hidden", width: 50 });
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 50,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [
+				"0 -10 m",
+				"0 -15.523 4.477 -20 10 -20 c",
+				"40 -20 l",
+				"45.523 -20 50 -15.523 50 -10 c",
+				"50 -10 l",
+				"50 -4.477 45.523 0 40 0 c",
+				"10 0 l",
+				"4.477 0 0 -4.477 0 -10 c",
+				"h",
+				"W",
+				"n"
+			],
+			"suffix": []
+		}
+	]);
+});
+
 wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
-	let node = new BoxNode({ border_radius: 1, background_color: [0, 0, 0], width: 4, height: 4 });
+	let node = new BoxNode({ border_radius: [1], background_color: [0, 0, 0], width: 4, height: 4 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -407,8 +435,36 @@ wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
 	]);
 });
 
+wtf.test(`BoxNode should support border radius "20%" when filling.`, (assert) => {
+	let node = new BoxNode({ border_radius: [20, "%"], background_color: [0, 0, 0], width: 50 });
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 50,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [
+				"0 0 0 rg",
+				"0 -10 m",
+				"0 -15.523 4.477 -20 10 -20 c",
+				"40 -20 l",
+				"45.523 -20 50 -15.523 50 -10 c",
+				"50 -10 l",
+				"50 -4.477 45.523 0 40 0 c",
+				"10 0 l",
+				"4.477 0 0 -4.477 0 -10 c",
+				"h",
+				"f"
+			],
+			"suffix": []
+		}
+	]);
+});
+
 wtf.test(`BoxNode should support border radius when stroking.`, (assert) => {
-	let node = new BoxNode({ border_radius: 2, border_width: 1, width: 8, height: 8 });
+	let node = new BoxNode({ border_radius: [2], border_width: [1], width: 8, height: 8 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -436,8 +492,37 @@ wtf.test(`BoxNode should support border radius when stroking.`, (assert) => {
 	]);
 });
 
+wtf.test(`BoxNode should support border radius "20%" when stroking.`, (assert) => {
+	let node = new BoxNode({ border_radius: [20, "%"], border_width: [1], width: 50 });
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 50,
+				"h": 2
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": [
+				"1 0 0 1 0.5 -0.5 cm",
+				"1 w",
+				"0 -9.5 m",
+				"0 -14.747 4.253 -19 9.5 -19 c",
+				"39.5 -19 l",
+				"44.747 -19 49 -14.747 49 -9.5 c",
+				"49 -9.5 l",
+				"49 -4.253 44.747 0 39.5 0 c",
+				"9.5 0 l",
+				"4.253 0 0 -4.253 0 -9.5 c",
+				"h",
+				"S"
+			]
+		}
+	]);
+});
+
 wtf.test(`BoxNode should support border width.`, (assert) => {
-	let node = new BoxNode({ border_width: 1 });
+	let node = new BoxNode({ border_width: [1] });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -454,6 +539,31 @@ wtf.test(`BoxNode should support border width.`, (assert) => {
 				"0 -1 l",
 				"1 -1 l",
 				"1 0 l",
+				"h",
+				"S"
+			]
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support border width "20%".`, (assert) => {
+	let node = new BoxNode({ border_width: [20, "%"], width: 50 });
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 50,
+				"h": 20
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": [
+				"1 0 0 1 5 -5 cm",
+				"10 w",
+				"0 0 m",
+				"0 -10 l",
+				"40 -10 l",
+				"40 0 l",
 				"h",
 				"S"
 			]

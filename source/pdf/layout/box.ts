@@ -4,8 +4,8 @@ import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, ParentNode, Path,
 export type BoxStyle = {
 	background_color: "transparent" | [number, number, number];
 	border_color: "transparent" | [number, number, number];
-	border_radius: number;
-	border_width: number;
+	border_radius: Length;
+	border_width: Length;
 	padding: Length;
 };
 
@@ -33,19 +33,19 @@ export class BoxNode extends ParentNode {
 		];
 	}
 
-	protected createBorderCommands(size: Size): Array<string> {
+	protected createBorderCommands(size: Size, border_width: number, border_radius: number): Array<string> {
 		let context = content.createContext();
 		if (this.style.border_color !== "transparent") {
 			context.setStrokeColorRGB(...this.style.border_color);
 		}
-		if (this.style.border_width > 0) {
-			let border_radius = Math.max(0, this.style.border_radius - this.style.border_width * 0.5);
-			context.concatenateMatrix(1, 0, 0, 1, this.style.border_width * 0.5, 0 - this.style.border_width * 0.5);
-			context.setStrokeWidth(this.style.border_width);
+		if (border_width > 0) {
+			let clamped_border_radius = Math.max(0, border_radius - border_width * 0.5);
+			context.concatenateMatrix(1, 0, 0, 1, border_width * 0.5, 0 - border_width * 0.5);
+			context.setStrokeWidth(border_width);
 			let border_path = Path.createRoundedRectangle({
-				w: Math.max(0, size.w - this.style.border_width),
-				h: Math.max(0, size.h - this.style.border_width)
-			}, border_radius);
+				w: Math.max(0, size.w - border_width),
+				h: Math.max(0, size.h - border_width)
+			}, clamped_border_radius);
 			Path.append(border_path, context);
 			context.strokePath();
 		}
@@ -57,12 +57,12 @@ export class BoxNode extends ParentNode {
 		style = style ?? {};
 		let background_color = style.background_color ?? "transparent";
 		let border_color = style.border_color ?? "transparent";
-		let border_radius = style.border_radius ?? 0;
-		if (border_radius < 0) {
+		let border_radius = style.border_radius ?? [0];
+		if (border_radius[0] < 0) {
 			throw new Error();
 		}
-		let border_width = style.border_width ?? 0;
-		if (border_width < 0) {
+		let border_width = style.border_width ?? [0];
+		if (border_width[0] < 0) {
 			throw new Error();
 		}
 		let padding = style.padding ?? [0];
@@ -83,11 +83,13 @@ export class BoxNode extends ParentNode {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
 		segment_left = this.getSegmentLeft(segment_left);
+		let border_radius = Length.getComputedLength(this.style.border_radius, target_size.w);
+		let border_width = Length.getComputedLength(this.style.border_width, target_size.w);
 		let padding = Length.getComputedLength(this.style.padding, target_size.w);
-		let inset_top = this.style.border_width + padding;
-		let inset_right = this.style.border_width + padding;
-		let inset_left = this.style.border_width + padding;
-		let inset_bottom = this.style.border_width + padding;
+		let inset_top = border_width + padding;
+		let inset_right = border_width + padding;
+		let inset_left = border_width + padding;
+		let inset_bottom = border_width + padding;
 		let content_segment_size: Size = {
 			w: 0,
 			h: Math.max(0, segment_size.h - inset_top - inset_bottom)
@@ -159,10 +161,10 @@ export class BoxNode extends ParentNode {
 			segment.size.h += inset_top + inset_bottom;
 		}
 		for (let segment of segments) {
-			let path = Path.createRoundedRectangle(segment.size, this.style.border_radius);
+			let path = Path.createRoundedRectangle(segment.size, border_radius);
 			segment.prefix = this.createPrefixCommands(path);
 			segment.suffix = [
-				...this.createBorderCommands(segment.size),
+				...this.createBorderCommands(segment.size, border_width, border_radius),
 				...this.createSuffixCommands(path)
 			];
 		}
