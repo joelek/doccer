@@ -1,7 +1,7 @@
 import * as truetype from "../../truetype";
 import * as content from "../content";
 import { TextRenderingMode } from "../content";
-import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
 
 export type TextStyle = {
 	color: "transparent" | [number, number, number];
@@ -23,7 +23,7 @@ export class TextNode extends ChildNode {
 	protected typesetter: truetype.Typesetter;
 	protected style: TextStyle;
 
-	protected createPrefixCommands(size: Size): Array<string> {
+	protected createPrefixCommands(path: Path): Array<string> {
 		let context = content.createContext();
 		context.beginTextObject();
 		context.setTextFontAndSize("F1", this.style.font_size);
@@ -44,17 +44,17 @@ export class TextNode extends ChildNode {
 			context.concatenateMatrix(1, 0, 0, 1, 0, offset);
 		}
 		return [
-			...super.createPrefixCommands(size),
+			...super.createPrefixCommands(path),
 			...context.getCommands()
 		];
 	}
 
-	protected createSuffixCommands(size: Size): Array<string> {
+	protected createSuffixCommands(path: Path): Array<string> {
 		let context = content.createContext();
 		context.endTextObject();
 		return [
 			...context.getCommands(),
-			...super.createSuffixCommands(size)
+			...super.createSuffixCommands(path)
 		];
 	}
 
@@ -311,8 +311,9 @@ export class TextNode extends ChildNode {
 			Size.constrain(segment.size, target_size);
 		}
 		for (let segment of segments) {
-			segment.prefix = this.createPrefixCommands(segment.size);
-			segment.suffix = this.createSuffixCommands(segment.size);
+			let path = Path.createRectangle(segment.size);
+			segment.prefix = this.createPrefixCommands(path);
+			segment.suffix = this.createSuffixCommands(path);
 		}
 		return segments;
 	}

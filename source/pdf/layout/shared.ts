@@ -5,6 +5,98 @@ export type Position = {
 	y: number;
 };
 
+export type PathSegment = [Position | 0, Position | 0, Position];
+
+export type Path = {
+	start: Position;
+	segments: Array<PathSegment>;
+	closed: boolean;
+};
+
+export const Path = {
+	append(path: Path, context: content.Context): void {
+		context.beginNewSubpath(path.start.x, path.start.y);
+		for (let [cp0, cp1, ep] of path.segments) {
+			if (cp0 === 0) {
+				if (cp1 == 0) {
+					context.appendLineSegment(ep.x, ep.y);
+				} else {
+					context.appendCubicBezierCurveWithReplicatedInitalPoint(cp1.x, cp1.y, ep.x, ep.y);
+				}
+			} else {
+				if (cp1 == 0) {
+					context.appendCubicBezierCurveWithReplicatedFinalPoint(cp0.x, cp0.y, ep.x, ep.y);
+				} else {
+					context.appendCubicBezierCurve(cp0.x, cp0.y, cp1.x, cp1.y, ep.x, ep.y);
+				}
+			}
+		}
+		if (path.closed) {
+			context.closeSubpath();
+		}
+	},
+
+	createRectangle(size: Size): Path {
+		let x1 = 0;
+		let x2 = size.w;
+		let y1 = 0;
+		let y2 = 0 - size.h;
+		let path: Path = {
+			start: {
+				x: x1,
+				y: y1
+			},
+			segments: [
+				[0, 0, { x: x1, y: y2 }],
+				[0, 0, { x: x2, y: y2 }],
+				[0, 0, { x: x2, y: y1 }]
+			],
+			closed: true
+		};
+		return path;
+	},
+
+	createRoundedRectangle(size: Size, border_radius: number): Path {
+		if (border_radius === 0) {
+			return this.createRectangle(size);
+		}
+		let w = Math.max(border_radius + border_radius, size.w);
+		let h = Math.max(border_radius + border_radius, size.h);
+		let f = (Math.SQRT2 - 1) * 4 / 3;
+		let c1 = border_radius * f;
+		let c2 = border_radius - c1;
+		let x1 = 0;
+		let x2 = c2;
+		let x3 = border_radius;
+		let x4 = (w - border_radius);
+		let x5 = (w - c2);
+		let x6 = w;
+		let y1 = 0 - 0;
+		let y2 = 0 - c2;
+		let y3 = 0 - border_radius;
+		let y4 = 0 - (h - border_radius);
+		let y5 = 0 - (h - c2);
+		let y6 = 0 - h;
+		let path: Path = {
+			start: {
+				x: x1,
+				y: y4
+			},
+			segments: [
+				[{ x: x1, y: y5 }, { x: x2, y: y6 }, { x: x3, y: y6 }],
+				[0, 0, { x: x4, y: y6 }],
+				[{ x: x5, y: y6 }, { x: x6, y: y5 }, { x: x6, y: y4 }],
+				[0, 0, { x: x6, y: y3 }],
+				[{ x: x6, y: y2 }, { x: x5, y: y1 }, { x: x4, y: y1 }],
+				[0, 0, { x: x3, y: y1 }],
+				[{ x: x2, y: y1 }, { x: x1, y: y2 }, { x: x1, y: y3 }]
+			],
+			closed: true
+		};
+		return path;
+	}
+};
+
 export type Size = {
 	w: number;
 	h: number;
@@ -173,27 +265,17 @@ export type NodeStyle = {
 export abstract class Node {
 	protected node_style: NodeStyle;
 
-	protected appendNodeShape(context: content.Context, size: Size): void {
-		let rect: Rect = {
-			x: 0,
-			y: 0,
-			w: size.w,
-			h: size.h
-		};
-		context.appendRectangle(rect.x, 0 - rect.y - rect.h, rect.w, rect.h);
-	}
-
-	protected createPrefixCommands(size: Size): Array<string> {
+	protected createPrefixCommands(path: Path): Array<string> {
 		let context = content.createContext();
 		if (this.node_style.overflow === "hidden") {
-			this.appendNodeShape(context, size);
+			Path.append(path, context);
 			context.setClippingPathUsingNonZeroWindingNumberRule();
 			context.endPath();
 		}
 		return context.getCommands();
 	}
 
-	protected createSuffixCommands(size: Size): Array<string> {
+	protected createSuffixCommands(path: Path): Array<string> {
 		let context = content.createContext();
 		return context.getCommands();
 	}

@@ -113,7 +113,11 @@ wtf.test(`BoxNode should support overflow "hidden".`, (assert) => {
 			},
 			"atoms": [],
 			"prefix": [
-				"0 0 0 0 re",
+				"0 0 m",
+				"0 0 l",
+				"0 0 l",
+				"0 0 l",
+				"h",
 				"W",
 				"n"
 			],
@@ -317,7 +321,11 @@ wtf.test(`BoxNode should support background color.`, (assert) => {
 			"atoms": [],
 			"prefix": [
 				"0.1 0.2 0.3 rg",
-				"0 0 0 0 re",
+				"0 0 m",
+				"0 0 l",
+				"0 0 l",
+				"0 0 l",
+				"h",
 				"f"
 			],
 			"suffix": []
@@ -354,8 +362,7 @@ wtf.test(`BoxNode should support border radius when clipping.`, (assert) => {
 			},
 			"atoms": [],
 			"prefix": [
-				"0 -1 m",
-				"0 -3 l",
+				"0 -3 m",
 				"0 -3.552 0.448 -4 1 -4 c",
 				"3 -4 l",
 				"3.552 -4 4 -3.552 4 -3 c",
@@ -384,8 +391,7 @@ wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
 			"atoms": [],
 			"prefix": [
 				"0 0 0 rg",
-				"0 -1 m",
-				"0 -3 l",
+				"0 -3 m",
 				"0 -3.552 0.448 -4 1 -4 c",
 				"3 -4 l",
 				"3.552 -4 4 -3.552 4 -3 c",
@@ -415,8 +421,7 @@ wtf.test(`BoxNode should support border radius when stroking.`, (assert) => {
 			"suffix": [
 				"1 0 0 1 0.5 -0.5 cm",
 				"1 w",
-				"0 -1.5 m",
-				"0 -5.5 l",
+				"0 -5.5 m",
 				"0 -6.328 0.672 -7 1.5 -7 c",
 				"5.5 -7 l",
 				"6.328 -7 7 -6.328 7 -5.5 c",
@@ -445,7 +450,11 @@ wtf.test(`BoxNode should support border width.`, (assert) => {
 			"suffix": [
 				"1 0 0 1 0.5 -0.5 cm",
 				"1 w",
-				"0 -1 1 1 re",
+				"0 0 m",
+				"0 -1 l",
+				"1 -1 l",
+				"1 0 l",
+				"h",
 				"S"
 			]
 		}

@@ -585,7 +585,11 @@ wtf.test(`VerticalLayoutNode should support overflow "hidden".`, (assert) => {
 			},
 			"atoms": [],
 			"prefix": [
-				"0 0 0 0 re",
+				"0 0 m",
+				"0 0 l",
+				"0 0 l",
+				"0 0 l",
+				"h",
 				"W",
 				"n"
 			],

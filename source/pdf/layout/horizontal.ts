@@ -1,5 +1,5 @@
 import * as content from "../content";
-import { Atom, ChildNode, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
 
 export type HorizontalLayoutStyle = {
 	align_x: "left" | "center" | "right";
@@ -10,19 +10,19 @@ export type HorizontalLayoutStyle = {
 export class HorizontalLayoutNode extends ParentNode {
 	protected style: HorizontalLayoutStyle;
 
-	protected createPrefixCommands(size: Size): Array<string> {
+	protected createPrefixCommands(path: Path): Array<string> {
 		let context = content.createContext();
 		return [
-			...super.createPrefixCommands(size),
+			...super.createPrefixCommands(path),
 			...context.getCommands()
 		];
 	}
 
-	protected createSuffixCommands(size: Size): Array<string> {
+	protected createSuffixCommands(path: Path): Array<string> {
 		let context = content.createContext();
 		return [
 			...context.getCommands(),
-			...super.createSuffixCommands(size)
+			...super.createSuffixCommands(path)
 		];
 	}
 
@@ -237,8 +237,9 @@ export class HorizontalLayoutNode extends ParentNode {
 			}
 		}
 		for (let segment of segments) {
-			segment.prefix = this.createPrefixCommands(segment.size);
-			segment.suffix = this.createSuffixCommands(segment.size);
+			let path = Path.createRectangle(segment.size);
+			segment.prefix = this.createPrefixCommands(path);
+			segment.suffix = this.createSuffixCommands(path);
 		}
 		return segments;
 	}

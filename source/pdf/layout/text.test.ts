@@ -1276,7 +1276,11 @@ wtf.test(`TextNode should support overflow "hidden".`, (assert) => {
 				}
 			],
 			"prefix": [
-				"0 -1 6 1 re",
+				"0 0 m",
+				"0 -1 l",
+				"6 -1 l",
+				"6 0 l",
+				"h",
 				"W",
 				"n",
 				"BT",
