@@ -36,7 +36,6 @@ NB: This project targets TypeScript 4 in strict mode.
 
 * Add support for work-break.
 * Add support for fractional widths and heights to BoxNode.
-* Add tests for codepage subproject.
 * Improve PDF serialization.
 * Create schema for extensible document format.
 * Create converter from extensible document format to PDF.
