@@ -35,7 +35,7 @@ NB: This project targets TypeScript 4 in strict mode.
 ## Roadmap
 
 * Add support for work-break.
-* Add support for fractional widths and heights.
+* Add support for fractional widths and heights to BoxNode.
 * Add support for percentage-based border-radius.
 * Add support for percentage-based border-width.
 * Add tests for codepage subproject.
@@ -44,5 +44,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Create converter from extensible document format to PDF.
 * Add command-line tool.
 * Add ImageNode.
-* Add support for paths.
 * Add support for compound paths.
