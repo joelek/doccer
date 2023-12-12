@@ -36,8 +36,6 @@ NB: This project targets TypeScript 4 in strict mode.
 
 * Add support for work-break.
 * Add support for fractional widths and heights to BoxNode.
-* Add support for percentage-based border-radius.
-* Add support for percentage-based border-width.
 * Add tests for codepage subproject.
 * Improve PDF serialization.
 * Create schema for extensible document format.
@@ -45,3 +43,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add command-line tool.
 * Add ImageNode.
 * Add support for compound paths.
+* Fix issue with implicit height not taking border radius into account.
