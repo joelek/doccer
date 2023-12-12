@@ -380,20 +380,20 @@ wtf.test(`BoxNode should support border radius when clipping.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support border radius "20%" when clipping.`, (assert) => {
-	let node = new BoxNode({ border_radius: [20, "%"], overflow: "hidden", width: 50 });
+	let node = new BoxNode({ border_radius: [20, "%"], overflow: "hidden", width: 50, height: 50 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
 			"size": {
 				"w": 50,
-				"h": 0
+				"h": 50
 			},
 			"atoms": [],
 			"prefix": [
-				"0 -10 m",
-				"0 -15.523 4.477 -20 10 -20 c",
-				"40 -20 l",
-				"45.523 -20 50 -15.523 50 -10 c",
+				"0 -40 m",
+				"0 -45.523 4.477 -50 10 -50 c",
+				"40 -50 l",
+				"45.523 -50 50 -45.523 50 -40 c",
 				"50 -10 l",
 				"50 -4.477 45.523 0 40 0 c",
 				"10 0 l",
@@ -436,21 +436,21 @@ wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support border radius "20%" when filling.`, (assert) => {
-	let node = new BoxNode({ border_radius: [20, "%"], background_color: [0, 0, 0], width: 50 });
+	let node = new BoxNode({ border_radius: [20, "%"], background_color: [0, 0, 0], width: 50, height: 50 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
 			"size": {
 				"w": 50,
-				"h": 0
+				"h": 50
 			},
 			"atoms": [],
 			"prefix": [
 				"0 0 0 rg",
-				"0 -10 m",
-				"0 -15.523 4.477 -20 10 -20 c",
-				"40 -20 l",
-				"45.523 -20 50 -15.523 50 -10 c",
+				"0 -40 m",
+				"0 -45.523 4.477 -50 10 -50 c",
+				"40 -50 l",
+				"45.523 -50 50 -45.523 50 -40 c",
 				"50 -10 l",
 				"50 -4.477 45.523 0 40 0 c",
 				"10 0 l",
@@ -493,23 +493,23 @@ wtf.test(`BoxNode should support border radius when stroking.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support border radius "20%" when stroking.`, (assert) => {
-	let node = new BoxNode({ border_radius: [20, "%"], border_width: [1], width: 50 });
+	let node = new BoxNode({ border_radius: [20, "%"], border_width: [1], width: 50, height: 50 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
 			"size": {
 				"w": 50,
-				"h": 2
+				"h": 50
 			},
 			"atoms": [],
 			"prefix": [],
 			"suffix": [
 				"1 0 0 1 0.5 -0.5 cm",
 				"1 w",
-				"0 -9.5 m",
-				"0 -14.747 4.253 -19 9.5 -19 c",
-				"39.5 -19 l",
-				"44.747 -19 49 -14.747 49 -9.5 c",
+				"0 -39.5 m",
+				"0 -44.747 4.253 -49 9.5 -49 c",
+				"39.5 -49 l",
+				"44.747 -49 49 -44.747 49 -39.5 c",
 				"49 -9.5 l",
 				"49 -4.253 44.747 0 39.5 0 c",
 				"9.5 0 l",
@@ -517,6 +517,62 @@ wtf.test(`BoxNode should support border radius "20%" when stroking.`, (assert) =
 				"h",
 				"S"
 			]
+		}
+	]);
+});
+
+wtf.test(`BoxNode should reduce border radius when greater than 50% of width.`, (assert) => {
+	let node = new BoxNode({ border_radius: [6], overflow: "hidden", width: 10, height: 50 });
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 10,
+				"h": 50
+			},
+			"atoms": [],
+			"prefix": [
+				"0 -45 m",
+				"0 -47.761 2.239 -50 5 -50 c",
+				"5 -50 l",
+				"7.761 -50 10 -47.761 10 -45 c",
+				"10 -5 l",
+				"10 -2.239 7.761 0 5 0 c",
+				"5 0 l",
+				"2.239 0 0 -2.239 0 -5 c",
+				"h",
+				"W",
+				"n"
+			],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should reduce border radius when greater than 50% of height.`, (assert) => {
+	let node = new BoxNode({ border_radius: [6], overflow: "hidden", width: 50, height: 10 });
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 50,
+				"h": 10
+			},
+			"atoms": [],
+			"prefix": [
+				"0 -5 m",
+				"0 -7.761 2.239 -10 5 -10 c",
+				"45 -10 l",
+				"47.761 -10 50 -7.761 50 -5 c",
+				"50 -5 l",
+				"50 -2.239 47.761 0 45 0 c",
+				"5 0 l",
+				"2.239 0 0 -2.239 0 -5 c",
+				"h",
+				"W",
+				"n"
+			],
+			"suffix": []
 		}
 	]);
 });

@@ -57,26 +57,26 @@ export const Path = {
 	},
 
 	createRoundedRectangle(size: Size, border_radius: number): Path {
+		border_radius = Math.min(border_radius, size.h * 0.5);
+		border_radius = Math.min(border_radius, size.w * 0.5);
 		if (border_radius === 0) {
 			return this.createRectangle(size);
 		}
-		let w = Math.max(border_radius + border_radius, size.w);
-		let h = Math.max(border_radius + border_radius, size.h);
 		let f = (Math.SQRT2 - 1) * 4 / 3;
 		let c1 = border_radius * f;
 		let c2 = border_radius - c1;
 		let x1 = 0;
 		let x2 = c2;
 		let x3 = border_radius;
-		let x4 = (w - border_radius);
-		let x5 = (w - c2);
-		let x6 = w;
+		let x4 = (size.w - border_radius);
+		let x5 = (size.w - c2);
+		let x6 = size.w;
 		let y1 = 0 - 0;
 		let y2 = 0 - c2;
 		let y3 = 0 - border_radius;
-		let y4 = 0 - (h - border_radius);
-		let y5 = 0 - (h - c2);
-		let y6 = 0 - h;
+		let y4 = 0 - (size.h - border_radius);
+		let y5 = 0 - (size.h - c2);
+		let y6 = 0 - size.h;
 		let path: Path = {
 			start: {
 				x: x1,
