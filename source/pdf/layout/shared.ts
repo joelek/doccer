@@ -18,13 +18,13 @@ export const Path = {
 		context.beginNewSubpath(path.start.x, path.start.y);
 		for (let [cp0, cp1, ep] of path.segments) {
 			if (cp0 === 0) {
-				if (cp1 == 0) {
+				if (cp1 === 0) {
 					context.appendLineSegment(ep.x, ep.y);
 				} else {
 					context.appendCubicBezierCurveWithReplicatedInitalPoint(cp1.x, cp1.y, ep.x, ep.y);
 				}
 			} else {
-				if (cp1 == 0) {
+				if (cp1 === 0) {
 					context.appendCubicBezierCurveWithReplicatedFinalPoint(cp0.x, cp0.y, ep.x, ep.y);
 				} else {
 					context.appendCubicBezierCurve(cp0.x, cp0.y, cp1.x, cp1.y, ep.x, ep.y);
