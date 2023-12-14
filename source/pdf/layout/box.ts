@@ -57,16 +57,16 @@ export class BoxNode extends ParentNode {
 		style = style ?? {};
 		let background_color = style.background_color ?? "transparent";
 		let border_color = style.border_color ?? "transparent";
-		let border_radius = style.border_radius ?? [0];
-		if (border_radius[0] < 0) {
+		let border_radius = style.border_radius ?? 0;
+		if (!Length.isValid(border_radius)) {
 			throw new Error();
 		}
-		let border_width = style.border_width ?? [0];
-		if (border_width[0] < 0) {
+		let border_width = style.border_width ?? 0;
+		if (!Length.isValid(border_width)) {
 			throw new Error();
 		}
-		let padding = style.padding ?? [0];
-		if (padding[0] < 0) {
+		let padding = style.padding ?? 0;
+		if (!Length.isValid(padding)) {
 			throw new Error();
 		}
 		this.style = {

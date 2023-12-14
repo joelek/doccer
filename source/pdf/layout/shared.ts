@@ -210,22 +210,34 @@ export const Atom = {
 	}
 };
 
-export type Length = [number, "%"?];
+export type Length = number | [number] | [number, "%"];
 
 export const Length = {
 	getComputedLength(length: Length, relative_to: number | undefined): number {
-		if (length[1] === "%") {
-			if (relative_to == null) {
-				throw new Error(`Unexpected relative length within intrinsic length!`);
-			}
-			return length[0] * 0.01 * relative_to;
+		if (typeof length === "number") {
+			return length;
 		} else {
-			return length[0];
+			if (length[1] === "%") {
+				if (relative_to == null) {
+					throw new Error(`Unexpected relative length within intrinsic length!`);
+				}
+				return length[0] * 0.01 * relative_to;
+			} else {
+				return length[0];
+			}
+		}
+	},
+
+	isValid(length: Length): boolean {
+		if (typeof length === "number") {
+			return length >= 0;
+		} else {
+			return length[0] >= 0;
 		}
 	}
 };
 
-export type NodeLength = number | Length | [number, "fr"] | "intrinsic" | "extrinsic";
+export type NodeLength = Length | [number, "fr"] | "intrinsic" | "extrinsic";
 
 export const NodeLength = {
 	getComputedLength(length: NodeLength, relative_to: number | undefined, fraction_length: number | undefined): number | undefined {
@@ -238,10 +250,7 @@ export const NodeLength = {
 			}
 			return relative_to;
 		}
-		if (typeof length === "number") {
-			return length;
-		}
-		if (length[1] === "fr") {
+		if (Array.isArray(length) && length[1] === "fr") {
 			if (fraction_length == null) {
 				throw new Error(`Unexpected fractional length within intrinsic length!`);
 			}

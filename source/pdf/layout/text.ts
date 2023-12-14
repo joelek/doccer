@@ -215,8 +215,8 @@ export class TextNode extends ChildNode {
 		if (font_size < 1) {
 			throw new Error();
 		}
-		let gutter = style.gutter ?? [0];
-		if (gutter[0] < 0) {
+		let gutter = style.gutter ?? 0;
+		if (!Length.isValid(gutter)) {
 			throw new Error();
 		}
 		let letter_spacing = style.letter_spacing ?? 0;

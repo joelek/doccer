@@ -203,8 +203,8 @@ export class VerticalLayoutNode extends ParentNode {
 		style = style ?? {};
 		let align_x = style.align_x ?? "left";
 		let align_y = style.align_y ?? "top";
-		let gap = style.gap ?? [0];
-		if (gap[0] < 0) {
+		let gap = style.gap ?? 0;
+		if (!Length.isValid(gap)) {
 			throw new Error();
 		}
 		this.style = {
