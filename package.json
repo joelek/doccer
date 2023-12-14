@@ -1,6 +1,7 @@
 {
 	"bin": {},
 	"devDependencies": {
+		"@joelek/ts-autoguard": "github:joelek/ts-autoguard#master",
 		"@joelek/wtf": "github:joelek/wtf#semver:^1.0",
 		"typescript": "^4.7"
 	},
@@ -15,7 +16,7 @@
 		"appgen": "node -e \"process.stdout.write(JSON.stringify((({ name, version }) => ({ name, version }))(require('./package.json')), null, '\t').split(/\\r?\\n/).join(require('os').EOL) + require('os').EOL)\" > ./source/app.json",
 		"build": "npm run appgen && npm run codegen && npm run compile && npm run package && npm run test",
 		"clean": "rm -rf ./build/ ./node_modules/",
-		"codegen": "",
+		"codegen": "npx autoguard",
 		"compile": "rm -rf ./build/* && npx tsc --build",
 		"package": "rm -rf ./dist/* && cp -r ./build/* ./dist/",
 		"version": "npm run build && git add ./",
