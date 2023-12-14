@@ -2,10 +2,11 @@ import * as wtf from "@joelek/wtf";
 import * as truetype from "../../truetype";
 import { TextNode } from "./text";
 
-const TYPESETTER = new truetype.Typesetter(new Map(), 1);
+const FONT_HANDLER = new truetype.FontHandler()
+	.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1));
 
 wtf.test(`TextNode should create one segment with one column when all of the lines fit within the remaining height.`, (assert) => {
-	let node = new TextNode("aaaaaa bbbbbb", TYPESETTER, { columns: 1, width: 6 });
+	let node = new TextNode("aaaaaa bbbbbb", FONT_HANDLER, { columns: 1, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
 	assert.equals(atoms, [
 		{
@@ -55,7 +56,7 @@ wtf.test(`TextNode should create one segment with one column when all of the lin
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -68,7 +69,7 @@ wtf.test(`TextNode should create one segment with one column when all of the lin
 });
 
 wtf.test(`TextNode should create two segments with one column when only some of the lines fit within the remaining height.`, (assert) => {
-	let node = new TextNode("aaaaaa bbbbbb", TYPESETTER, { columns: 1, width: 6 });
+	let node = new TextNode("aaaaaa bbbbbb", FONT_HANDLER, { columns: 1, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 1 });
 	assert.equals(atoms, [
 		{
@@ -105,7 +106,7 @@ wtf.test(`TextNode should create two segments with one column when only some of 
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -148,7 +149,7 @@ wtf.test(`TextNode should create two segments with one column when only some of 
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -161,7 +162,7 @@ wtf.test(`TextNode should create two segments with one column when only some of 
 });
 
 wtf.test(`TextNode should create one segment with one column when none of the lines fit within the remaining height.`, (assert) => {
-	let node = new TextNode("aaaaaa bbbbbb", TYPESETTER, { columns: 1, width: 6 });
+	let node = new TextNode("aaaaaa bbbbbb", FONT_HANDLER, { columns: 1, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 0 });
 	assert.equals(atoms, [
 		{
@@ -211,7 +212,7 @@ wtf.test(`TextNode should create one segment with one column when none of the li
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -224,7 +225,7 @@ wtf.test(`TextNode should create one segment with one column when none of the li
 });
 
 wtf.test(`TextNode should create one segment with two columns when all of the lines fit within the remaining height.`, (assert) => {
-	let node = new TextNode("aaa bbb ccc ddd", TYPESETTER, { columns: 2, width: 6 });
+	let node = new TextNode("aaa bbb ccc ddd", FONT_HANDLER, { columns: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
 	assert.equals(atoms, [
 		{
@@ -312,7 +313,7 @@ wtf.test(`TextNode should create one segment with two columns when all of the li
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -325,7 +326,7 @@ wtf.test(`TextNode should create one segment with two columns when all of the li
 });
 
 wtf.test(`TextNode should create two segments with two columns when only some of the lines fit within the remaining height.`, (assert) => {
-	let node = new TextNode("aaa bbb ccc ddd", TYPESETTER, { columns: 2, width: 6 });
+	let node = new TextNode("aaa bbb ccc ddd", FONT_HANDLER, { columns: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 1 });
 	assert.equals(atoms, [
 		{
@@ -387,7 +388,7 @@ wtf.test(`TextNode should create two segments with two columns when only some of
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -455,7 +456,7 @@ wtf.test(`TextNode should create two segments with two columns when only some of
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -468,7 +469,7 @@ wtf.test(`TextNode should create two segments with two columns when only some of
 });
 
 wtf.test(`TextNode should create one segment with two columns when none of the lines fit within the remaining height.`, (assert) => {
-	let node = new TextNode("aaa bbb ccc ddd", TYPESETTER, { columns: 2, width: 6 });
+	let node = new TextNode("aaa bbb ccc ddd", FONT_HANDLER, { columns: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 0 });
 	assert.equals(atoms, [
 		{
@@ -556,7 +557,7 @@ wtf.test(`TextNode should create one segment with two columns when none of the l
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -569,7 +570,7 @@ wtf.test(`TextNode should create one segment with two columns when none of the l
 });
 
 wtf.test(`TextNode should create one segment with three columns when all of the lines fit within the remaining height.`, (assert) => {
-	let node = new TextNode("aa bb cc dd ee ff", TYPESETTER, { columns: 3, width: 6 });
+	let node = new TextNode("aa bb cc dd ee ff", FONT_HANDLER, { columns: 3, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
 	assert.equals(atoms, [
 		{
@@ -695,7 +696,7 @@ wtf.test(`TextNode should create one segment with three columns when all of the 
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -708,7 +709,7 @@ wtf.test(`TextNode should create one segment with three columns when all of the 
 });
 
 wtf.test(`TextNode should create two segments with three columns when only some of the lines fit within the remaining height.`, (assert) => {
-	let node = new TextNode("aa bb cc dd ee ff", TYPESETTER, { columns: 3, width: 6 });
+	let node = new TextNode("aa bb cc dd ee ff", FONT_HANDLER, { columns: 3, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 1 });
 	assert.equals(atoms, [
 		{
@@ -795,7 +796,7 @@ wtf.test(`TextNode should create two segments with three columns when only some 
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -888,7 +889,7 @@ wtf.test(`TextNode should create two segments with three columns when only some 
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -901,7 +902,7 @@ wtf.test(`TextNode should create two segments with three columns when only some 
 });
 
 wtf.test(`TextNode should create one segment with three columns when none of the lines fit within the remaining height.`, (assert) => {
-	let node = new TextNode("aa bb cc dd ee ff", TYPESETTER, { columns: 3, width: 6 });
+	let node = new TextNode("aa bb cc dd ee ff", FONT_HANDLER, { columns: 3, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 0 });
 	assert.equals(atoms, [
 		{
@@ -1027,7 +1028,7 @@ wtf.test(`TextNode should create one segment with three columns when none of the
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1040,7 +1041,7 @@ wtf.test(`TextNode should create one segment with three columns when none of the
 });
 
 wtf.test(`TextNode should support height.`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { height: 10, width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { height: 10, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1077,7 +1078,7 @@ wtf.test(`TextNode should support height.`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1090,7 +1091,7 @@ wtf.test(`TextNode should support height.`, (assert) => {
 });
 
 wtf.test(`TextNode should support height "50%".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { height: [50, "%"], width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { height: [50, "%"], width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1127,7 +1128,7 @@ wtf.test(`TextNode should support height "50%".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1140,7 +1141,7 @@ wtf.test(`TextNode should support height "50%".`, (assert) => {
 });
 
 wtf.test(`TextNode should support height "extrinsic".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { height: "extrinsic", width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { height: "extrinsic", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1177,7 +1178,7 @@ wtf.test(`TextNode should support height "extrinsic".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1190,7 +1191,7 @@ wtf.test(`TextNode should support height "extrinsic".`, (assert) => {
 });
 
 wtf.test(`TextNode should support height "intrinsic".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { height: "intrinsic", width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { height: "intrinsic", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1227,7 +1228,7 @@ wtf.test(`TextNode should support height "intrinsic".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1240,7 +1241,7 @@ wtf.test(`TextNode should support height "intrinsic".`, (assert) => {
 });
 
 wtf.test(`TextNode should support overflow "hidden".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { overflow: "hidden", width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { overflow: "hidden", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1284,7 +1285,7 @@ wtf.test(`TextNode should support overflow "hidden".`, (assert) => {
 				"W",
 				"n",
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1297,7 +1298,7 @@ wtf.test(`TextNode should support overflow "hidden".`, (assert) => {
 });
 
 wtf.test(`TextNode should support overflow "visible".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { overflow: "visible", width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { overflow: "visible", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1334,7 +1335,7 @@ wtf.test(`TextNode should support overflow "visible".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1347,7 +1348,7 @@ wtf.test(`TextNode should support overflow "visible".`, (assert) => {
 });
 
 wtf.test(`TextNode should support segmentation "auto".`, (assert) => {
-	let node = new TextNode("aaaa bbbb", TYPESETTER, { segmentation: "auto", width: 6 });
+	let node = new TextNode("aaaa bbbb", FONT_HANDLER, { segmentation: "auto", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 1 });
 	assert.equals(atoms, [
 		{
@@ -1384,7 +1385,7 @@ wtf.test(`TextNode should support segmentation "auto".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1427,7 +1428,7 @@ wtf.test(`TextNode should support segmentation "auto".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1440,7 +1441,7 @@ wtf.test(`TextNode should support segmentation "auto".`, (assert) => {
 });
 
 wtf.test(`TextNode should support segmentation "none".`, (assert) => {
-	let node = new TextNode("aaaa bbbb", TYPESETTER, { segmentation: "none", width: 6 });
+	let node = new TextNode("aaaa bbbb", FONT_HANDLER, { segmentation: "none", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 1 });
 	assert.equals(atoms, [
 		{
@@ -1490,7 +1491,7 @@ wtf.test(`TextNode should support segmentation "none".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1506,7 +1507,7 @@ wtf.test(`TextNode should support segmentation "none".`, (assert) => {
 
 
 wtf.test(`TextNode should support width.`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { width: 10 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { width: 10 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1543,7 +1544,7 @@ wtf.test(`TextNode should support width.`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1556,7 +1557,7 @@ wtf.test(`TextNode should support width.`, (assert) => {
 });
 
 wtf.test(`TextNode should support width "50%".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { width: [50, "%"] });
+	let node = new TextNode("aaaa", FONT_HANDLER, { width: [50, "%"] });
 	let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1593,7 +1594,7 @@ wtf.test(`TextNode should support width "50%".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1606,7 +1607,7 @@ wtf.test(`TextNode should support width "50%".`, (assert) => {
 });
 
 wtf.test(`TextNode should support width "extrinsic".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { width: "extrinsic" });
+	let node = new TextNode("aaaa", FONT_HANDLER, { width: "extrinsic" });
 	let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1643,7 +1644,7 @@ wtf.test(`TextNode should support width "extrinsic".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1656,7 +1657,7 @@ wtf.test(`TextNode should support width "extrinsic".`, (assert) => {
 });
 
 wtf.test(`TextNode should support width "intrinsic".`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { width: "intrinsic" });
+	let node = new TextNode("aaaa", FONT_HANDLER, { width: "intrinsic" });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1693,7 +1694,7 @@ wtf.test(`TextNode should support width "intrinsic".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1706,7 +1707,7 @@ wtf.test(`TextNode should support width "intrinsic".`, (assert) => {
 });
 
 wtf.test(`TextNode should support color.`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { color: { r: 0.1, g: 0.2, b: 0.3 }, width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { color: { r: 0.1, g: 0.2, b: 0.3 }, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1743,7 +1744,7 @@ wtf.test(`TextNode should support color.`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"0.1 0.2 0.3 rg",
 				"1 0 0 1 0 -1 cm"
@@ -1756,7 +1757,7 @@ wtf.test(`TextNode should support color.`, (assert) => {
 });
 
 wtf.test(`TextNode should support font size.`, (assert) => {
-	let node = new TextNode("aa", TYPESETTER, { font_size: 2, width: 6 });
+	let node = new TextNode("aa", FONT_HANDLER, { font_size: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1793,7 +1794,7 @@ wtf.test(`TextNode should support font size.`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 2 Tf",
+				"/F0 2 Tf",
 				"2 TL",
 				"3 Tr",
 				"1 0 0 1 0 -2 cm"
@@ -1806,7 +1807,7 @@ wtf.test(`TextNode should support font size.`, (assert) => {
 });
 
 wtf.test(`TextNode should support gutter.`, (assert) => {
-	let node = new TextNode("aa bb", TYPESETTER, { columns: 2, gutter: [2], width: 6 });
+	let node = new TextNode("aa bb", FONT_HANDLER, { columns: 2, gutter: [2], width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1868,7 +1869,7 @@ wtf.test(`TextNode should support gutter.`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1881,7 +1882,7 @@ wtf.test(`TextNode should support gutter.`, (assert) => {
 });
 
 wtf.test(`TextNode should support gutter "20%".`, (assert) => {
-	let node = new TextNode("aaaa bbbb", TYPESETTER, { columns: 2, gutter: [20, "%"], width: 10 });
+	let node = new TextNode("aaaa bbbb", FONT_HANDLER, { columns: 2, gutter: [20, "%"], width: 10 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1943,7 +1944,7 @@ wtf.test(`TextNode should support gutter "20%".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -1956,7 +1957,7 @@ wtf.test(`TextNode should support gutter "20%".`, (assert) => {
 });
 
 wtf.test(`TextNode should support letter spacing`, (assert) => {
-	let node = new TextNode("aa", TYPESETTER, { letter_spacing: 2, width: 6 });
+	let node = new TextNode("aa", FONT_HANDLER, { letter_spacing: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -1993,7 +1994,7 @@ wtf.test(`TextNode should support letter spacing`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"2 Tc",
 				"3 Tr",
@@ -2014,8 +2015,9 @@ wtf.test(`TextNode should support line anchor "meanline".`, (assert) => {
 		x_max: 0.0,
 		y_max: 0.2
 	});
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, boxes, undefined);
-	let node = new TextNode("aaaa", typesetter, { line_anchor: "meanline", width: 6 });
+	let font_handler = new truetype.FontHandler()
+		.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1, undefined, boxes, undefined));
+	let node = new TextNode("aaaa", font_handler, { line_anchor: "meanline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2052,7 +2054,7 @@ wtf.test(`TextNode should support line anchor "meanline".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -0.2 cm"
@@ -2072,8 +2074,9 @@ wtf.test(`TextNode should support line anchor "capline".`, (assert) => {
 		x_max: 0.0,
 		y_max: 0.4
 	});
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, boxes, undefined);
-	let node = new TextNode("aaaa", typesetter, { line_anchor: "capline", width: 6 });
+	let font_handler = new truetype.FontHandler()
+		.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1, undefined, boxes, undefined));
+	let node = new TextNode("aaaa", font_handler, { line_anchor: "capline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2110,7 +2113,7 @@ wtf.test(`TextNode should support line anchor "capline".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -0.4 cm"
@@ -2129,8 +2132,9 @@ wtf.test(`TextNode should support line anchor "topline".`, (assert) => {
 		x_max: 0.0,
 		y_max: 0.6
 	};
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, undefined, fallback_box);
-	let node = new TextNode("aaaa", typesetter, { line_anchor: "topline", width: 6 });
+	let font_handler = new truetype.FontHandler()
+		.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1, undefined, undefined, fallback_box));
+	let node = new TextNode("aaaa", font_handler, { line_anchor: "topline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2167,7 +2171,7 @@ wtf.test(`TextNode should support line anchor "topline".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -0.6 cm"
@@ -2186,8 +2190,9 @@ wtf.test(`TextNode should support line anchor "bottomline".`, (assert) => {
 		x_max: 0.0,
 		y_max: 0.8
 	};
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, undefined, fallback_box);
-	let node = new TextNode("aaaa", typesetter, { line_anchor: "bottomline", width: 6 });
+	let font_handler = new truetype.FontHandler()
+		.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1, undefined, undefined, fallback_box));
+	let node = new TextNode("aaaa", font_handler, { line_anchor: "bottomline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2224,7 +2229,7 @@ wtf.test(`TextNode should support line anchor "bottomline".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -0.3 cm"
@@ -2237,8 +2242,9 @@ wtf.test(`TextNode should support line anchor "bottomline".`, (assert) => {
 });
 
 wtf.test(`TextNode should support line anchor "baseline".`, (assert) => {
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, undefined, undefined);
-	let node = new TextNode("aaaa", typesetter, { line_anchor: "baseline", width: 6 });
+	let font_handler = new truetype.FontHandler()
+		.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1, undefined, undefined, undefined));
+	let node = new TextNode("aaaa", font_handler, { line_anchor: "baseline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2275,7 +2281,7 @@ wtf.test(`TextNode should support line anchor "baseline".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2288,7 +2294,7 @@ wtf.test(`TextNode should support line anchor "baseline".`, (assert) => {
 });
 
 wtf.test(`TextNode should support line height when there is a single line.`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { line_height: 2, width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { line_height: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2325,7 +2331,7 @@ wtf.test(`TextNode should support line height when there is a single line.`, (as
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"2 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2338,7 +2344,7 @@ wtf.test(`TextNode should support line height when there is a single line.`, (as
 });
 
 wtf.test(`TextNode should support line height when there is more than one line.`, (assert) => {
-	let node = new TextNode("aaaa bbbb", TYPESETTER, { line_height: 2, width: 6 });
+	let node = new TextNode("aaaa bbbb", FONT_HANDLER, { line_height: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2388,7 +2394,7 @@ wtf.test(`TextNode should support line height when there is more than one line.`
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"2 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2401,7 +2407,7 @@ wtf.test(`TextNode should support line height when there is more than one line.`
 });
 
 wtf.test(`TextNode should support orphans.`, (assert) => {
-	let node = new TextNode("aaaa bbbb", TYPESETTER, { orphans: 2, width: 6 });
+	let node = new TextNode("aaaa bbbb", FONT_HANDLER, { orphans: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 1 });
 	assert.equals(atoms, [
 		{
@@ -2451,7 +2457,7 @@ wtf.test(`TextNode should support orphans.`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2464,7 +2470,7 @@ wtf.test(`TextNode should support orphans.`, (assert) => {
 });
 
 wtf.test(`TextNode should support text align "start" when there is no horizontal overflow.`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { text_align: "start", width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { text_align: "start", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2501,7 +2507,7 @@ wtf.test(`TextNode should support text align "start" when there is no horizontal
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2514,7 +2520,7 @@ wtf.test(`TextNode should support text align "start" when there is no horizontal
 });
 
 wtf.test(`TextNode should support text align "start" when there is horizontal overflow.`, (assert) => {
-	let node = new TextNode("aaaaaaaa", TYPESETTER, { text_align: "start", width: 6 });
+	let node = new TextNode("aaaaaaaa", FONT_HANDLER, { text_align: "start", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2551,7 +2557,7 @@ wtf.test(`TextNode should support text align "start" when there is horizontal ov
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2564,7 +2570,7 @@ wtf.test(`TextNode should support text align "start" when there is horizontal ov
 });
 
 wtf.test(`TextNode should support text align "center" when there is no horizontal overflow.`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { text_align: "center", width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { text_align: "center", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2601,7 +2607,7 @@ wtf.test(`TextNode should support text align "center" when there is no horizonta
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2614,7 +2620,7 @@ wtf.test(`TextNode should support text align "center" when there is no horizonta
 });
 
 wtf.test(`TextNode should support text align "center" when there is horizontal overflow.`, (assert) => {
-	let node = new TextNode("aaaaaaaa", TYPESETTER, { text_align: "center", width: 6 });
+	let node = new TextNode("aaaaaaaa", FONT_HANDLER, { text_align: "center", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2651,7 +2657,7 @@ wtf.test(`TextNode should support text align "center" when there is horizontal o
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2664,7 +2670,7 @@ wtf.test(`TextNode should support text align "center" when there is horizontal o
 });
 
 wtf.test(`TextNode should support text align "end" when there is no horizontal overflow.`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { text_align: "end", width: 6 });
+	let node = new TextNode("aaaa", FONT_HANDLER, { text_align: "end", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2701,7 +2707,7 @@ wtf.test(`TextNode should support text align "end" when there is no horizontal o
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2714,7 +2720,7 @@ wtf.test(`TextNode should support text align "end" when there is no horizontal o
 });
 
 wtf.test(`TextNode should support text align "end" when there is horizontal overflow.`, (assert) => {
-	let node = new TextNode("aaaaaaaa", TYPESETTER, { text_align: "end", width: 6 });
+	let node = new TextNode("aaaaaaaa", FONT_HANDLER, { text_align: "end", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2751,7 +2757,7 @@ wtf.test(`TextNode should support text align "end" when there is horizontal over
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2764,7 +2770,7 @@ wtf.test(`TextNode should support text align "end" when there is horizontal over
 });
 
 wtf.test(`TextNode should support text transform "none".`, (assert) => {
-	let node = new TextNode("aa BB", TYPESETTER, { text_transform: "none", width: 6 });
+	let node = new TextNode("aa BB", FONT_HANDLER, { text_transform: "none", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2801,7 +2807,7 @@ wtf.test(`TextNode should support text transform "none".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2814,7 +2820,7 @@ wtf.test(`TextNode should support text transform "none".`, (assert) => {
 });
 
 wtf.test(`TextNode should support text transform "uppercase".`, (assert) => {
-	let node = new TextNode("aa BB", TYPESETTER, { text_transform: "uppercase", width: 6 });
+	let node = new TextNode("aa BB", FONT_HANDLER, { text_transform: "uppercase", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2851,7 +2857,7 @@ wtf.test(`TextNode should support text transform "uppercase".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2864,7 +2870,7 @@ wtf.test(`TextNode should support text transform "uppercase".`, (assert) => {
 });
 
 wtf.test(`TextNode should support text transform "lowercase".`, (assert) => {
-	let node = new TextNode("aa BB", TYPESETTER, { text_transform: "lowercase", width: 6 });
+	let node = new TextNode("aa BB", FONT_HANDLER, { text_transform: "lowercase", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2901,7 +2907,7 @@ wtf.test(`TextNode should support text transform "lowercase".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2914,7 +2920,7 @@ wtf.test(`TextNode should support text transform "lowercase".`, (assert) => {
 });
 
 wtf.test(`TextNode should support white space "wrap".`, (assert) => {
-	let node = new TextNode("aaaa bbbb", TYPESETTER, { white_space: "wrap", width: 6 });
+	let node = new TextNode("aaaa bbbb", FONT_HANDLER, { white_space: "wrap", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -2964,7 +2970,7 @@ wtf.test(`TextNode should support white space "wrap".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -2977,7 +2983,7 @@ wtf.test(`TextNode should support white space "wrap".`, (assert) => {
 });
 
 wtf.test(`TextNode should support white space "nowrap".`, (assert) => {
-	let node = new TextNode("aaaa bbbb", TYPESETTER, { white_space: "nowrap", width: 6 });
+	let node = new TextNode("aaaa bbbb", FONT_HANDLER, { white_space: "nowrap", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -3014,7 +3020,7 @@ wtf.test(`TextNode should support white space "nowrap".`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"3 Tr",
 				"1 0 0 1 0 -1 cm"
@@ -3027,7 +3033,7 @@ wtf.test(`TextNode should support white space "nowrap".`, (assert) => {
 });
 
 wtf.test(`TextNode should support word spacing.`, (assert) => {
-	let node = new TextNode("a b", TYPESETTER, { word_spacing: 2, width: 6 });
+	let node = new TextNode("a b", FONT_HANDLER, { word_spacing: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -3064,7 +3070,7 @@ wtf.test(`TextNode should support word spacing.`, (assert) => {
 			],
 			"prefix": [
 				"BT",
-				"/F1 1 Tf",
+				"/F0 1 Tf",
 				"1 TL",
 				"2 Tw",
 				"3 Tr",

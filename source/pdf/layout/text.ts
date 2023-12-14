@@ -6,7 +6,10 @@ import { Atom, ChildNode, Color, Length, Node, NodeStyle, ParentAtom, Path, Posi
 export type TextStyle = {
 	color: "transparent" | Color;
 	columns: number;
+	font_family: string;
 	font_size: number;
+	font_style: "normal" | "italic";
+	font_weight: "normal" | "bold";
 	gutter: Length;
 	letter_spacing: number;
 	line_anchor: "meanline" | "capline" | "topline" | "bottomline" | "baseline";
@@ -20,13 +23,14 @@ export type TextStyle = {
 
 export class TextNode extends ChildNode {
 	protected content: string;
+	protected type_id: number;
 	protected typesetter: truetype.Typesetter;
 	protected style: TextStyle;
 
 	protected createPrefixCommands(path: Path): Array<string> {
 		let context = content.createContext();
 		context.beginTextObject();
-		context.setTextFontAndSize("F1", this.style.font_size);
+		context.setTextFontAndSize(`F${this.type_id}`, this.style.font_size);
 		context.setTextLeading(this.style.line_height);
 		if (this.style.letter_spacing > 0) {
 			context.setCharacterSpacing(this.style.letter_spacing);
@@ -203,7 +207,7 @@ export class TextNode extends ChildNode {
 		return columns;
 	}
 
-	constructor(content: string, typesetter: truetype.Typesetter, style?: Partial<NodeStyle & TextStyle>) {
+	constructor(content: string, font_handler: truetype.FontHandler, style?: Partial<NodeStyle & TextStyle>) {
 		super(style);
 		style = style ?? {};
 		let color = style.color ?? "transparent";
@@ -211,10 +215,13 @@ export class TextNode extends ChildNode {
 		if (columns < 1 || !Number.isInteger(columns)) {
 			throw new Error();
 		}
+		let font_family = style.font_family ?? "sans-serif";
 		let font_size = style.font_size ?? 1;
 		if (font_size < 1) {
 			throw new Error();
 		}
+		let font_style = style.font_style ?? "normal";
+		let font_weight = style.font_weight ?? "normal";
 		let gutter = style.gutter ?? 0;
 		if (!Length.isValid(gutter)) {
 			throw new Error();
@@ -239,7 +246,9 @@ export class TextNode extends ChildNode {
 		if (word_spacing < 0) {
 			throw new Error();
 		}
+		let typesetter = font_handler.getTypesetter(font_family, font_style, font_weight);
 		this.content = content;
+		this.type_id = font_handler.getTypeId(typesetter);
 		this.typesetter = typesetter.withOptions({
 			letter_spacing: letter_spacing / font_size,
 			word_spacing: word_spacing / font_size
@@ -247,7 +256,10 @@ export class TextNode extends ChildNode {
 		this.style = {
 			color,
 			columns,
+			font_family,
 			font_size,
+			font_style,
+			font_weight,
 			gutter,
 			letter_spacing,
 			line_anchor,
