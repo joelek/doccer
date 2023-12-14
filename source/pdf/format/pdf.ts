@@ -2,8 +2,6 @@ import { Tokenizer } from "./tokenization";
 import { Codec } from "./utils";
 import * as codepages from "../codepages";
 
-export * as tokenization from "./tokenization";
-
 export const PDFTokenizer = {
 	create() {
 		return new Tokenizer({
