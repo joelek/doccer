@@ -893,3 +893,64 @@ export class Typesetter {
 		return new Typesetter(widths, fallback_width, kernings, boxes, fallback_box);
 	}
 };
+
+export type Font = {
+	family: string;
+	style: "normal" | "italic";
+	weight: "normal" | "bold";
+	typesetter: Typesetter;
+};
+
+export class FontHandler {
+	protected fonts: Array<Font>;
+
+	constructor() {
+		this.fonts = new Array();
+	}
+
+	addTypesetter(family: string, style: "normal" | "italic", weight: "normal" | "bold", typesetter: Typesetter): FontHandler {
+		this.fonts.push({
+			family,
+			style,
+			weight,
+			typesetter
+		});
+		return this;
+	}
+
+	[Symbol.iterator](): Iterator<[number, Font]> {
+		return this.fonts.entries();
+	}
+
+	getTypeId(typesetter: Typesetter): number {
+		let index = this.fonts.findIndex((font) => {
+			if (font.typesetter !== typesetter) {
+				return;
+			}
+			return font;
+		});
+		if (index < 0) {
+			throw new Error();
+		}
+		return index;
+	}
+
+	getTypesetter(family: string, style: "normal" | "italic", weight: "normal" | "bold"): Typesetter {
+		let index = this.fonts.findIndex((font) => {
+			if (font.family !== family) {
+				return;
+			}
+			if (font.style !== style) {
+				return;
+			}
+			if (font.weight !== weight) {
+				return;
+			}
+			return font;
+		});
+		if (index < 0) {
+			throw new Error();
+		}
+		return this.fonts[index].typesetter;
+	}
+};
