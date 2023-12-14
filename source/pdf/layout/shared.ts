@@ -1,5 +1,46 @@
 import * as content from "../content";
 
+export type GrayscaleColor = {
+	i: number;
+};
+
+export type RGBColor = {
+	r: number;
+	g: number;
+	b: number;
+};
+
+export type CMYKColor = {
+	c: number;
+	m: number;
+	y: number;
+	k: number;
+};
+
+export type Color = GrayscaleColor | RGBColor | CMYKColor;
+
+export const Color = {
+	setFillColor(color: Color, context: content.Context): void {
+		if ("i" in color) {
+			context.setFillColorGrayscale(color.i);
+		} else if ("r" in color && "g" in color && "b" in color) {
+			context.setfillColorRGB(color.r, color.g, color.b);
+		} else if ("c" in color && "m" in color && "y" in color && "k" in color) {
+			context.setFillColorCMYK(color.c, color.m, color.y, color.k);
+		}
+	},
+
+	setStrokeColor(color: Color, context: content.Context): void {
+		if ("i" in color) {
+			context.setStrokeColorGrayscale(color.i);
+		} else if ("r" in color && "g" in color && "b" in color) {
+			context.setStrokeColorRGB(color.r, color.g, color.b);
+		} else if ("c" in color && "m" in color && "y" in color && "k" in color) {
+			context.setStrokeColorCMYK(color.c, color.m, color.y, color.k);
+		}
+	}
+};
+
 export type Position = {
 	x: number;
 	y: number;

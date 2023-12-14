@@ -310,7 +310,7 @@ wtf.test(`BoxNode should support width "intrinsic".`, (assert) => {
 });
 
 wtf.test(`BoxNode should support background color.`, (assert) => {
-	let node = new BoxNode({ background_color: [0.1, 0.2, 0.3] });
+	let node = new BoxNode({ background_color: { r: 0.1, g: 0.2, b: 0.3 } });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -334,7 +334,7 @@ wtf.test(`BoxNode should support background color.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support border color.`, (assert) => {
-	let node = new BoxNode({ border_color: [0.1, 0.2, 0.3] });
+	let node = new BoxNode({ border_color: { r: 0.1, g: 0.2, b: 0.3 } });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -408,7 +408,7 @@ wtf.test(`BoxNode should support border radius "20%" when clipping.`, (assert) =
 });
 
 wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
-	let node = new BoxNode({ border_radius: [1], background_color: [0, 0, 0], width: 4, height: 4 });
+	let node = new BoxNode({ border_radius: [1], background_color: { r: 0, g: 0, b: 0 }, width: 4, height: 4 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -436,7 +436,7 @@ wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support border radius "20%" when filling.`, (assert) => {
-	let node = new BoxNode({ border_radius: [20, "%"], background_color: [0, 0, 0], width: 50, height: 50 });
+	let node = new BoxNode({ border_radius: [20, "%"], background_color: { r: 0, g: 0, b: 0 }, width: 50, height: 50 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{

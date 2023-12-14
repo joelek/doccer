@@ -1706,7 +1706,7 @@ wtf.test(`TextNode should support width "intrinsic".`, (assert) => {
 });
 
 wtf.test(`TextNode should support color.`, (assert) => {
-	let node = new TextNode("aaaa", TYPESETTER, { color: [0.1, 0.2, 0.3], width: 6 });
+	let node = new TextNode("aaaa", TYPESETTER, { color: { r: 0.1, g: 0.2, b: 0.3 }, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{

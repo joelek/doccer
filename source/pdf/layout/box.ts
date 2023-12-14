@@ -1,9 +1,9 @@
 import * as content from "../content";
-import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Color, Length, Node, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
 
 export type BoxStyle = {
-	background_color: "transparent" | [number, number, number];
-	border_color: "transparent" | [number, number, number];
+	background_color: "transparent" | Color;
+	border_color: "transparent" | Color;
 	border_radius: Length;
 	border_width: Length;
 	padding: Length;
@@ -15,7 +15,7 @@ export class BoxNode extends ParentNode {
 	protected createPrefixCommands(path: Path): Array<string> {
 		let context = content.createContext();
 		if (this.style.background_color !== "transparent") {
-			context.setfillColorRGB(...this.style.background_color);
+			Color.setFillColor(this.style.background_color, context);
 			Path.append(path, context);
 			context.fillUsingNonZeroWindingNumberRule();
 		}
@@ -36,7 +36,7 @@ export class BoxNode extends ParentNode {
 	protected createBorderCommands(size: Size, border_width: number, border_radius: number): Array<string> {
 		let context = content.createContext();
 		if (this.style.border_color !== "transparent") {
-			context.setStrokeColorRGB(...this.style.border_color);
+			Color.setStrokeColor(this.style.border_color, context);
 		}
 		if (border_width > 0) {
 			let clamped_border_radius = Math.max(0, border_radius - border_width * 0.5);

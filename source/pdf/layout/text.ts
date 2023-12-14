@@ -1,10 +1,10 @@
 import * as truetype from "../../truetype";
 import * as content from "../content";
 import { TextRenderingMode } from "../content";
-import { Atom, ChildNode, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Color, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
 
 export type TextStyle = {
-	color: "transparent" | [number, number, number];
+	color: "transparent" | Color;
 	columns: number;
 	font_size: number;
 	gutter: Length;
@@ -35,7 +35,7 @@ export class TextNode extends ChildNode {
 			context.setWordSpacing(this.style.word_spacing);
 		}
 		if (this.style.color !== "transparent") {
-			context.setfillColorRGB(...this.style.color);
+			Color.setFillColor(this.style.color, context);
 		} else {
 			context.setTextRenderingMode(TextRenderingMode.INVISIBLE);
 		}
