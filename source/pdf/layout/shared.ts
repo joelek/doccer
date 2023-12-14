@@ -194,7 +194,7 @@ export const Atom = {
 		let context = content.createContext();
 		context.saveGraphicsState();
 		if (atom.position != null && (atom.position.x !== 0 || atom.position.y !== 0)) {
-			context.concatenateMatrix(1, 0, 0, 1, atom.position.x, atom.position.y);
+			context.concatenateMatrix(1, 0, 0, 1, atom.position.x, 0 - atom.position.y);
 		}
 		return context.getCommands();
 	},
