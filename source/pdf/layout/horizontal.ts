@@ -1,14 +1,14 @@
 import * as content from "../content";
 import { Atom, ChildNode, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
 
-export type HorizontalLayoutStyle = {
+export type HorizontalStyle = {
 	align_x: "left" | "center" | "right";
 	align_y: "top" | "middle" | "bottom";
 	gap: Length;
 };
 
-export class HorizontalLayoutNode extends ParentNode {
-	protected style: HorizontalLayoutStyle;
+export class HorizontalNode extends ParentNode {
+	protected style: HorizontalStyle;
 
 	protected createPrefixCommands(path: Path): Array<string> {
 		let context = content.createContext();
@@ -45,7 +45,7 @@ export class HorizontalLayoutNode extends ParentNode {
 		};
 	}
 
-	constructor(style?: Partial<NodeStyle & HorizontalLayoutStyle>, ...children: Array<ChildNode>) {
+	constructor(style?: Partial<NodeStyle & HorizontalStyle>, ...children: Array<ChildNode>) {
 		super(style, ...children);
 		style = style ?? {};
 		let align_x = style.align_x ?? "left";

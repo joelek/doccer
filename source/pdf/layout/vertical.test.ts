@@ -1,6 +1,6 @@
 import * as wtf from "@joelek/wtf";
 import { Atom, ChildNode, NodeStyle, Size } from "./shared";
-import { VerticalLayoutNode } from "./vertical";
+import { VerticalNode } from "./vertical";
 
 class MockNode extends ChildNode {
 	constructor(style?: Partial<NodeStyle>) {
@@ -59,8 +59,8 @@ class MockRemainingHeightNode extends ChildNode {
 	}
 };
 
-wtf.test(`VerticalLayoutNode should support children with fractional widths.`, (assert) => {
-	let node = new VerticalLayoutNode({ width: 10, gap: [1] },
+wtf.test(`VerticalNode should support children with fractional widths.`, (assert) => {
+	let node = new VerticalNode({ width: 10, gap: [1] },
 		new MockNode({ width: [1, "fr"] }),
 		new MockNode({ width: [2] }),
 		new MockNode({ width: [2, "fr"] })
@@ -110,8 +110,8 @@ wtf.test(`VerticalLayoutNode should support children with fractional widths.`, (
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support children with fractional heights.`, (assert) => {
-	let node = new VerticalLayoutNode({ height: 10, gap: [1] },
+wtf.test(`VerticalNode should support children with fractional heights.`, (assert) => {
+	let node = new VerticalNode({ height: 10, gap: [1] },
 		new MockNode({ height: [1, "fr"] }),
 		new MockNode({ height: [2] }),
 		new MockNode({ height: [2, "fr"] })
@@ -161,8 +161,8 @@ wtf.test(`VerticalLayoutNode should support children with fractional heights.`, 
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should create one segment when there are no children.`, (assert) => {
-	let node = new VerticalLayoutNode({});
+wtf.test(`VerticalNode should create one segment when there are no children.`, (assert) => {
+	let node = new VerticalNode({});
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -177,8 +177,8 @@ wtf.test(`VerticalLayoutNode should create one segment when there are no childre
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should provide each child with the size left in the current segment.`, (assert) => {
-	let node = new VerticalLayoutNode({},
+wtf.test(`VerticalNode should provide each child with the size left in the current segment.`, (assert) => {
+	let node = new VerticalNode({},
 		new MockSegmentedNode({ w: 0, h: 1 }),
 		new MockRemainingHeightNode()
 	);
@@ -217,8 +217,8 @@ wtf.test(`VerticalLayoutNode should provide each child with the size left in the
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should pack the segments as densely as possible when the first segmentation point is before the first child.`, (assert) => {
-	let node = new VerticalLayoutNode({},
+wtf.test(`VerticalNode should pack the segments as densely as possible when the first segmentation point is before the first child.`, (assert) => {
+	let node = new VerticalNode({},
 		new MockSegmentedNode({ w: 0, h: 4 }, { w: 0, h: 4 }),
 		new MockSegmentedNode({ w: 0, h: 4 }, { w: 0, h: 4 })
 	);
@@ -287,8 +287,8 @@ wtf.test(`VerticalLayoutNode should pack the segments as densely as possible whe
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should pack the segments as densely as possible when the first segmentation point is within the first child.`, (assert) => {
-	let node = new VerticalLayoutNode({},
+wtf.test(`VerticalNode should pack the segments as densely as possible when the first segmentation point is within the first child.`, (assert) => {
+	let node = new VerticalNode({},
 		new MockSegmentedNode({ w: 0, h: 4 }, { w: 0, h: 4 }),
 		new MockSegmentedNode({ w: 0, h: 4 }, { w: 0, h: 4 })
 	);
@@ -357,8 +357,8 @@ wtf.test(`VerticalLayoutNode should pack the segments as densely as possible whe
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should pack the segments as densely as possible when the first segmentation point is before the second child.`, (assert) => {
-	let node = new VerticalLayoutNode({},
+wtf.test(`VerticalNode should pack the segments as densely as possible when the first segmentation point is before the second child.`, (assert) => {
+	let node = new VerticalNode({},
 		new MockSegmentedNode({ w: 0, h: 4 }, { w: 0, h: 4 }),
 		new MockSegmentedNode({ w: 0, h: 4 }, { w: 0, h: 4 })
 	);
@@ -427,8 +427,8 @@ wtf.test(`VerticalLayoutNode should pack the segments as densely as possible whe
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should pack the segments as densely as possible when the first segmentation point is within the second child.`, (assert) => {
-	let node = new VerticalLayoutNode({},
+wtf.test(`VerticalNode should pack the segments as densely as possible when the first segmentation point is within the second child.`, (assert) => {
+	let node = new VerticalNode({},
 		new MockSegmentedNode({ w: 0, h: 4 }, { w: 0, h: 4 }),
 		new MockSegmentedNode({ w: 0, h: 4 }, { w: 0, h: 4 })
 	);
@@ -497,8 +497,8 @@ wtf.test(`VerticalLayoutNode should pack the segments as densely as possible whe
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support height.`, (assert) => {
-	let node = new VerticalLayoutNode({ height: 10 });
+wtf.test(`VerticalNode should support height.`, (assert) => {
+	let node = new VerticalNode({ height: 10 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -513,8 +513,8 @@ wtf.test(`VerticalLayoutNode should support height.`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support height "50%".`, (assert) => {
-	let node = new VerticalLayoutNode({ height: [50, "%"] });
+wtf.test(`VerticalNode should support height "50%".`, (assert) => {
+	let node = new VerticalNode({ height: [50, "%"] });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -529,8 +529,8 @@ wtf.test(`VerticalLayoutNode should support height "50%".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support height "extrinsic".`, (assert) => {
-	let node = new VerticalLayoutNode({ height: "extrinsic" });
+wtf.test(`VerticalNode should support height "extrinsic".`, (assert) => {
+	let node = new VerticalNode({ height: "extrinsic" });
 	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -545,8 +545,8 @@ wtf.test(`VerticalLayoutNode should support height "extrinsic".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support height "intrinsic".`, (assert) => {
-	let node = new VerticalLayoutNode({ height: "intrinsic" },
+wtf.test(`VerticalNode should support height "intrinsic".`, (assert) => {
+	let node = new VerticalNode({ height: "intrinsic" },
 		new MockSegmentedNode({ w: 0, h: 10 })
 	);
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
@@ -574,8 +574,8 @@ wtf.test(`VerticalLayoutNode should support height "intrinsic".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support overflow "hidden".`, (assert) => {
-	let node = new VerticalLayoutNode({ overflow: "hidden" });
+wtf.test(`VerticalNode should support overflow "hidden".`, (assert) => {
+	let node = new VerticalNode({ overflow: "hidden" });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -598,8 +598,8 @@ wtf.test(`VerticalLayoutNode should support overflow "hidden".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support overflow "visible".`, (assert) => {
-	let node = new VerticalLayoutNode({ overflow: "visible" });
+wtf.test(`VerticalNode should support overflow "visible".`, (assert) => {
+	let node = new VerticalNode({ overflow: "visible" });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -614,8 +614,8 @@ wtf.test(`VerticalLayoutNode should support overflow "visible".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support segmentation "auto".`, (assert) => {
-	let node = new VerticalLayoutNode({ segmentation: "auto" },
+wtf.test(`VerticalNode should support segmentation "auto".`, (assert) => {
+	let node = new VerticalNode({ segmentation: "auto" },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 2 })
 	);
@@ -664,8 +664,8 @@ wtf.test(`VerticalLayoutNode should support segmentation "auto".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support segmentation "none".`, (assert) => {
-	let node = new VerticalLayoutNode({ segmentation: "none" },
+wtf.test(`VerticalNode should support segmentation "none".`, (assert) => {
+	let node = new VerticalNode({ segmentation: "none" },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 2 })
 	);
@@ -704,8 +704,8 @@ wtf.test(`VerticalLayoutNode should support segmentation "none".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support width.`, (assert) => {
-	let node = new VerticalLayoutNode({ width: 10 });
+wtf.test(`VerticalNode should support width.`, (assert) => {
+	let node = new VerticalNode({ width: 10 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -720,8 +720,8 @@ wtf.test(`VerticalLayoutNode should support width.`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support width "50%".`, (assert) => {
-	let node = new VerticalLayoutNode({ width: [50, "%"] });
+wtf.test(`VerticalNode should support width "50%".`, (assert) => {
+	let node = new VerticalNode({ width: [50, "%"] });
 	let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -736,8 +736,8 @@ wtf.test(`VerticalLayoutNode should support width "50%".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support width "extrinsic".`, (assert) => {
-	let node = new VerticalLayoutNode({ width: "extrinsic" });
+wtf.test(`VerticalNode should support width "extrinsic".`, (assert) => {
+	let node = new VerticalNode({ width: "extrinsic" });
 	let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -752,8 +752,8 @@ wtf.test(`VerticalLayoutNode should support width "extrinsic".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support width "intrinsic".`, (assert) => {
-	let node = new VerticalLayoutNode({ width: "intrinsic" },
+wtf.test(`VerticalNode should support width "intrinsic".`, (assert) => {
+	let node = new VerticalNode({ width: "intrinsic" },
 		new MockSegmentedNode({ w: 10, h: 0 })
 	);
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
@@ -781,8 +781,8 @@ wtf.test(`VerticalLayoutNode should support width "intrinsic".`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align x "left" when there is no horizontal overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_x: "left", width: 8 },
+wtf.test(`VerticalNode should support align x "left" when there is no horizontal overflow.`, (assert) => {
+	let node = new VerticalNode({ align_x: "left", width: 8 },
 		new MockSegmentedNode({ w: 2, h: 0 }),
 		new MockSegmentedNode({ w: 2, h: 0 })
 	);
@@ -821,8 +821,8 @@ wtf.test(`VerticalLayoutNode should support align x "left" when there is no hori
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align x "left" when there is horizontal overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_x: "left", width: 8 },
+wtf.test(`VerticalNode should support align x "left" when there is horizontal overflow.`, (assert) => {
+	let node = new VerticalNode({ align_x: "left", width: 8 },
 		new MockSegmentedNode({ w: 2, h: 0 }),
 		new MockSegmentedNode({ w: 10, h: 0 })
 	);
@@ -861,8 +861,8 @@ wtf.test(`VerticalLayoutNode should support align x "left" when there is horizon
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align x "center" when there is no horizontal overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_x: "center", width: 8 },
+wtf.test(`VerticalNode should support align x "center" when there is no horizontal overflow.`, (assert) => {
+	let node = new VerticalNode({ align_x: "center", width: 8 },
 		new MockSegmentedNode({ w: 2, h: 0 }),
 		new MockSegmentedNode({ w: 2, h: 0 })
 	);
@@ -901,8 +901,8 @@ wtf.test(`VerticalLayoutNode should support align x "center" when there is no ho
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align x "center" when there is horizontal overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_x: "center", width: 8 },
+wtf.test(`VerticalNode should support align x "center" when there is horizontal overflow.`, (assert) => {
+	let node = new VerticalNode({ align_x: "center", width: 8 },
 		new MockSegmentedNode({ w: 2, h: 0 }),
 		new MockSegmentedNode({ w: 10, h: 0 })
 	);
@@ -941,8 +941,8 @@ wtf.test(`VerticalLayoutNode should support align x "center" when there is horiz
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align x "right" when there is no horizontal overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_x: "right", width: 8 },
+wtf.test(`VerticalNode should support align x "right" when there is no horizontal overflow.`, (assert) => {
+	let node = new VerticalNode({ align_x: "right", width: 8 },
 		new MockSegmentedNode({ w: 2, h: 0 }),
 		new MockSegmentedNode({ w: 2, h: 0 })
 	);
@@ -981,8 +981,8 @@ wtf.test(`VerticalLayoutNode should support align x "right" when there is no hor
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align x "right" when there is horizontal overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_x: "right", width: 8 },
+wtf.test(`VerticalNode should support align x "right" when there is horizontal overflow.`, (assert) => {
+	let node = new VerticalNode({ align_x: "right", width: 8 },
 		new MockSegmentedNode({ w: 2, h: 0 }),
 		new MockSegmentedNode({ w: 10, h: 0 })
 	);
@@ -1021,8 +1021,8 @@ wtf.test(`VerticalLayoutNode should support align x "right" when there is horizo
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align y "top" when there is no vertical overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_y: "top", height: 8 },
+wtf.test(`VerticalNode should support align y "top" when there is no vertical overflow.`, (assert) => {
+	let node = new VerticalNode({ align_y: "top", height: 8 },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 2 })
 	);
@@ -1061,8 +1061,8 @@ wtf.test(`VerticalLayoutNode should support align y "top" when there is no verti
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align y "top" when there is vertical overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_y: "top", height: 8 },
+wtf.test(`VerticalNode should support align y "top" when there is vertical overflow.`, (assert) => {
+	let node = new VerticalNode({ align_y: "top", height: 8 },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 10 })
 	);
@@ -1101,8 +1101,8 @@ wtf.test(`VerticalLayoutNode should support align y "top" when there is vertical
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align y "middle" when there is no vertical overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_y: "middle", height: 8 },
+wtf.test(`VerticalNode should support align y "middle" when there is no vertical overflow.`, (assert) => {
+	let node = new VerticalNode({ align_y: "middle", height: 8 },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 2 })
 	);
@@ -1141,8 +1141,8 @@ wtf.test(`VerticalLayoutNode should support align y "middle" when there is no ve
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align y "middle" when there is vertical overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_y: "middle", height: 8 },
+wtf.test(`VerticalNode should support align y "middle" when there is vertical overflow.`, (assert) => {
+	let node = new VerticalNode({ align_y: "middle", height: 8 },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 10 })
 	);
@@ -1181,8 +1181,8 @@ wtf.test(`VerticalLayoutNode should support align y "middle" when there is verti
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align y "bottom" when there is no vertical overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_y: "bottom", height: 8 },
+wtf.test(`VerticalNode should support align y "bottom" when there is no vertical overflow.`, (assert) => {
+	let node = new VerticalNode({ align_y: "bottom", height: 8 },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 2 })
 	);
@@ -1221,8 +1221,8 @@ wtf.test(`VerticalLayoutNode should support align y "bottom" when there is no ve
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support align y "bottom" when there is vertical overflow.`, (assert) => {
-	let node = new VerticalLayoutNode({ align_y: "bottom", height: 8 },
+wtf.test(`VerticalNode should support align y "bottom" when there is vertical overflow.`, (assert) => {
+	let node = new VerticalNode({ align_y: "bottom", height: 8 },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 10 })
 	);
@@ -1261,8 +1261,8 @@ wtf.test(`VerticalLayoutNode should support align y "bottom" when there is verti
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support gap.`, (assert) => {
-	let node = new VerticalLayoutNode({ gap: [1] },
+wtf.test(`VerticalNode should support gap.`, (assert) => {
+	let node = new VerticalNode({ gap: [1] },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 2 })
 	);
@@ -1301,8 +1301,8 @@ wtf.test(`VerticalLayoutNode should support gap.`, (assert) => {
 	]);
 });
 
-wtf.test(`VerticalLayoutNode should support gap "20%".`, (assert) => {
-	let node = new VerticalLayoutNode({ gap: [20, "%"], height: 50 },
+wtf.test(`VerticalNode should support gap "20%".`, (assert) => {
+	let node = new VerticalNode({ gap: [20, "%"], height: 50 },
 		new MockSegmentedNode({ w: 0, h: 2 }),
 		new MockSegmentedNode({ w: 0, h: 2 })
 	);
