@@ -140,7 +140,11 @@ export class TextNode extends ChildNode {
 				h
 			};
 			let context = content.createContext();
-			context.showText(line.line_string);
+			if (options?.text_operand === "bytestring") {
+				context.showText(this.typesetter.getGlyphIndexArray(line.line_string));
+			} else {
+				context.showText(line.line_string);
+			}
 			lines.push({
 				size: size,
 				prefix: context.getCommands()

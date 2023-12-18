@@ -305,7 +305,9 @@ export const NodeLength = {
 	}
 };
 
-export type CreateSegmentsOptions = {};
+export type CreateSegmentsOptions = {
+	text_operand: "bytestring" | "string";
+};
 
 export type NodeStyle = {
 	height: NodeLength;
