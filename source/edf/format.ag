@@ -1,0 +1,138 @@
+guard Base64: string("^([A-Za-z0-9+/]{3})*([A-Za-z0-9+/]{2}[=]{1}|[A-Za-z0-9+/]{1}[=]{2})?$");
+
+guard NonNegativeNumber: number(0, *);
+
+guard PositiveInteger: integer(1, *);
+
+guard ColorComponent: number(0, 1);
+
+guard GrayscaleColor: {
+	i: ColorComponent
+};
+
+guard RGBColor: {
+	r: ColorComponent,
+	g: ColorComponent,
+	b: ColorComponent
+};
+
+guard CMYKColor: {
+	c: ColorComponent,
+	m: ColorComponent,
+	y: ColorComponent,
+	k: ColorComponent
+};
+
+guard Color: GrayscaleColor | RGBColor | CMYKColor;
+
+guard Length: NonNegativeNumber | [NonNegativeNumber] | [NonNegativeNumber, "%"];
+guard NodeLength: Length | [NonNegativeNumber, "fr"] | "intrinsic" | "extrinsic";
+
+guard Size: {
+	w: NonNegativeNumber,
+	h: NonNegativeNumber
+};
+
+guard Style: {
+	extends?: string
+};
+
+guard NodeStyle: Style & {
+	height?: NodeLength,
+	overflow?: "hidden" | "visible",
+	segmentation?: "auto" | "none",
+	width?: NodeLength
+};
+
+guard Node: {
+	type: string
+};
+
+guard ChildNode: Node & {
+
+};
+
+guard ParentNode: ChildNode & {
+	children: Node[]
+};
+
+guard TextStyle: NodeStyle & {
+	color?: "transparent" | Color,
+	columns?: PositiveInteger,
+	font_family?: string,
+	font_size?: NonNegativeNumber,
+	font_style?: "normal" | "italic",
+	font_weight?: "normal" | "bold",
+	gutter?: Length,
+	letter_spacing?: NonNegativeNumber,
+	line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline",
+	line_height?: NonNegativeNumber,
+	orphans?: PositiveInteger,
+	text_align?: "start" | "center" | "end",
+	text_transform?: "none" | "lowercase" | "uppercase",
+	white_space?: "wrap" | "nowrap",
+	word_spacing?: NonNegativeNumber
+};
+
+guard TextNode: ChildNode & {
+	type: "text",
+	style?: TextStyle,
+	content: string
+};
+
+guard BoxStyle: NodeStyle & {
+	background_color?: "transparent" | Color,
+	border_color?: "transparent" | Color,
+	border_radius?: Length,
+	border_width?: Length,
+	padding?: Length
+};
+
+guard BoxNode: ParentNode & {
+	type: "box",
+	style?: BoxStyle
+};
+
+guard VerticalStyle: NodeStyle & {
+	align_x?: "left" | "center" | "right",
+	align_y?: "top" | "middle" | "bottom",
+	gap?: Length
+};
+
+guard VerticalNode: ParentNode & {
+	type: "vertical",
+	style?: VerticalStyle
+};
+
+guard HorizontalStyle: NodeStyle & {
+	align_x?: "left" | "center" | "right",
+	align_y?: "top" | "middle" | "bottom",
+	gap?: Length
+};
+
+guard HorizontalNode: ParentNode & {
+	type: "horizontal",
+	style?: HorizontalStyle
+};
+
+guard Font: {
+	family: string,
+	style: "normal" | "italic",
+	weight: "normal" | "bold",
+	file: string
+};
+
+guard Styles: {
+	box?: { BoxStyle },
+	horizontal?: { HorizontalStyle },
+	text?: { TextStyle },
+	vertical?: { VerticalStyle }
+};
+
+guard Document: {
+	content: Node,
+	files?: { Base64 },
+	fonts?: Font[],
+	size: Size,
+	styles?: Styles
+};

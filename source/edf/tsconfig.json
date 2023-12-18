@@ -6,16 +6,9 @@
 	},
 	"extends": "../../tsconfig.json",
 	"include": [
-		"./",
-		"./cppdfdoc.json"
+		"./"
 	],
 	"references": [
-		{
-			"path": "../codepage/"
-		},
-		{
-			"path": "../edf/"
-		},
 		{
 			"path": "../pdf/"
 		},
