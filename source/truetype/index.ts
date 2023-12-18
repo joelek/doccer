@@ -790,10 +790,30 @@ export class Typesetter {
 	protected kernings: Map<string, number>;
 	protected glyph_data: Map<string, GlyphData>;
 	protected fallback_box: Box;
+	protected scale_factor: number;
 	protected options: Options;
 
-	protected getCharacterBox(character: string): Box {
-		return this.glyph_data.get(character)?.box ?? this.fallback_box;
+	protected getCharacterBox(character: string, normalized: boolean = true): Box {
+		let box = this.glyph_data.get(character)?.box ?? this.fallback_box;
+		if (normalized) {
+			return {
+				x_min: box.x_min * this.scale_factor,
+				y_min: box.y_min * this.scale_factor,
+				x_max: box.x_max * this.scale_factor,
+				y_max: box.y_max * this.scale_factor
+			};
+		} else {
+			return box;
+		}
+	}
+
+	protected getWidth(character: string, normalized: boolean = true): number {
+		let width = this.widths.get(character) ?? this.fallback_width;
+		if (normalized) {
+			return width * this.scale_factor;
+		} else {
+			return width;
+		}
 	}
 
 	protected getKerning(prefix: string, suffix: string): number {
@@ -833,7 +853,7 @@ export class Typesetter {
 		return Array.from(string.match(/\S+/g) ?? []);
 	}
 
-	constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, glyph_data?: Map<string, GlyphData>, fallback_box?: Box, options?: Partial<Options>) {
+	constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, glyph_data?: Map<string, GlyphData>, fallback_box?: Box, scale_factor?: number, options?: Partial<Options>) {
 		this.widths = widths;
 		this.fallback_width = fallback_width;
 		this.kernings = kernings ?? new Map();
@@ -844,6 +864,7 @@ export class Typesetter {
 			x_max: 1,
 			y_max: 1
 		};
+		this.scale_factor = scale_factor ?? 1;
 		this.options = {
 			letter_spacing: options?.letter_spacing ?? 0,
 			word_spacing: options?.word_spacing ?? 0
@@ -918,28 +939,28 @@ export class Typesetter {
 		];
 	}
 
-	getAscent(): number {
-		let box = this.getCharacterBox("");
+	getAscent(normalized: boolean = true): number {
+		let box = this.getCharacterBox("", normalized);
 		return box.y_max;
 	}
 
-	getCapHeight(): number {
-		let box = this.getCharacterBox("I");
+	getCapHeight(normalized: boolean = true): number {
+		let box = this.getCharacterBox("I", normalized);
 		return box.y_max;
 	}
 
-	getDescent(): number {
-		let box = this.getCharacterBox("");
+	getDescent(normalized: boolean = true): number {
+		let box = this.getCharacterBox("", normalized);
 		return box.y_min;
 	}
 
-	getStemWidth(): number {
-		let box = this.getCharacterBox("l");
+	getStemWidth(normalized: boolean = true): number {
+		let box = this.getCharacterBox("l", normalized);
 		return box.x_max - box.x_min;
 	}
 
-	getXHeight(): number {
-		let box = this.getCharacterBox("x");
+	getXHeight(normalized: boolean = true): number {
+		let box = this.getCharacterBox("x", normalized);
 		return box.y_max;
 	}
 
@@ -963,7 +984,7 @@ export class Typesetter {
 		for (let i = 0; i < characters.length; i++) {
 			let character = characters[i];
 			let kerning = this.getKerning(last_character, character);
-			let segment_width = this.widths.get(character) ?? this.fallback_width;
+			let segment_width = this.getWidth(character);
 			total_width += kerning + segment_width;
 			last_character = character;
 		}
@@ -971,7 +992,7 @@ export class Typesetter {
 	}
 
 	withOptions(options: Partial<Options>): Typesetter {
-		return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, options);
+		return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, this.scale_factor, options);
 	}
 
 	wrapString(string: string, target_width: number): Array<MeasuredLine> {
@@ -1048,26 +1069,27 @@ export class Typesetter {
 			let metrics = font.hmtx.metrics[index];
 			let key = String.fromCodePoint(code_point);
 			let glyph = font.glyf.glyphs[index];
-			widths.set(key, metrics.advance_width / font.head.units_per_em);
+			widths.set(key, metrics.advance_width);
 			let box: Box = {
-				x_min: glyph.x_min / font.head.units_per_em,
-				y_min: glyph.y_min / font.head.units_per_em,
-				x_max: glyph.x_max / font.head.units_per_em,
-				y_max: glyph.y_max / font.head.units_per_em,
+				x_min: glyph.x_min,
+				y_min: glyph.y_min,
+				x_max: glyph.x_max,
+				y_max: glyph.y_max,
 			};
 			glyph_data.set(key, {
 				index,
 				box
 			});
 		}
-		let fallback_width = font.hmtx.metrics[0].advance_width / font.head.units_per_em;
+		let fallback_width = font.hmtx.metrics[0].advance_width;
 		let fallback_box: Box = {
-			x_min: font.head.x_min / font.head.units_per_em,
-			y_min: font.head.y_min / font.head.units_per_em,
-			x_max: font.head.x_max / font.head.units_per_em,
-			y_max: font.head.y_max / font.head.units_per_em,
+			x_min: font.head.x_min,
+			y_min: font.head.y_min,
+			x_max: font.head.x_max,
+			y_max: font.head.y_max,
 		};
-		return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box);
+		let scale_factor = 1.0 / font.head.units_per_em;
+		return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box, scale_factor);
 	}
 };
 
