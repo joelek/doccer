@@ -566,6 +566,10 @@ export class PDFObject extends PDFEntity {
 		this.value = value;
 	}
 
+	getReference(): PDFReference {
+		return new PDFReference(this.id, this.generation);
+	}
+
 	tokenize(): Array<string> {
 		let lines = [] as Array<string>;
 		lines.push(`${this.id.tokenize().join(" ")} ${this.generation.tokenize().join(" ")} obj`);
@@ -628,6 +632,10 @@ export class PDFStreamObject extends PDFEntity {
 		this.generation = generation;
 		this.properties = properties;
 		this.stream = stream;
+	}
+
+	getReference(): PDFReference {
+		return new PDFReference(this.id, this.generation);
 	}
 
 	tokenize(): Array<string> {
