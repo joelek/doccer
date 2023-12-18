@@ -798,6 +798,19 @@ export class Typesetter {
 		return this.glyph_data.get(character)?.box ?? this.fallback_box;
 	}
 
+	getGlyphIndexArray(string: string): Uint8Array {
+		let bytes = [] as Array<number>;
+		let characters = this.segmentIntoCharacters(string);
+		for (let character of characters) {
+			let index = this.glyph_data.get(character)?.index ?? 0;
+			let hi = (index >> 8) & 0xFF;
+			let lo = (index >> 0) & 0xFF;
+			bytes.push(hi);
+			bytes.push(lo);
+		}
+		return Uint8Array.from(bytes);
+	}
+
 	measureString(string: string): number {
 		let characters = this.segmentIntoCharacters(string);
 		let total_width = 0;
