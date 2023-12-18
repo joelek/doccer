@@ -922,7 +922,6 @@ export class Typesetter {
 			x_max: font.head.x_max / font.head.units_per_em,
 			y_max: font.head.y_max / font.head.units_per_em,
 		};
-		// TODO: Parse kernings.
 		return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box);
 	}
 };

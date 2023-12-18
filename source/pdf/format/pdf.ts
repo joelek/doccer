@@ -699,7 +699,6 @@ export class PDFFile extends PDFEntity {
 		lines.push(`startxref`);
 		lines.push(`${xref_offset}`);
 		lines.push(`%%EOF`);
-		// TODO: Serialize increments.
 		return lines;
 	}
 
@@ -751,7 +750,6 @@ export class PDFFile extends PDFEntity {
 				objects: Array<PDFObject | PDFStreamObject>;
 				trailer: PDFRecord;
 			}>;
-			// TODO: Parse increments.
 			return new PDFFile(version, objects, trailer, increments);
 		});
 	}

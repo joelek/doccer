@@ -57,3 +57,7 @@ NB: This project targets TypeScript 4 in strict mode.
 * Move font size into Typesetter.
 * Consider improving handling of missing characters in PDF conversion.
 * Add support for prefix and suffix nodes.
+* Parse kerning data from truetype font.
+* Parse ligature data from truetype font.
+* Parse PDF increments.
+* Serialize PDF increments.

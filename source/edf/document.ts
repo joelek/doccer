@@ -108,20 +108,20 @@ export const DocumentUtils = {
 					new pdf.format.PDFInteger(0),
 					new pdf.format.PDFRecord([
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("FontDescriptor")),
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontName"), new pdf.format.PDFName("DDCJPOM+DMSans-Regular")), // TODO: Write.
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Flags"), new pdf.format.PDFInteger(4)), // TODO: Write. (p. 283)
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontName"), new pdf.format.PDFName("DDCJPOM+DMSans-Regular")),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Flags"), new pdf.format.PDFInteger(4)),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontBBox"), new pdf.format.PDFArray([
 							new pdf.format.PDFReal(truetype_font.head.x_min),
 							new pdf.format.PDFReal(truetype_font.head.y_min),
 							new pdf.format.PDFReal(truetype_font.head.x_max),
 							new pdf.format.PDFReal(truetype_font.head.y_max)
 						])),
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("ItalicAngle"), new pdf.format.PDFReal(0)), // TODO: Write.
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Ascent"), new pdf.format.PDFReal(967)), // TODO: Write.
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Descent"), new pdf.format.PDFReal(-261)), // TODO: Write.
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("CapHeight"), new pdf.format.PDFReal(700)), // TODO: Write.
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("XHeight"), new pdf.format.PDFReal(496)), // TODO: Write.
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("StemV"), new pdf.format.PDFReal(84)), // TODO: Write.
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("ItalicAngle"), new pdf.format.PDFReal(0)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Ascent"), new pdf.format.PDFReal(967)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Descent"), new pdf.format.PDFReal(-261)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("CapHeight"), new pdf.format.PDFReal(700)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("XHeight"), new pdf.format.PDFReal(496)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("StemV"), new pdf.format.PDFReal(84)),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontFile2"), pdf_font_file.getReference())
 					])
 				);
@@ -139,7 +139,7 @@ export const DocumentUtils = {
 					new pdf.format.PDFRecord([
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("Font")),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Subtype"), new pdf.format.PDFName("CIDFontType2")),
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("BaseFont"), new pdf.format.PDFName("DCJPOM+DMSans-Regular")), // TODO: Write.
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("BaseFont"), new pdf.format.PDFName("DCJPOM+DMSans-Regular")),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("CIDSystemInfo"), pdf_cid_system_info.getReference()),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontDescriptor"), pdf_font_descriptor.getReference()),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("W"), widths)
@@ -162,7 +162,7 @@ export const DocumentUtils = {
 					new pdf.format.PDFRecord([
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("Font")),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Subtype"), new pdf.format.PDFName("Type0")),
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("BaseFont"), new pdf.format.PDFName("DCJPOM+DMSans-Regular")), // TODO: Write.
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("BaseFont"), new pdf.format.PDFName("DCJPOM+DMSans-Regular")),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Encoding"), new pdf.format.PDFName("Identity-H")),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("DescendantFonts"), new pdf.format.PDFArray([
 							pdf_cid_font_type2.getReference()
