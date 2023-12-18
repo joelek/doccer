@@ -109,7 +109,7 @@ export const DocumentUtils = {
 					new pdf.format.PDFRecord([
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("FontDescriptor")),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontName"), new pdf.format.PDFName("DMSans-Regular")),
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Flags"), new pdf.format.PDFInteger(4)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Flags"), new pdf.format.PDFInteger(32)),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontBBox"), new pdf.format.PDFArray([
 							new pdf.format.PDFReal(truetype_font.head.x_min),
 							new pdf.format.PDFReal(truetype_font.head.y_min),
