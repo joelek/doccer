@@ -628,13 +628,154 @@ function parseGlyfData(buffer, loca, maxp) {
 function parseNameData(buffer) {
     let dw = new DataView(buffer);
     let o = 0;
-    return {};
+    let format = dw.getUint16(o);
+    o += 2;
+    let count = dw.getUint16(o);
+    o += 2;
+    let string_offset = dw.getUint16(o);
+    o += 2;
+    if (format === 0) {
+        let name_records = [];
+        for (let i = 0; i < count; i++) {
+            let platform_id = dw.getUint16(o);
+            o += 2;
+            let platform_specific_id = dw.getUint16(o);
+            o += 2;
+            let language_id = dw.getUint16(o);
+            o += 2;
+            let name_id = dw.getUint16(o);
+            o += 2;
+            let byte_length = dw.getUint16(o);
+            o += 2;
+            let byte_offset = dw.getUint16(o);
+            o += 2;
+            name_records.push({
+                platform_id,
+                platform_specific_id,
+                language_id,
+                name_id,
+                byte_length,
+                byte_offset,
+                string: ""
+            });
+        }
+        for (let name_record of name_records) {
+            if (name_record.platform_id === 0) {
+                if (name_record.platform_specific_id === 4) {
+                    let characters = [];
+                    for (let o = string_offset + name_record.byte_offset; o < string_offset + name_record.byte_offset + name_record.byte_length; o += 2) {
+                        characters.push(String.fromCharCode(dw.getUint8(o + 0) << 8 | dw.getUint8(o + 1)));
+                    }
+                    name_record.string = characters.join("");
+                }
+                else {
+                    throw new Error(`Expected a supported platform specific id!`);
+                }
+            }
+            else if (name_record.platform_id === 3) {
+                let characters = [];
+                for (let o = string_offset + name_record.byte_offset; o < string_offset + name_record.byte_offset + name_record.byte_length; o += 2) {
+                    characters.push(String.fromCharCode(dw.getUint8(o + 0) << 8 | dw.getUint8(o + 1)));
+                }
+                name_record.string = characters.join("");
+            }
+            else {
+                throw new Error(`Expected a supported platform id!`);
+            }
+        }
+        return {
+            name_records
+        };
+    }
+    else {
+        throw new Error(`Expected a supported format!`);
+    }
 }
 ;
 function parsePostData(buffer) {
     let dw = new DataView(buffer);
     let o = 0;
     return {};
+}
+;
+function parseOs2Data(buffer) {
+    let dw = new DataView(buffer);
+    let o = 0;
+    let version = dw.getUint16(o);
+    o += 2;
+    let average_weighted_advance = dw.getInt16(o);
+    o += 2;
+    let weight_class = dw.getUint16(o);
+    o += 2;
+    let width_class = dw.getUint16(o);
+    o += 2;
+    let font_flags = dw.getInt16(o);
+    o += 2;
+    let subscript_x_size = dw.getInt16(o);
+    o += 2;
+    let subscript_y_size = dw.getInt16(o);
+    o += 2;
+    let subscript_x_offset = dw.getInt16(o);
+    o += 2;
+    let subscript_y_offset = dw.getInt16(o);
+    o += 2;
+    let superscript_x_size = dw.getInt16(o);
+    o += 2;
+    let superscript_y_size = dw.getInt16(o);
+    o += 2;
+    let superscript_x_offset = dw.getInt16(o);
+    o += 2;
+    let superscript_y_offset = dw.getInt16(o);
+    o += 2;
+    let strikeout_size = dw.getInt16(o);
+    o += 2;
+    let strikeout_position = dw.getInt16(o);
+    o += 2;
+    let family_class = dw.getInt16(o);
+    o += 2;
+    let panose = new Uint8Array(buffer.slice(o, o + 10));
+    o += 10;
+    let unicode_ranges = [];
+    let a = dw.getUint32(o);
+    o += 4;
+    let b = dw.getUint32(o);
+    o += 4;
+    let c = dw.getUint32(o);
+    o += 4;
+    let d = dw.getUint32(o);
+    o += 4;
+    unicode_ranges.push(a, b, c, d);
+    let font_vendor_identifier = String.fromCharCode(dw.getUint8(o++), dw.getUint8(o++), dw.getUint8(o++), dw.getUint8(o++));
+    let font_style_flags = dw.getUint16(o);
+    o += 2;
+    let first_char_index = dw.getUint16(o);
+    o += 2;
+    let last_char_index = dw.getUint16(o);
+    o += 2;
+    return {
+        version,
+        average_weighted_advance,
+        weight_class,
+        width_class,
+        font_flags,
+        subscript_x_size,
+        subscript_y_size,
+        subscript_x_offset,
+        subscript_y_offset,
+        superscript_x_size,
+        superscript_y_size,
+        superscript_x_offset,
+        superscript_y_offset,
+        strikeout_size,
+        strikeout_position,
+        family_class,
+        panose,
+        unicode_ranges,
+        font_vendor_identifier,
+        font_style_flags,
+        first_char_index,
+        last_char_index
+    };
 }
 ;
 function parseTrueTypeData(buffer) {
@@ -684,6 +825,11 @@ function parseTrueTypeData(buffer) {
         throw new Error(`Expected table "post" to be present!`);
     }
     let post = parsePostData(buffer.slice(post_table.offset, post_table.offset + post_table.length));
+    let os2_table = header.tables.find((table) => table.tag === "OS/2");
+    let os2;
+    if (os2_table != null) {
+        os2 = parseOs2Data(buffer.slice(os2_table.offset, os2_table.offset + os2_table.length));
+    }
     return {
         header,
         cmap,
@@ -694,7 +840,8 @@ function parseTrueTypeData(buffer) {
         loca,
         glyf,
         name,
-        post
+        post,
+        os2
     };
 }
 exports.parseTrueTypeData = parseTrueTypeData;
@@ -705,7 +852,35 @@ class Typesetter {
     kernings;
     glyph_data;
     fallback_box;
+    scale_factor;
+    italic_angle;
+    postscript_name;
+    font_family;
+    font_weight;
     options;
+    getCharacterBox(character, normalized = true) {
+        let box = this.glyph_data.get(character)?.box ?? this.fallback_box;
+        if (normalized) {
+            return {
+                x_min: box.x_min * this.scale_factor,
+                y_min: box.y_min * this.scale_factor,
+                x_max: box.x_max * this.scale_factor,
+                y_max: box.y_max * this.scale_factor
+            };
+        }
+        else {
+            return box;
+        }
+    }
+    getWidth(character, normalized = true) {
+        let width = this.widths.get(character) ?? this.fallback_width;
+        if (normalized) {
+            return width * this.scale_factor;
+        }
+        else {
+            return width;
+        }
+    }
     getKerning(prefix, suffix) {
         if (prefix === "") {
             return 0;
@@ -742,7 +917,7 @@ class Typesetter {
     segmentIntoWords(string) {
         return Array.from(string.match(/\S+/g) ?? []);
     }
-    constructor(widths, fallback_width, kernings, glyph_data, fallback_box, options) {
+    constructor(widths, fallback_width, kernings, glyph_data, fallback_box, scale_factor, italic_angle, postscript_name, font_family, font_weight, options) {
         this.widths = widths;
         this.fallback_width = fallback_width;
         this.kernings = kernings ?? new Map();
@@ -753,6 +928,11 @@ class Typesetter {
             x_max: 1,
             y_max: 1
         };
+        this.scale_factor = scale_factor ?? 1;
+        this.italic_angle = italic_angle ?? 0;
+        this.postscript_name = postscript_name;
+        this.font_family = font_family;
+        this.font_weight = font_weight;
         this.options = {
             letter_spacing: options?.letter_spacing ?? 0,
             word_spacing: options?.word_spacing ?? 0
@@ -826,8 +1006,40 @@ class Typesetter {
             }
         ];
     }
-    getCharacterBox(character) {
-        return this.glyph_data.get(character)?.box ?? this.fallback_box;
+    getAscent(normalized = true) {
+        let box = this.getCharacterBox("", normalized);
+        return box.y_max;
+    }
+    getCapHeight(normalized = true) {
+        let box = this.getCharacterBox("I", normalized);
+        return box.y_max;
+    }
+    getDescent(normalized = true) {
+        let box = this.getCharacterBox("", normalized);
+        return box.y_min;
+    }
+    getFontFamily() {
+        return this.font_family;
+    }
+    getFontStyle() {
+        return this.italic_angle === 0 ? "normal" : "italic";
+    }
+    getFontWeight() {
+        return this.font_weight;
+    }
+    getItalicAngle() {
+        return this.italic_angle;
+    }
+    getPostscriptName() {
+        return this.postscript_name;
+    }
+    getStemWidth(normalized = true) {
+        let box = this.getCharacterBox("l", normalized);
+        return box.x_max - box.x_min;
+    }
+    getXHeight(normalized = true) {
+        let box = this.getCharacterBox("x", normalized);
+        return box.y_max;
     }
     getGlyphIndexArray(string) {
         let bytes = [];
@@ -848,14 +1060,14 @@ class Typesetter {
         for (let i = 0; i < characters.length; i++) {
             let character = characters[i];
             let kerning = this.getKerning(last_character, character);
-            let segment_width = this.widths.get(character) ?? this.fallback_width;
+            let segment_width = this.getWidth(character);
             total_width += kerning + segment_width;
             last_character = character;
         }
         return total_width;
     }
     withOptions(options) {
-        return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, options);
+        return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, this.scale_factor, this.italic_angle, this.postscript_name, this.font_family, this.font_weight, options);
     }
     wrapString(string, target_width) {
         string = string.trim().replaceAll(/\s+/g, " ");
@@ -930,27 +1142,31 @@ class Typesetter {
             let metrics = font.hmtx.metrics[index];
             let key = String.fromCodePoint(code_point);
             let glyph = font.glyf.glyphs[index];
-            widths.set(key, metrics.advance_width / font.head.units_per_em);
+            widths.set(key, metrics.advance_width);
             let box = {
-                x_min: glyph.x_min / font.head.units_per_em,
-                y_min: glyph.y_min / font.head.units_per_em,
-                x_max: glyph.x_max / font.head.units_per_em,
-                y_max: glyph.y_max / font.head.units_per_em,
+                x_min: glyph.x_min,
+                y_min: glyph.y_min,
+                x_max: glyph.x_max,
+                y_max: glyph.y_max,
             };
             glyph_data.set(key, {
                 index,
                 box
             });
         }
-        let fallback_width = font.hmtx.metrics[0].advance_width / font.head.units_per_em;
+        let fallback_width = font.hmtx.metrics[0].advance_width;
         let fallback_box = {
-            x_min: font.head.x_min / font.head.units_per_em,
-            y_min: font.head.y_min / font.head.units_per_em,
-            x_max: font.head.x_max / font.head.units_per_em,
-            y_max: font.head.y_max / font.head.units_per_em,
+            x_min: font.head.x_min,
+            y_min: font.head.y_min,
+            x_max: font.head.x_max,
+            y_max: font.head.y_max,
         };
-        // TODO: Parse kernings.
-        return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box);
+        let scale_factor = 1.0 / font.head.units_per_em;
+        let italic_angle = Math.atan2(font.hhea.caret_slope_run, font.hhea.caret_slope_rise) / Math.PI * 180;
+        let postscript_name = font.name.name_records.find((name_record) => name_record.name_id === 6)?.string;
+        let font_family = font.name.name_records.find((name_record) => name_record.name_id === 1)?.string;
+        let font_weight = font.os2?.weight_class;
+        return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box, scale_factor, italic_angle, postscript_name, font_family, font_weight);
     }
 }
 exports.Typesetter = Typesetter;

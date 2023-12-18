@@ -640,7 +640,6 @@ class PDFFile extends PDFEntity {
         lines.push(`startxref`);
         lines.push(`${xref_offset}`);
         lines.push(`%%EOF`);
-        // TODO: Serialize increments.
         return lines;
     }
     static parseFrom(parser) {
@@ -685,7 +684,6 @@ class PDFFile extends PDFEntity {
             }
             read("EOF");
             let increments = [];
-            // TODO: Parse increments.
             return new PDFFile(version, objects, trailer, increments);
         });
     }
