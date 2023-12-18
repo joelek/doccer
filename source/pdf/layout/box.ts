@@ -119,7 +119,7 @@ export class BoxNode extends ParentNode {
 				w: 0,
 				h: Math.max(0, content_segment_left.h - current_segment.size.h)
 			};
-			let child_target_size = Node.getTargetSize(child, target_size);
+			let child_target_size = Node.getTargetSize(child, content_target_size);
 			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
 			for (let row of rows) {
 				if (current_segment.size.h + row.size.h <= content_segment_left.h) {

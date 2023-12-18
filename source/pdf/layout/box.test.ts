@@ -1,5 +1,5 @@
 import * as wtf from "@joelek/wtf";
-import { Atom, ChildNode, Size } from "./shared";
+import { Atom, ChildNode, NodeStyle, Size } from "./shared";
 import { BoxNode } from "./box";
 
 class MockSegmentedNode extends ChildNode {
@@ -22,6 +22,23 @@ class MockSegmentedNode extends ChildNode {
 				size
 			};
 		});
+	}
+};
+
+class MockNode extends ChildNode {
+	constructor(style?: Partial<NodeStyle>) {
+		super(style);
+	}
+
+	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom> {
+		return [
+			{
+				size: {
+					w: target_size?.w ?? 0,
+					h: target_size?.h ?? 0
+				}
+			}
+		];
 	}
 };
 
@@ -676,6 +693,35 @@ wtf.test(`BoxNode should support padding "20%".`, (assert) => {
 					"position": {
 						"x": 10,
 						"y": 10
+					}
+				}
+			],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should provide children with the correct target size.`, (assert) => {
+	let node = new BoxNode({ padding: [1], width: 4, height: 4 },
+		new MockNode({ width: "extrinsic", height: "extrinsic" })
+	);
+	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 4,
+				"h": 4
+			},
+			"atoms": [
+				{
+					"size": {
+						"w": 2,
+						"h": 2
+					},
+					"position": {
+						"x": 1,
+						"y": 1
 					}
 				}
 			],
