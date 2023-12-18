@@ -124,6 +124,17 @@ function parseCmapData(buffer: ArrayBuffer) {
 				throw new Error(`Expected a supported subtable format!`);
 			}
 		}
+		let map = new Map<number, number>();
+		for (let mapping of mappings) {
+			map.set(mapping.code_point, mapping.index);
+		}
+		mappings = [];
+		for (let [code_point, index] of map.entries()) {
+			mappings.push({
+				code_point,
+				index
+			});
+		}
 		return {
 			version: 0x0000 as const,
 			mappings
