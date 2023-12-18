@@ -635,6 +635,64 @@ function parsePostData(buffer: ArrayBuffer) {
 
 type PostData = ReturnType<typeof parsePostData>;
 
+function parseOs2Data(buffer: ArrayBuffer) {
+	let dw = new DataView(buffer);
+	let o = 0;
+	let version = dw.getUint16(o); o += 2;
+	let average_weighted_advance = dw.getInt16(o); o += 2;
+	let weight_class = dw.getUint16(o); o += 2;
+	let width_class = dw.getUint16(o); o += 2;
+	let font_flags = dw.getInt16(o); o += 2;
+	let subscript_x_size = dw.getInt16(o); o += 2;
+	let subscript_y_size = dw.getInt16(o); o += 2;
+	let subscript_x_offset = dw.getInt16(o); o += 2;
+	let subscript_y_offset = dw.getInt16(o); o += 2;
+	let superscript_x_size = dw.getInt16(o); o += 2;
+	let superscript_y_size = dw.getInt16(o); o += 2;
+	let superscript_x_offset = dw.getInt16(o); o += 2;
+	let superscript_y_offset = dw.getInt16(o); o += 2;
+	let strikeout_size = dw.getInt16(o); o += 2;
+	let strikeout_position = dw.getInt16(o); o += 2;
+	let family_class = dw.getInt16(o); o += 2;
+	let panose = new Uint8Array(buffer.slice(o, o + 10)); o += 10;
+	let unicode_ranges = [] as Array<{}>;
+	let a = dw.getUint32(o); o += 4;
+	let b = dw.getUint32(o); o += 4;
+	let c = dw.getUint32(o); o += 4;
+	let d = dw.getUint32(o); o += 4;
+	unicode_ranges.push(a, b, c, d);
+	let font_vendor_identifier = String.fromCharCode(dw.getUint8(o++), dw.getUint8(o++), dw.getUint8(o++), dw.getUint8(o++));
+	let font_style_flags = dw.getUint16(o); o += 2;
+	let first_char_index = dw.getUint16(o); o += 2;
+	let last_char_index = dw.getUint16(o); o += 2;
+	return {
+		version,
+		average_weighted_advance,
+		weight_class,
+		width_class,
+		font_flags,
+		subscript_x_size,
+		subscript_y_size,
+		subscript_x_offset,
+		subscript_y_offset,
+		superscript_x_size,
+		superscript_y_size,
+		superscript_x_offset,
+		superscript_y_offset,
+		strikeout_size,
+		strikeout_position,
+		family_class,
+		panose,
+		unicode_ranges,
+		font_vendor_identifier,
+		font_style_flags,
+		first_char_index,
+		last_char_index
+	};
+};
+
+type Os2Data = ReturnType<typeof parseOs2Data>;
+
 export function parseTrueTypeData(buffer: ArrayBuffer) {
 	let header = parseHeaderData(buffer);
 	let cmap_table = header.tables.find((table) => table.tag === "cmap");
@@ -682,6 +740,11 @@ export function parseTrueTypeData(buffer: ArrayBuffer) {
 		throw new Error(`Expected table "post" to be present!`);
 	}
 	let post = parsePostData(buffer.slice(post_table.offset, post_table.offset + post_table.length));
+	let os2_table = header.tables.find((table) => table.tag === "OS/2");
+	let os2: Os2Data | undefined;
+	if (os2_table != null) {
+		os2 = parseOs2Data(buffer.slice(os2_table.offset, os2_table.offset + os2_table.length));
+	}
 	return {
 		header,
 		cmap,
@@ -692,7 +755,8 @@ export function parseTrueTypeData(buffer: ArrayBuffer) {
 		loca,
 		glyf,
 		name,
-		post
+		post,
+		os2
 	};
 };
 
