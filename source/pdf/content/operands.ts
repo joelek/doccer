@@ -1,4 +1,4 @@
-import { PDFInteger, PDFName, PDFReal, PDFString } from "../format";
+import { PDFBytestring, PDFInteger, PDFName, PDFReal, PDFString } from "../format";
 
 export abstract class Operand<A> {
 	constructor() {}
@@ -63,11 +63,26 @@ export class StringOperand extends Operand<string> {
 	}
 
 	getToken(value: string): string {
+		if (typeof value !== "string") {
+			throw new Error();
+		}
 		return new PDFString(value).tokenize().join(" ");
 	}
 };
 
 export const STRING = new StringOperand();
+
+export class BytestringOperand extends Operand<Uint8Array> {
+	constructor() {
+		super();
+	}
+
+	getToken(value: Uint8Array): string {
+		return new PDFBytestring(value).tokenize().join(" ");
+	}
+};
+
+export const BYTESTRING = new BytestringOperand();
 
 type Operands<A extends any[]> = {
 	[B in keyof A]: Operand<A[B]>;
