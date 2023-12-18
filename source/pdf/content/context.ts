@@ -1,4 +1,4 @@
-import { REAL, Operand, NAME, STRING, REAL_ARRAY, INTEGER, ArrayOperand, UnionOperand } from "./operands";
+import { REAL, Operand, NAME, REAL_ARRAY, INTEGER, ArrayOperand, UnionOperand, TEXT } from "./operands";
 
 type ExpansionOf<A> = A extends infer B ? { [C in keyof B]: B[C] } : never;
 type IntersectionOfUnion<A> = (A extends any ? (_: A) => void : never) extends ((_: infer B) => void) ? B : never;
@@ -227,12 +227,12 @@ export const COMMANDS = [
 	},
 	{
 		type: "showText",
-		operands: [STRING],
+		operands: [TEXT],
 		operator: "Tj"
 	},
 	{
 		type: "showTexts",
-		operands: [new ArrayOperand(new UnionOperand(STRING, REAL))],
+		operands: [new ArrayOperand(new UnionOperand(TEXT, REAL))],
 		operator: "TJ"
 	},
 	{
@@ -292,12 +292,12 @@ export const COMMANDS = [
 	},
 	{
 		type: "moveToNextLineAndShowText",
-		operands: [STRING],
+		operands: [TEXT],
 		operator: "'"
 	},
 	{
 		type: "setWordAndCharacterSpacingMoveToNextLineAndShowText",
-		operands: [REAL, REAL, STRING],
+		operands: [REAL, REAL, TEXT],
 		operator: "''"
 	}
 ] as const;
