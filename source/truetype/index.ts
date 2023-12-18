@@ -791,6 +791,7 @@ export class Typesetter {
 	protected glyph_data: Map<string, GlyphData>;
 	protected fallback_box: Box;
 	protected scale_factor: number;
+	protected italic_angle: number;
 	protected options: Options;
 
 	protected getCharacterBox(character: string, normalized: boolean = true): Box {
@@ -853,7 +854,7 @@ export class Typesetter {
 		return Array.from(string.match(/\S+/g) ?? []);
 	}
 
-	constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, glyph_data?: Map<string, GlyphData>, fallback_box?: Box, scale_factor?: number, options?: Partial<Options>) {
+	constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, glyph_data?: Map<string, GlyphData>, fallback_box?: Box, scale_factor?: number, italic_angle?: number, options?: Partial<Options>) {
 		this.widths = widths;
 		this.fallback_width = fallback_width;
 		this.kernings = kernings ?? new Map();
@@ -865,6 +866,7 @@ export class Typesetter {
 			y_max: 1
 		};
 		this.scale_factor = scale_factor ?? 1;
+		this.italic_angle = italic_angle ?? 0;
 		this.options = {
 			letter_spacing: options?.letter_spacing ?? 0,
 			word_spacing: options?.word_spacing ?? 0
@@ -954,6 +956,10 @@ export class Typesetter {
 		return box.y_min;
 	}
 
+	getItalicAngle(): number {
+		return this.italic_angle;
+	}
+
 	getStemWidth(normalized: boolean = true): number {
 		let box = this.getCharacterBox("l", normalized);
 		return box.x_max - box.x_min;
@@ -992,7 +998,7 @@ export class Typesetter {
 	}
 
 	withOptions(options: Partial<Options>): Typesetter {
-		return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, this.scale_factor, options);
+		return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, this.scale_factor, this.italic_angle, options);
 	}
 
 	wrapString(string: string, target_width: number): Array<MeasuredLine> {
@@ -1089,7 +1095,8 @@ export class Typesetter {
 			y_max: font.head.y_max,
 		};
 		let scale_factor = 1.0 / font.head.units_per_em;
-		return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box, scale_factor);
+		let italic_angle = Math.atan2(font.hhea.caret_slope_run, font.hhea.caret_slope_rise) / Math.PI * 180;
+		return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box, scale_factor, italic_angle);
 	}
 };
 

@@ -116,7 +116,7 @@ export const DocumentUtils = {
 							new pdf.format.PDFReal(truetype_font.head.x_max),
 							new pdf.format.PDFReal(truetype_font.head.y_max)
 						])),
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("ItalicAngle"), new pdf.format.PDFReal(0)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("ItalicAngle"), new pdf.format.PDFReal(typesetter.getItalicAngle())),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Ascent"), new pdf.format.PDFReal(typesetter.getAscent(false))),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Descent"), new pdf.format.PDFReal(typesetter.getDescent(false))),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("CapHeight"), new pdf.format.PDFReal(typesetter.getCapHeight(false))),
