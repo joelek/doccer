@@ -792,6 +792,9 @@ export class Typesetter {
 	protected fallback_box: Box;
 	protected scale_factor: number;
 	protected italic_angle: number;
+	protected postscript_name?: string;
+	protected font_family?: string;
+	protected font_weight?: number;
 	protected options: Options;
 
 	protected getCharacterBox(character: string, normalized: boolean = true): Box {
@@ -854,7 +857,7 @@ export class Typesetter {
 		return Array.from(string.match(/\S+/g) ?? []);
 	}
 
-	constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, glyph_data?: Map<string, GlyphData>, fallback_box?: Box, scale_factor?: number, italic_angle?: number, options?: Partial<Options>) {
+	constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, glyph_data?: Map<string, GlyphData>, fallback_box?: Box, scale_factor?: number, italic_angle?: number, postscript_name?: string, font_family?: string, font_weight?: number, options?: Partial<Options>) {
 		this.widths = widths;
 		this.fallback_width = fallback_width;
 		this.kernings = kernings ?? new Map();
@@ -867,6 +870,9 @@ export class Typesetter {
 		};
 		this.scale_factor = scale_factor ?? 1;
 		this.italic_angle = italic_angle ?? 0;
+		this.postscript_name = postscript_name;
+		this.font_family = font_family;
+		this.font_weight = font_weight;
 		this.options = {
 			letter_spacing: options?.letter_spacing ?? 0,
 			word_spacing: options?.word_spacing ?? 0
@@ -956,8 +962,24 @@ export class Typesetter {
 		return box.y_min;
 	}
 
+	getFontFamily(): string | undefined {
+		return this.font_family;
+	}
+
+	getFontStyle(): "italic" | "normal" {
+		return this.italic_angle === 0 ? "normal" : "italic";
+	}
+
+	getFontWeight(): number | undefined {
+		return this.font_weight;
+	}
+
 	getItalicAngle(): number {
 		return this.italic_angle;
+	}
+
+	getPostscriptName(): string | undefined {
+		return this.postscript_name;
 	}
 
 	getStemWidth(normalized: boolean = true): number {
@@ -998,7 +1020,7 @@ export class Typesetter {
 	}
 
 	withOptions(options: Partial<Options>): Typesetter {
-		return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, this.scale_factor, this.italic_angle, options);
+		return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, this.scale_factor, this.italic_angle, this.postscript_name, this.font_family, this.font_weight, options);
 	}
 
 	wrapString(string: string, target_width: number): Array<MeasuredLine> {
@@ -1096,7 +1118,10 @@ export class Typesetter {
 		};
 		let scale_factor = 1.0 / font.head.units_per_em;
 		let italic_angle = Math.atan2(font.hhea.caret_slope_run, font.hhea.caret_slope_rise) / Math.PI * 180;
-		return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box, scale_factor, italic_angle);
+		let postscript_name = font.name.name_records.find((name_record) => name_record.name_id === 6)?.string;
+		let font_family = font.name.name_records.find((name_record) => name_record.name_id === 1)?.string;
+		let font_weight = font.os2?.weight_class;
+		return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box, scale_factor, italic_angle, postscript_name, font_family, font_weight);
 	}
 };
 
