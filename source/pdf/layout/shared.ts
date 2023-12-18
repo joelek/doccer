@@ -305,6 +305,8 @@ export const NodeLength = {
 	}
 };
 
+export type CreateSegmentsOptions = {};
+
 export type NodeStyle = {
 	height: NodeLength;
 	overflow: "hidden" | "visible";
@@ -358,7 +360,7 @@ export abstract class Node {
 		};
 	}
 
-	abstract createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom>;
+	abstract createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom>;
 
 	getHeight(): NodeLength {
 		return this.node_style.height;

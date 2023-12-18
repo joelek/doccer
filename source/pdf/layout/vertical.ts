@@ -1,5 +1,5 @@
 import * as content from "../content";
-import { Atom, ChildNode, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, CreateSegmentsOptions, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
 
 export type VerticalStyle = {
 	align_x: "left" | "center" | "right";
@@ -45,7 +45,7 @@ export class VerticalNode extends ParentNode {
 		};
 	}
 
-	protected getSegmentsNone(segment_size: Size, segment_left: Size, target_size: Partial<Size>): Array<ParentAtom> {
+	protected getSegmentsNone(segment_size: Size, segment_left: Size, target_size: Partial<Size>, options: Partial<CreateSegmentsOptions>): Array<ParentAtom> {
 		let gap = Length.getComputedLength(this.style.gap, target_size.h);
 		let fraction_size: Partial<Size> = {
 			...target_size
@@ -80,7 +80,7 @@ export class VerticalNode extends ParentNode {
 				h: 0
 			};
 			let child_target_size = Node.getTargetSize(child, target_size, fraction_size);
-			let child_atoms = child.createSegments(child_segment_size, child_segment_left, child_target_size);
+			let child_atoms = child.createSegments(child_segment_size, child_segment_left, child_target_size, options);
 			let child_height = child_atoms.reduce((sum, child_atom) => sum + child_atom.size.h, 0);
 			child_row_arrays[index] = child_atoms;
 			if (fraction_size.h != null) {
@@ -104,7 +104,7 @@ export class VerticalNode extends ParentNode {
 				h: 0
 			};
 			let child_target_size = Node.getTargetSize(child, target_size, fraction_size);
-			let child_atoms = child.createSegments(child_segment_size, child_segment_left, child_target_size);
+			let child_atoms = child.createSegments(child_segment_size, child_segment_left, child_target_size, options);
 			let child_height = child_atoms.reduce((sum, child_atom) => sum + child_atom.size.h, 0);
 			child_row_arrays[index] = child_atoms;
 		}
@@ -128,7 +128,7 @@ export class VerticalNode extends ParentNode {
 		return segments;
 	}
 
-	protected getSegmentsAuto(segment_size: Size, segment_left: Size, target_size: Partial<Size>): Array<ParentAtom> {
+	protected getSegmentsAuto(segment_size: Size, segment_left: Size, target_size: Partial<Size>, options: Partial<CreateSegmentsOptions>): Array<ParentAtom> {
 		let gap = Length.getComputedLength(this.style.gap, target_size.h);
 		let fraction_size: Partial<Size> = {
 			...target_size
@@ -156,7 +156,7 @@ export class VerticalNode extends ParentNode {
 				h: Math.max(0, segment_left.h - (current_segment.size.h + current_gap))
 			};
 			let child_target_size = Node.getTargetSize(child, target_size, fraction_size);
-			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
+			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size, options);
 			for (let row of rows) {
 				if (current_segment.size.h + current_gap + row.size.h <= segment_left.h) {
 				} else {
@@ -190,11 +190,11 @@ export class VerticalNode extends ParentNode {
 		return segments;
 	}
 
-	protected getSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>): Array<ParentAtom> {
+	protected getSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>, options: Partial<CreateSegmentsOptions>): Array<ParentAtom> {
 		if (this.node_style.segmentation === "auto") {
-			return this.getSegmentsAuto(segment_size, segment_left, target_size);
+			return this.getSegmentsAuto(segment_size, segment_left, target_size, options);
 		} else {
-			return this.getSegmentsNone(segment_size, segment_left, target_size);
+			return this.getSegmentsNone(segment_size, segment_left, target_size, options);
 		}
 	}
 
@@ -214,12 +214,13 @@ export class VerticalNode extends ParentNode {
 		};
 	}
 
-	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom> {
+	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom> {
 		if (target_size == null) {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
+		options = options ?? {};
 		segment_left = this.getSegmentLeft(segment_left);
-		let segments = this.getSegments(segment_size, segment_left, target_size);
+		let segments = this.getSegments(segment_size, segment_left, target_size, options);
 		for (let segment of segments) {
 			Size.constrain(segment.size, target_size);
 		}

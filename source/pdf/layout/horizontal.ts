@@ -1,5 +1,5 @@
 import * as content from "../content";
-import { Atom, ChildNode, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, CreateSegmentsOptions, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
 
 export type HorizontalStyle = {
 	align_x: "left" | "center" | "right";
@@ -61,7 +61,7 @@ export class HorizontalNode extends ParentNode {
 		};
 	}
 
-	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom> {
+	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom> {
 		if (target_size == null) {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
@@ -107,7 +107,7 @@ export class HorizontalNode extends ParentNode {
 				h: content_segment_left.h
 			};
 			let child_target_size = Node.getTargetSize(child, content_target_size, fraction_size);
-			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
+			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size, options);
 			column_rows[index] = rows;
 			let column_width = rows.reduce((max, row) => Math.max(max, row.size.w), 0);
 			column_widths[index] = column_width;
@@ -133,7 +133,7 @@ export class HorizontalNode extends ParentNode {
 				h: content_segment_left.h
 			};
 			let child_target_size = Node.getTargetSize(child, content_target_size, fraction_size);
-			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
+			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size, options);
 			column_rows[index] = rows;
 			max_column_rows = Math.max(max_column_rows, rows.length);
 			let column_width = rows.reduce((max, row) => Math.max(max, row.size.w), 0);

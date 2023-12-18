@@ -1,7 +1,7 @@
 import * as truetype from "../../truetype";
 import * as content from "../content";
 import { TextRenderingMode } from "../content";
-import { Atom, ChildNode, Color, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
 
 export type TextStyle = {
 	color: "transparent" | Color;
@@ -128,7 +128,7 @@ export class TextNode extends ChildNode {
 		return lines;
 	}
 
-	protected createLineSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>): Array<Atom> {
+	protected createLineSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>, options: Partial<CreateSegmentsOptions>): Array<Atom> {
 		segment_left = this.getSegmentLeft(segment_left);
 		let column_width = this.getColumnWidth(target_size);
 		let lines = [] as Array<Atom>;
@@ -149,7 +149,7 @@ export class TextNode extends ChildNode {
 		return lines;
 	}
 
-	protected createColumnSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>): Array<Atom> {
+	protected createColumnSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>, options: Partial<CreateSegmentsOptions>): Array<Atom> {
 		segment_left = this.getSegmentLeft(segment_left);
 		let columns = [] as Array<ParentAtom>;
 		let current_column: ParentAtom = {
@@ -159,7 +159,7 @@ export class TextNode extends ChildNode {
 			},
 			atoms: []
 		};
-		let lines = this.createLineSegments(segment_size, segment_left, target_size);
+		let lines = this.createLineSegments(segment_size, segment_left, target_size, options);
 		let max_lines_in_current_column = Math.ceil(lines.length / this.style.columns);
 		let gap = 0;
 		let line_index = 0;
@@ -272,10 +272,11 @@ export class TextNode extends ChildNode {
 		};
 	}
 
-	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom> {
+	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom> {
 		if (target_size == null) {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
+		options = options ?? {};
 		segment_left = this.getSegmentLeft(segment_left);
 		let gutter = Length.getComputedLength(this.style.gutter, target_size.w);
 		let target_column_width = this.getColumnWidth(target_size);
@@ -287,7 +288,7 @@ export class TextNode extends ChildNode {
 			},
 			atoms: []
 		};
-		let columns = this.createColumnSegments(segment_size, segment_left, target_size);
+		let columns = this.createColumnSegments(segment_size, segment_left, target_size, options);
 		let current_gap = 0;
 		for (let column of columns) {
 			if (current_segment.atoms.length < this.style.columns) {

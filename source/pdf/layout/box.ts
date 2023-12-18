@@ -1,5 +1,5 @@
 import * as content from "../content";
-import { Atom, ChildNode, Color, Length, Node, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
+import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, Node, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
 
 export type BoxStyle = {
 	background_color: "transparent" | Color;
@@ -78,10 +78,11 @@ export class BoxNode extends ParentNode {
 		};
 	}
 
-	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom> {
+	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom> {
 		if (target_size == null) {
 			target_size = Node.getTargetSize(this, segment_size);
 		}
+		options = options ?? {};
 		segment_left = this.getSegmentLeft(segment_left);
 		let border_radius = Length.getComputedLength(this.style.border_radius, target_size.w);
 		let border_width = Length.getComputedLength(this.style.border_width, target_size.w);
@@ -120,7 +121,7 @@ export class BoxNode extends ParentNode {
 				h: Math.max(0, content_segment_left.h - current_segment.size.h)
 			};
 			let child_target_size = Node.getTargetSize(child, content_target_size);
-			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
+			let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size, options);
 			for (let row of rows) {
 				if (current_segment.size.h + row.size.h <= content_segment_left.h) {
 				} else {
