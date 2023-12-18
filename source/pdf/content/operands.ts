@@ -120,3 +120,5 @@ export class UnionOperand<A extends any[]> extends Operand<A[number]> {
 		throw new Error();
 	}
 };
+
+export const TEXT = new UnionOperand(STRING, BYTESTRING);
