@@ -1,4 +1,4 @@
-import { Operand, ArrayOperand } from "./operands";
+import { Operand, ArrayOperand, UnionOperand } from "./operands";
 type IntersectionOfUnion<A> = (A extends any ? (_: A) => void : never) extends ((_: infer B) => void) ? B : never;
 export type Command = {
     type: string;
@@ -179,11 +179,11 @@ export declare const COMMANDS: readonly [{
     readonly operator: "Tf";
 }, {
     readonly type: "showText";
-    readonly operands: readonly [import("./operands").StringOperand];
+    readonly operands: readonly [UnionOperand<[string, Uint8Array]>];
     readonly operator: "Tj";
 }, {
     readonly type: "showTexts";
-    readonly operands: readonly [ArrayOperand<string | number>];
+    readonly operands: readonly [ArrayOperand<string | number | Uint8Array>];
     readonly operator: "TJ";
 }, {
     readonly type: "setTextLeading";
@@ -231,11 +231,11 @@ export declare const COMMANDS: readonly [{
     readonly operator: "y";
 }, {
     readonly type: "moveToNextLineAndShowText";
-    readonly operands: readonly [import("./operands").StringOperand];
+    readonly operands: readonly [UnionOperand<[string, Uint8Array]>];
     readonly operator: "'";
 }, {
     readonly type: "setWordAndCharacterSpacingMoveToNextLineAndShowText";
-    readonly operands: readonly [import("./operands").RealOperand, import("./operands").RealOperand, import("./operands").StringOperand];
+    readonly operands: readonly [import("./operands").RealOperand, import("./operands").RealOperand, UnionOperand<[string, Uint8Array]>];
     readonly operator: "''";
 }];
 export type Commands = typeof COMMANDS;

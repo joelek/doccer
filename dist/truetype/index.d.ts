@@ -147,23 +147,42 @@ export type Box = {
     x_max: number;
     y_max: number;
 };
+export type GlyphData = {
+    index: number;
+    box: Box;
+};
 export declare class Typesetter {
     protected widths: Map<string, number>;
     protected fallback_width: number;
     protected kernings: Map<string, number>;
-    protected boxes: Map<string, Box>;
+    protected glyph_data: Map<string, GlyphData>;
     protected fallback_box: Box;
     protected options: Options;
     protected getKerning(prefix: string, suffix: string): number;
     protected segmentIntoLines(string: string): Array<string>;
     protected segmentIntoCharacters(string: string): Array<string>;
     protected segmentIntoWords(string: string): Array<string>;
-    constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, boxes?: Map<string, Box>, fallback_box?: Box, options?: Partial<Options>);
+    constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, glyph_data?: Map<string, GlyphData>, fallback_box?: Box, options?: Partial<Options>);
     clampString(string: string, target_width: number): Array<MeasuredLine>;
     getCharacterBox(character: string): Box;
+    getGlyphIndexArray(string: string): Uint8Array;
     measureString(string: string): number;
     withOptions(options: Partial<Options>): Typesetter;
     wrapString(string: string, target_width: number): Array<MeasuredLine>;
     wrapStringUsingLineBreaks(string: string): Array<MeasuredLine>;
     static createFromFont(font: TrueTypeData): Typesetter;
+}
+export type Font = {
+    family: string;
+    style: "normal" | "italic";
+    weight: "normal" | "bold";
+    typesetter: Typesetter;
+};
+export declare class FontHandler {
+    protected fonts: Array<Font>;
+    constructor();
+    addTypesetter(family: string, style: "normal" | "italic", weight: "normal" | "bold", typesetter: Typesetter): FontHandler;
+    [Symbol.iterator](): Iterator<[number, Font]>;
+    getTypeId(typesetter: Typesetter): number;
+    getTypesetter(family: string, style: "normal" | "italic", weight: "normal" | "bold"): Typesetter;
 }

@@ -5,72 +5,42 @@ const content = require("../content");
 const shared_1 = require("./shared");
 class BoxNode extends shared_1.ParentNode {
     style;
-    appendNodeShape(context, size, border_radius) {
-        let br = border_radius ?? this.style.border_radius;
-        if (br === 0) {
-            super.appendNodeShape(context, size);
-        }
-        else {
-            let w = Math.max(br + br, size.w);
-            let h = Math.max(br + br, size.h);
-            let f = (Math.SQRT2 - 1) * 4 / 3;
-            let c1 = br * f;
-            let c2 = br - c1;
-            let x1 = 0;
-            let x2 = c2;
-            let x3 = br;
-            let x4 = (w - br);
-            let x5 = (w - c2);
-            let x6 = w;
-            let y1 = 0 - 0;
-            let y2 = 0 - c2;
-            let y3 = 0 - br;
-            let y4 = 0 - (h - br);
-            let y5 = 0 - (h - c2);
-            let y6 = 0 - h;
-            context.beginNewSubpath(x1, y3);
-            context.appendLineSegment(x1, y4);
-            context.appendCubicBezierCurve(x1, y5, x2, y6, x3, y6);
-            context.appendLineSegment(x4, y6);
-            context.appendCubicBezierCurve(x5, y6, x6, y5, x6, y4);
-            context.appendLineSegment(x6, y3);
-            context.appendCubicBezierCurve(x6, y2, x5, y1, x4, y1);
-            context.appendLineSegment(x3, y1);
-            context.appendCubicBezierCurve(x2, y1, x1, y2, x1, y3);
-            context.closeSubpath();
-        }
-    }
-    createPrefixCommands(size) {
+    createPrefixCommands(path) {
         let context = content.createContext();
         if (this.style.background_color !== "transparent") {
-            context.setfillColorRGB(...this.style.background_color);
-            this.appendNodeShape(context, size);
+            shared_1.Color.setFillColor(this.style.background_color, context);
+            shared_1.Path.append(path, context);
             context.fillUsingNonZeroWindingNumberRule();
         }
         return [
-            ...super.createPrefixCommands(size),
+            ...super.createPrefixCommands(path),
             ...context.getCommands()
         ];
     }
-    createSuffixCommands(size) {
+    createSuffixCommands(path) {
         let context = content.createContext();
-        if (this.style.border_color !== "transparent") {
-            context.setStrokeColorRGB(...this.style.border_color);
-        }
-        if (this.style.border_width > 0) {
-            let border_radius = Math.max(0, this.style.border_radius - this.style.border_width * 0.5);
-            context.concatenateMatrix(1, 0, 0, 1, this.style.border_width * 0.5, 0 - this.style.border_width * 0.5);
-            context.setStrokeWidth(this.style.border_width);
-            this.appendNodeShape(context, {
-                w: Math.max(0, size.w - this.style.border_width),
-                h: Math.max(0, size.h - this.style.border_width)
-            }, border_radius);
-            context.strokePath();
-        }
         return [
             ...context.getCommands(),
-            ...super.createSuffixCommands(size)
+            ...super.createSuffixCommands(path)
         ];
+    }
+    createBorderCommands(size, border_width, border_radius) {
+        let context = content.createContext();
+        if (this.style.border_color !== "transparent") {
+            shared_1.Color.setStrokeColor(this.style.border_color, context);
+        }
+        if (border_width > 0) {
+            let clamped_border_radius = Math.max(0, border_radius - border_width * 0.5);
+            context.concatenateMatrix(1, 0, 0, 1, border_width * 0.5, 0 - border_width * 0.5);
+            context.setStrokeWidth(border_width);
+            let border_path = shared_1.Path.createRoundedRectangle({
+                w: Math.max(0, size.w - border_width),
+                h: Math.max(0, size.h - border_width)
+            }, clamped_border_radius);
+            shared_1.Path.append(border_path, context);
+            context.strokePath();
+        }
+        return context.getCommands();
     }
     constructor(style, ...children) {
         super(style, ...children);
@@ -78,15 +48,15 @@ class BoxNode extends shared_1.ParentNode {
         let background_color = style.background_color ?? "transparent";
         let border_color = style.border_color ?? "transparent";
         let border_radius = style.border_radius ?? 0;
-        if (border_radius < 0) {
+        if (!shared_1.Length.isValid(border_radius)) {
             throw new Error();
         }
         let border_width = style.border_width ?? 0;
-        if (border_width < 0) {
+        if (!shared_1.Length.isValid(border_width)) {
             throw new Error();
         }
         let padding = style.padding ?? 0;
-        if (padding < 0) {
+        if (!shared_1.Length.isValid(padding)) {
             throw new Error();
         }
         this.style = {
@@ -97,15 +67,19 @@ class BoxNode extends shared_1.ParentNode {
             padding
         };
     }
-    createSegments(segment_size, segment_left, target_size) {
+    createSegments(segment_size, segment_left, target_size, options) {
         if (target_size == null) {
             target_size = shared_1.Node.getTargetSize(this, segment_size);
         }
+        options = options ?? {};
         segment_left = this.getSegmentLeft(segment_left);
-        let inset_top = this.style.border_width + this.style.padding;
-        let inset_right = this.style.border_width + this.style.padding;
-        let inset_left = this.style.border_width + this.style.padding;
-        let inset_bottom = this.style.border_width + this.style.padding;
+        let border_radius = shared_1.Length.getComputedLength(this.style.border_radius, target_size.w);
+        let border_width = shared_1.Length.getComputedLength(this.style.border_width, target_size.w);
+        let padding = shared_1.Length.getComputedLength(this.style.padding, target_size.w);
+        let inset_top = border_width + padding;
+        let inset_right = border_width + padding;
+        let inset_left = border_width + padding;
+        let inset_bottom = border_width + padding;
         let content_segment_size = {
             w: 0,
             h: Math.max(0, segment_size.h - inset_top - inset_bottom)
@@ -135,8 +109,8 @@ class BoxNode extends shared_1.ParentNode {
                 w: 0,
                 h: Math.max(0, content_segment_left.h - current_segment.size.h)
             };
-            let child_target_size = shared_1.Node.getTargetSize(child, target_size);
-            let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
+            let child_target_size = shared_1.Node.getTargetSize(child, content_target_size);
+            let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size, options);
             for (let row of rows) {
                 if (current_segment.size.h + row.size.h <= content_segment_left.h) {
                 }
@@ -167,7 +141,7 @@ class BoxNode extends shared_1.ParentNode {
         }
         segments.push(current_segment);
         for (let segment of segments) {
-            this.constrainSegmentSize(segment.size, content_target_size);
+            shared_1.Size.constrain(segment.size, content_target_size);
         }
         for (let segment of segments) {
             for (let row of segment.atoms) {
@@ -178,8 +152,12 @@ class BoxNode extends shared_1.ParentNode {
             segment.size.h += inset_top + inset_bottom;
         }
         for (let segment of segments) {
-            segment.prefix = this.createPrefixCommands(segment.size);
-            segment.suffix = this.createSuffixCommands(segment.size);
+            let path = shared_1.Path.createRoundedRectangle(segment.size, border_radius);
+            segment.prefix = this.createPrefixCommands(path);
+            segment.suffix = [
+                ...this.createBorderCommands(segment.size, border_width, border_radius),
+                ...this.createSuffixCommands(path)
+            ];
         }
         return segments;
     }

@@ -1,17 +1,16 @@
-import * as content from "../content";
-import { Atom, ChildNode, NodeStyle, ParentNode, Size } from "./shared";
+import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, NodeStyle, ParentNode, Path, Size } from "./shared";
 export type BoxStyle = {
-    background_color: "transparent" | [number, number, number];
-    border_color: "transparent" | [number, number, number];
-    border_radius: number;
-    border_width: number;
-    padding: number;
+    background_color: "transparent" | Color;
+    border_color: "transparent" | Color;
+    border_radius: Length;
+    border_width: Length;
+    padding: Length;
 };
 export declare class BoxNode extends ParentNode {
     protected style: BoxStyle;
-    protected appendNodeShape(context: content.Context, size: Size, border_radius?: number): void;
-    protected createPrefixCommands(size: Size): Array<string>;
-    protected createSuffixCommands(size: Size): Array<string>;
+    protected createPrefixCommands(path: Path): Array<string>;
+    protected createSuffixCommands(path: Path): Array<string>;
+    protected createBorderCommands(size: Size, border_width: number, border_radius: number): Array<string>;
     constructor(style?: Partial<NodeStyle & BoxStyle>, ...children: Array<ChildNode>);
-    createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom>;
+    createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom>;
 }

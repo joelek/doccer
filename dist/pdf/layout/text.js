@@ -6,12 +6,13 @@ const content_1 = require("../content");
 const shared_1 = require("./shared");
 class TextNode extends shared_1.ChildNode {
     content;
+    type_id;
     typesetter;
     style;
-    createPrefixCommands(size) {
+    createPrefixCommands(path) {
         let context = content.createContext();
         context.beginTextObject();
-        context.setTextFontAndSize("F1", this.style.font_size);
+        context.setTextFontAndSize(`F${this.type_id}`, this.style.font_size);
         context.setTextLeading(this.style.line_height);
         if (this.style.letter_spacing > 0) {
             context.setCharacterSpacing(this.style.letter_spacing);
@@ -20,7 +21,7 @@ class TextNode extends shared_1.ChildNode {
             context.setWordSpacing(this.style.word_spacing);
         }
         if (this.style.color !== "transparent") {
-            context.setfillColorRGB(...this.style.color);
+            shared_1.Color.setFillColor(this.style.color, context);
         }
         else {
             context.setTextRenderingMode(content_1.TextRenderingMode.INVISIBLE);
@@ -30,20 +31,21 @@ class TextNode extends shared_1.ChildNode {
             context.concatenateMatrix(1, 0, 0, 1, 0, offset);
         }
         return [
-            ...super.createPrefixCommands(size),
+            ...super.createPrefixCommands(path),
             ...context.getCommands()
         ];
     }
-    createSuffixCommands(size) {
+    createSuffixCommands(path) {
         let context = content.createContext();
         context.endTextObject();
         return [
             ...context.getCommands(),
-            ...super.createSuffixCommands(size)
+            ...super.createSuffixCommands(path)
         ];
     }
     getColumnWidth(target_size) {
-        return Math.max(0, ((target_size.w ?? Infinity) - (this.style.columns - 1) * this.style.gutter) / this.style.columns);
+        let gutter = shared_1.Length.getComputedLength(this.style.gutter, target_size.w);
+        return Math.max(0, ((target_size.w ?? Infinity) - (this.style.columns - 1) * gutter) / this.style.columns);
     }
     getLineOffsetX(column_width, line_width) {
         if (this.style.text_align === "start") {
@@ -102,7 +104,7 @@ class TextNode extends shared_1.ChildNode {
         });
         return lines;
     }
-    createLineSegments(segment_size, segment_left, target_size) {
+    createLineSegments(segment_size, segment_left, target_size, options) {
         segment_left = this.getSegmentLeft(segment_left);
         let column_width = this.getColumnWidth(target_size);
         let lines = [];
@@ -114,7 +116,12 @@ class TextNode extends shared_1.ChildNode {
                 h
             };
             let context = content.createContext();
-            context.showText(line.line_string);
+            if (options?.text_operand === "bytestring") {
+                context.showText(this.typesetter.getGlyphIndexArray(line.line_string));
+            }
+            else {
+                context.showText(line.line_string);
+            }
             lines.push({
                 size: size,
                 prefix: context.getCommands()
@@ -122,7 +129,7 @@ class TextNode extends shared_1.ChildNode {
         }
         return lines;
     }
-    createColumnSegments(segment_size, segment_left, target_size) {
+    createColumnSegments(segment_size, segment_left, target_size, options) {
         segment_left = this.getSegmentLeft(segment_left);
         let columns = [];
         let current_column = {
@@ -132,7 +139,7 @@ class TextNode extends shared_1.ChildNode {
             },
             atoms: []
         };
-        let lines = this.createLineSegments(segment_size, segment_left, target_size);
+        let lines = this.createLineSegments(segment_size, segment_left, target_size, options);
         let max_lines_in_current_column = Math.ceil(lines.length / this.style.columns);
         let gap = 0;
         let line_index = 0;
@@ -180,7 +187,7 @@ class TextNode extends shared_1.ChildNode {
         }
         return columns;
     }
-    constructor(content, typesetter, style) {
+    constructor(content, font_handler, style) {
         super(style);
         style = style ?? {};
         let color = style.color ?? "transparent";
@@ -188,12 +195,15 @@ class TextNode extends shared_1.ChildNode {
         if (columns < 1 || !Number.isInteger(columns)) {
             throw new Error();
         }
+        let font_family = style.font_family ?? "sans-serif";
         let font_size = style.font_size ?? 1;
         if (font_size < 1) {
             throw new Error();
         }
+        let font_style = style.font_style ?? "normal";
+        let font_weight = style.font_weight ?? "normal";
         let gutter = style.gutter ?? 0;
-        if (gutter < 0) {
+        if (!shared_1.Length.isValid(gutter)) {
             throw new Error();
         }
         let letter_spacing = style.letter_spacing ?? 0;
@@ -216,7 +226,9 @@ class TextNode extends shared_1.ChildNode {
         if (word_spacing < 0) {
             throw new Error();
         }
+        let typesetter = font_handler.getTypesetter(font_family, font_style, font_weight);
         this.content = content;
+        this.type_id = font_handler.getTypeId(typesetter);
         this.typesetter = typesetter.withOptions({
             letter_spacing: letter_spacing / font_size,
             word_spacing: word_spacing / font_size
@@ -224,7 +236,10 @@ class TextNode extends shared_1.ChildNode {
         this.style = {
             color,
             columns,
+            font_family,
             font_size,
+            font_style,
+            font_weight,
             gutter,
             letter_spacing,
             line_anchor,
@@ -236,11 +251,13 @@ class TextNode extends shared_1.ChildNode {
             word_spacing
         };
     }
-    createSegments(segment_size, segment_left, target_size) {
+    createSegments(segment_size, segment_left, target_size, options) {
         if (target_size == null) {
             target_size = shared_1.Node.getTargetSize(this, segment_size);
         }
+        options = options ?? {};
         segment_left = this.getSegmentLeft(segment_left);
+        let gutter = shared_1.Length.getComputedLength(this.style.gutter, target_size.w);
         let target_column_width = this.getColumnWidth(target_size);
         let segments = [];
         let current_segment = {
@@ -250,8 +267,8 @@ class TextNode extends shared_1.ChildNode {
             },
             atoms: []
         };
-        let columns = this.createColumnSegments(segment_size, segment_left, target_size);
-        let gap = 0;
+        let columns = this.createColumnSegments(segment_size, segment_left, target_size, options);
+        let current_gap = 0;
         for (let column of columns) {
             if (current_segment.atoms.length < this.style.columns) {
             }
@@ -267,28 +284,29 @@ class TextNode extends shared_1.ChildNode {
                     };
                 }
                 segment_left = { ...segment_size };
-                gap = 0;
+                current_gap = 0;
             }
             column.size.w = Number.isFinite(target_column_width) ? target_column_width : column.size.w;
             let positioned_column = {
                 ...column,
                 position: {
-                    x: current_segment.size.w + gap,
+                    x: current_segment.size.w + current_gap,
                     y: 0
                 }
             };
             current_segment.atoms.push(positioned_column);
             current_segment.size.w = Math.max(current_segment.size.w, positioned_column.position.x + positioned_column.size.w);
             current_segment.size.h = Math.max(current_segment.size.h, positioned_column.position.y + positioned_column.size.h);
-            gap = this.style.gutter;
+            current_gap = gutter;
         }
         segments.push(current_segment);
         for (let segment of segments) {
-            this.constrainSegmentSize(segment.size, target_size);
+            shared_1.Size.constrain(segment.size, target_size);
         }
         for (let segment of segments) {
-            segment.prefix = this.createPrefixCommands(segment.size);
-            segment.suffix = this.createSuffixCommands(segment.size);
+            let path = shared_1.Path.createRectangle(segment.size);
+            segment.prefix = this.createPrefixCommands(path);
+            segment.suffix = this.createSuffixCommands(path);
         }
         return segments;
     }

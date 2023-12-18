@@ -1,5 +1,4 @@
 import { Tokenizer } from "./tokenization";
-export * as tokenization from "./tokenization";
 export declare const PDFTokenizer: {
     create(): Tokenizer<{
         null: RegExp;
@@ -238,6 +237,7 @@ export declare class PDFObject extends PDFEntity {
     readonly generation: PDFInteger;
     readonly value: PDFType;
     constructor(id: PDFInteger, generation: PDFInteger, value: PDFType);
+    getReference(): PDFReference;
     tokenize(): Array<string>;
     static parseFrom(parser: PDFParser): PDFObject;
 }
@@ -253,6 +253,7 @@ export declare class PDFStreamObject extends PDFEntity {
     readonly properties: PDFRecord;
     readonly stream: PDFStream;
     constructor(id: PDFInteger, generation: PDFInteger, properties: PDFRecord, stream: PDFStream);
+    getReference(): PDFReference;
     tokenize(): Array<string>;
     static parseFrom(parser: PDFParser): PDFStreamObject;
 }

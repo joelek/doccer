@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Typesetter = exports.parseTrueTypeData = void 0;
+exports.FontHandler = exports.Typesetter = exports.parseTrueTypeData = void 0;
 function parseHeaderData(buffer) {
     let dw = new DataView(buffer);
     let o = 0;
@@ -140,6 +140,17 @@ function parseCmapData(buffer) {
             else {
                 throw new Error(`Expected a supported subtable format!`);
             }
+        }
+        let map = new Map();
+        for (let mapping of mappings) {
+            map.set(mapping.code_point, mapping.index);
+        }
+        mappings = [];
+        for (let [code_point, index] of map.entries()) {
+            mappings.push({
+                code_point,
+                index
+            });
         }
         return {
             version: 0x0000,
@@ -692,7 +703,7 @@ class Typesetter {
     widths;
     fallback_width;
     kernings;
-    boxes;
+    glyph_data;
     fallback_box;
     options;
     getKerning(prefix, suffix) {
@@ -731,11 +742,11 @@ class Typesetter {
     segmentIntoWords(string) {
         return Array.from(string.match(/\S+/g) ?? []);
     }
-    constructor(widths, fallback_width, kernings, boxes, fallback_box, options) {
+    constructor(widths, fallback_width, kernings, glyph_data, fallback_box, options) {
         this.widths = widths;
         this.fallback_width = fallback_width;
         this.kernings = kernings ?? new Map();
-        this.boxes = boxes ?? new Map();
+        this.glyph_data = glyph_data ?? new Map();
         this.fallback_box = fallback_box ?? {
             x_min: 0,
             y_min: 0,
@@ -816,7 +827,19 @@ class Typesetter {
         ];
     }
     getCharacterBox(character) {
-        return this.boxes.get(character) ?? this.fallback_box;
+        return this.glyph_data.get(character)?.box ?? this.fallback_box;
+    }
+    getGlyphIndexArray(string) {
+        let bytes = [];
+        let characters = this.segmentIntoCharacters(string);
+        for (let character of characters) {
+            let index = this.glyph_data.get(character)?.index ?? 0;
+            let hi = (index >> 8) & 0xFF;
+            let lo = (index >> 0) & 0xFF;
+            bytes.push(hi);
+            bytes.push(lo);
+        }
+        return Uint8Array.from(bytes);
     }
     measureString(string) {
         let characters = this.segmentIntoCharacters(string);
@@ -832,7 +855,7 @@ class Typesetter {
         return total_width;
     }
     withOptions(options) {
-        return new Typesetter(this.widths, this.fallback_width, this.kernings, this.boxes, this.fallback_box, options);
+        return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, options);
     }
     wrapString(string, target_width) {
         string = string.trim().replaceAll(/\s+/g, " ");
@@ -902,17 +925,21 @@ class Typesetter {
     static createFromFont(font) {
         let widths = new Map();
         let kernings = new Map();
-        let boxes = new Map();
+        let glyph_data = new Map();
         for (let { code_point, index } of font.cmap.mappings) {
             let metrics = font.hmtx.metrics[index];
             let key = String.fromCodePoint(code_point);
             let glyph = font.glyf.glyphs[index];
             widths.set(key, metrics.advance_width / font.head.units_per_em);
-            boxes.set(key, {
+            let box = {
                 x_min: glyph.x_min / font.head.units_per_em,
                 y_min: glyph.y_min / font.head.units_per_em,
                 x_max: glyph.x_max / font.head.units_per_em,
                 y_max: glyph.y_max / font.head.units_per_em,
+            };
+            glyph_data.set(key, {
+                index,
+                box
             });
         }
         let fallback_width = font.hmtx.metrics[0].advance_width / font.head.units_per_em;
@@ -923,8 +950,58 @@ class Typesetter {
             y_max: font.head.y_max / font.head.units_per_em,
         };
         // TODO: Parse kernings.
-        return new Typesetter(widths, fallback_width, kernings, boxes, fallback_box);
+        return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box);
     }
 }
 exports.Typesetter = Typesetter;
+;
+class FontHandler {
+    fonts;
+    constructor() {
+        this.fonts = new Array();
+    }
+    addTypesetter(family, style, weight, typesetter) {
+        this.fonts.push({
+            family,
+            style,
+            weight,
+            typesetter
+        });
+        return this;
+    }
+    [Symbol.iterator]() {
+        return this.fonts.entries();
+    }
+    getTypeId(typesetter) {
+        let index = this.fonts.findIndex((font) => {
+            if (font.typesetter !== typesetter) {
+                return;
+            }
+            return font;
+        });
+        if (index < 0) {
+            throw new Error();
+        }
+        return index;
+    }
+    getTypesetter(family, style, weight) {
+        let index = this.fonts.findIndex((font) => {
+            if (font.family !== family) {
+                return;
+            }
+            if (font.style !== style) {
+                return;
+            }
+            if (font.weight !== weight) {
+                return;
+            }
+            return font;
+        });
+        if (index < 0) {
+            throw new Error();
+        }
+        return this.fonts[index].typesetter;
+    }
+}
+exports.FontHandler = FontHandler;
 ;

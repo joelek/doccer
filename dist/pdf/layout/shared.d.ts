@@ -1,11 +1,44 @@
 import * as content from "../content";
+export type GrayscaleColor = {
+    i: number;
+};
+export type RGBColor = {
+    r: number;
+    g: number;
+    b: number;
+};
+export type CMYKColor = {
+    c: number;
+    m: number;
+    y: number;
+    k: number;
+};
+export type Color = GrayscaleColor | RGBColor | CMYKColor;
+export declare const Color: {
+    setFillColor(color: Color, context: content.Context): void;
+    setStrokeColor(color: Color, context: content.Context): void;
+};
 export type Position = {
     x: number;
     y: number;
 };
+export type PathSegment = [Position | 0, Position | 0, Position];
+export type Path = {
+    start: Position;
+    segments: Array<PathSegment>;
+    closed: boolean;
+};
+export declare const Path: {
+    append(path: Path, context: content.Context): void;
+    createRectangle(size: Size): Path;
+    createRoundedRectangle(size: Size, border_radius: number): Path;
+};
 export type Size = {
     w: number;
     h: number;
+};
+export declare const Size: {
+    constrain(intrinsic_size: Size, target_size?: Partial<Size>): void;
 };
 export type Rect = Position & Size;
 export declare const Rect: {
@@ -31,28 +64,35 @@ export declare const Atom: {
     getCommandsFromAtoms(atoms: Array<Atom>): Array<string>;
     getContentRect(atom: ParentAtom): Rect;
 };
-type Length = number | `${number}%` | "intrinsic" | "extrinsic";
-declare const Length: {
-    getComputedLength(length: Length, relative_to: number | undefined): number | undefined;
+export type Length = number | [number] | [number, "%"];
+export declare const Length: {
+    getComputedLength(length: Length, relative_to: number | undefined): number;
+    isValid(length: Length): boolean;
+};
+export type NodeLength = Length | [number, "fr"] | "intrinsic" | "extrinsic";
+export declare const NodeLength: {
+    getComputedLength(length: NodeLength, relative_to: number | undefined, fraction_length: number | undefined): number | undefined;
+    isFractional(length: NodeLength): length is [number, "fr"];
+};
+export type CreateSegmentsOptions = {
+    text_operand: "bytestring" | "string";
 };
 export type NodeStyle = {
-    height: Length;
+    height: NodeLength;
     overflow: "hidden" | "visible";
     segmentation: "auto" | "none";
-    width: Length;
+    width: NodeLength;
 };
 export declare abstract class Node {
     protected node_style: NodeStyle;
-    protected appendNodeShape(context: content.Context, size: Size): void;
-    protected createPrefixCommands(size: Size): Array<string>;
-    protected createSuffixCommands(size: Size): Array<string>;
+    protected createPrefixCommands(path: Path): Array<string>;
+    protected createSuffixCommands(path: Path): Array<string>;
     protected getSegmentLeft(segment_left: Size): Size;
-    protected constrainSegmentSize(intrinsic_size: Size, target_size?: Partial<Size>): void;
     constructor(style?: Partial<NodeStyle>);
-    abstract createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom>;
-    getHeight(): Length;
-    getWidth(): Length;
-    static getTargetSize(node: Node, parent_target_size?: Partial<Size>): Partial<Size>;
+    abstract createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom>;
+    getHeight(): NodeLength;
+    getWidth(): NodeLength;
+    static getTargetSize(node: Node, parent_target_size: Partial<Size>, fraction_size?: Partial<Size>): Partial<Size>;
 }
 export declare abstract class ChildNode extends Node {
     constructor(style?: Partial<NodeStyle>);
@@ -61,4 +101,3 @@ export declare abstract class ParentNode extends ChildNode {
     protected children: Array<ChildNode>;
     constructor(style?: Partial<NodeStyle>, ...children: Array<ChildNode>);
 }
-export {};

@@ -28,6 +28,11 @@ export declare class StringOperand extends Operand<string> {
     getToken(value: string): string;
 }
 export declare const STRING: StringOperand;
+export declare class BytestringOperand extends Operand<Uint8Array> {
+    constructor();
+    getToken(value: Uint8Array): string;
+}
+export declare const BYTESTRING: BytestringOperand;
 type Operands<A extends any[]> = {
     [B in keyof A]: Operand<A[B]>;
 };
@@ -36,4 +41,5 @@ export declare class UnionOperand<A extends any[]> extends Operand<A[number]> {
     constructor(...operands: Operands<A>);
     getToken(value: A[number]): string;
 }
+export declare const TEXT: UnionOperand<[string, Uint8Array]>;
 export {};

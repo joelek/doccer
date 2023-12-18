@@ -4,6 +4,22 @@ const wtf = require("@joelek/wtf");
 const shared_1 = require("./shared");
 const horizontal_1 = require("./horizontal");
 class MockNode extends shared_1.ChildNode {
+    constructor(style) {
+        super(style);
+    }
+    createSegments(segment_size, segment_left, target_size) {
+        return [
+            {
+                size: {
+                    w: target_size?.w ?? 0,
+                    h: target_size?.h ?? 0
+                }
+            }
+        ];
+    }
+}
+;
+class MockSegmentedNode extends shared_1.ChildNode {
     sizes;
     constructor(...sizes) {
         super();
@@ -40,9 +56,173 @@ class MockRemainingHeightNode extends shared_1.ChildNode {
     }
 }
 ;
-wtf.test(`HorizontalLayoutNode should create one segment when there are no children.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({});
-    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
+wtf.test(`HorizontalNode should support children with fractional widths.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ width: 10, gap: [1] }, new MockNode({ width: [1, "fr"] }), new MockNode({ width: [2] }), new MockNode({ width: [2, "fr"] }));
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 10,
+                "h": 0
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 2,
+                        "h": 0
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 2,
+                                "h": 0
+                            },
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ]
+                },
+                {
+                    "size": {
+                        "w": 2,
+                        "h": 0
+                    },
+                    "position": {
+                        "x": 3,
+                        "y": 0
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 2,
+                                "h": 0
+                            },
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ]
+                },
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 0
+                    },
+                    "position": {
+                        "x": 6,
+                        "y": 0
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 0
+                            },
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ]
+                }
+            ],
+            "prefix": [],
+            "suffix": []
+        }
+    ]);
+});
+wtf.test(`HorizontalNode should support children with fractional heights.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ height: 10, gap: [1] }, new MockNode({ height: [1, "fr"] }), new MockNode({ height: [2] }), new MockNode({ height: [2, "fr"] }));
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 2,
+                "h": 10
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 0,
+                        "h": 5
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 0,
+                                "h": 5
+                            },
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ]
+                },
+                {
+                    "size": {
+                        "w": 0,
+                        "h": 2
+                    },
+                    "position": {
+                        "x": 1,
+                        "y": 0
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 0,
+                                "h": 2
+                            },
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ]
+                },
+                {
+                    "size": {
+                        "w": 0,
+                        "h": 10
+                    },
+                    "position": {
+                        "x": 2,
+                        "y": 0
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 0,
+                                "h": 10
+                            },
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ]
+                }
+            ],
+            "prefix": [],
+            "suffix": []
+        }
+    ]);
+});
+wtf.test(`HorizontalNode should create one segment when there are no children.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({});
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
             "size": {
@@ -55,8 +235,8 @@ wtf.test(`HorizontalLayoutNode should create one segment when there are no child
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should provide each child with the size left in the current segment.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({}, new MockRemainingHeightNode());
+wtf.test(`HorizontalNode should provide each child with the size left in the current segment.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({}, new MockRemainingHeightNode());
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
     assert.equals(atoms, [
         {
@@ -93,8 +273,8 @@ wtf.test(`HorizontalLayoutNode should provide each child with the size left in t
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support height.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ height: 10 });
+wtf.test(`HorizontalNode should support height.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ height: 10 });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -108,8 +288,8 @@ wtf.test(`HorizontalLayoutNode should support height.`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support height "50%".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ height: "50%" });
+wtf.test(`HorizontalNode should support height "50%".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ height: [50, "%"] });
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -123,8 +303,8 @@ wtf.test(`HorizontalLayoutNode should support height "50%".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support height "extrinsic".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ height: "extrinsic" });
+wtf.test(`HorizontalNode should support height "extrinsic".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ height: "extrinsic" });
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -138,8 +318,8 @@ wtf.test(`HorizontalLayoutNode should support height "extrinsic".`, (assert) => 
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support height "intrinsic".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ height: "intrinsic" }, new MockNode({ w: 0, h: 10 }));
+wtf.test(`HorizontalNode should support height "intrinsic".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ height: "intrinsic" }, new MockSegmentedNode({ w: 0, h: 10 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -176,8 +356,8 @@ wtf.test(`HorizontalLayoutNode should support height "intrinsic".`, (assert) => 
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support overflow "hidden".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ overflow: "hidden" });
+wtf.test(`HorizontalNode should support overflow "hidden".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ overflow: "hidden" });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -187,7 +367,11 @@ wtf.test(`HorizontalLayoutNode should support overflow "hidden".`, (assert) => {
             },
             "atoms": [],
             "prefix": [
-                "0 0 0 0 re",
+                "0 0 m",
+                "0 0 l",
+                "0 0 l",
+                "0 0 l",
+                "h",
                 "W",
                 "n"
             ],
@@ -195,8 +379,8 @@ wtf.test(`HorizontalLayoutNode should support overflow "hidden".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support overflow "visible".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ overflow: "visible" });
+wtf.test(`HorizontalNode should support overflow "visible".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ overflow: "visible" });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -210,8 +394,8 @@ wtf.test(`HorizontalLayoutNode should support overflow "visible".`, (assert) => 
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support segmentation "auto".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ segmentation: "auto" }, new MockNode({ w: 1, h: 2 }), new MockNode({ w: 3, h: 2 }, { w: 5, h: 2 }));
+wtf.test(`HorizontalNode should support segmentation "auto".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ segmentation: "auto" }, new MockSegmentedNode({ w: 1, h: 2 }), new MockSegmentedNode({ w: 3, h: 2 }, { w: 5, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
     assert.equals(atoms, [
         {
@@ -313,8 +497,8 @@ wtf.test(`HorizontalLayoutNode should support segmentation "auto".`, (assert) =>
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support segmentation "none".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ segmentation: "none" }, new MockNode({ w: 0, h: 2 }), new MockNode({ w: 0, h: 2 }, { w: 0, h: 2 }));
+wtf.test(`HorizontalNode should support segmentation "none".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ segmentation: "none" }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }, { w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
     assert.equals(atoms, [
         {
@@ -383,8 +567,8 @@ wtf.test(`HorizontalLayoutNode should support segmentation "none".`, (assert) =>
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support width.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ width: 10 });
+wtf.test(`HorizontalNode should support width.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ width: 10 });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -398,8 +582,8 @@ wtf.test(`HorizontalLayoutNode should support width.`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support width "50%".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ width: "50%" });
+wtf.test(`HorizontalNode should support width "50%".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ width: [50, "%"] });
     let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -413,8 +597,8 @@ wtf.test(`HorizontalLayoutNode should support width "50%".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support width "extrinsic".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ width: "extrinsic" });
+wtf.test(`HorizontalNode should support width "extrinsic".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ width: "extrinsic" });
     let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -428,8 +612,8 @@ wtf.test(`HorizontalLayoutNode should support width "extrinsic".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support width "intrinsic".`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ width: "intrinsic" }, new MockNode({ w: 10, h: 0 }));
+wtf.test(`HorizontalNode should support width "intrinsic".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ width: "intrinsic" }, new MockSegmentedNode({ w: 10, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -466,8 +650,8 @@ wtf.test(`HorizontalLayoutNode should support width "intrinsic".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align x "left" when there is no horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_x: "left", width: 8 }, new MockNode({ w: 2, h: 0 }), new MockNode({ w: 2, h: 0 }));
+wtf.test(`HorizontalNode should support align x "left" when there is no horizontal overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_x: "left", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -526,8 +710,8 @@ wtf.test(`HorizontalLayoutNode should support align x "left" when there is no ho
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align x "left" when there is horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_x: "left", width: 8 }, new MockNode({ w: 2, h: 0 }), new MockNode({ w: 10, h: 0 }));
+wtf.test(`HorizontalNode should support align x "left" when there is horizontal overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_x: "left", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 10, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -586,8 +770,8 @@ wtf.test(`HorizontalLayoutNode should support align x "left" when there is horiz
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align x "center" when there is no horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_x: "center", width: 8 }, new MockNode({ w: 2, h: 0 }), new MockNode({ w: 2, h: 0 }));
+wtf.test(`HorizontalNode should support align x "center" when there is no horizontal overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_x: "center", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -646,8 +830,8 @@ wtf.test(`HorizontalLayoutNode should support align x "center" when there is no 
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align x "center" when there is horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_x: "center", width: 8 }, new MockNode({ w: 2, h: 0 }), new MockNode({ w: 10, h: 0 }));
+wtf.test(`HorizontalNode should support align x "center" when there is horizontal overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_x: "center", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 10, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -706,8 +890,8 @@ wtf.test(`HorizontalLayoutNode should support align x "center" when there is hor
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align x "right" when there is no horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_x: "right", width: 8 }, new MockNode({ w: 2, h: 0 }), new MockNode({ w: 2, h: 0 }));
+wtf.test(`HorizontalNode should support align x "right" when there is no horizontal overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_x: "right", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -766,8 +950,8 @@ wtf.test(`HorizontalLayoutNode should support align x "right" when there is no h
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align x "right" when there is horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_x: "right", width: 8 }, new MockNode({ w: 2, h: 0 }), new MockNode({ w: 10, h: 0 }));
+wtf.test(`HorizontalNode should support align x "right" when there is horizontal overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_x: "right", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 10, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -826,8 +1010,8 @@ wtf.test(`HorizontalLayoutNode should support align x "right" when there is hori
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align y "top" when there is no vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_y: "top", height: 8 }, new MockNode({ w: 0, h: 2 }), new MockNode({ w: 0, h: 2 }));
+wtf.test(`HorizontalNode should support align y "top" when there is no vertical overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_y: "top", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -886,8 +1070,8 @@ wtf.test(`HorizontalLayoutNode should support align y "top" when there is no ver
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align y "top" when there is vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_y: "top", height: 8 }, new MockNode({ w: 0, h: 2 }), new MockNode({ w: 0, h: 10 }));
+wtf.test(`HorizontalNode should support align y "top" when there is vertical overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_y: "top", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 10 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -946,8 +1130,8 @@ wtf.test(`HorizontalLayoutNode should support align y "top" when there is vertic
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align y "middle" when there is no vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_y: "middle", height: 8 }, new MockNode({ w: 0, h: 2 }), new MockNode({ w: 0, h: 2 }));
+wtf.test(`HorizontalNode should support align y "middle" when there is no vertical overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_y: "middle", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1006,8 +1190,8 @@ wtf.test(`HorizontalLayoutNode should support align y "middle" when there is no 
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align y "middle" when there is vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_y: "middle", height: 8 }, new MockNode({ w: 0, h: 2 }), new MockNode({ w: 0, h: 10 }));
+wtf.test(`HorizontalNode should support align y "middle" when there is vertical overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_y: "middle", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 10 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1066,8 +1250,8 @@ wtf.test(`HorizontalLayoutNode should support align y "middle" when there is ver
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align y "bottom" when there is no vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_y: "bottom", height: 8 }, new MockNode({ w: 0, h: 2 }), new MockNode({ w: 0, h: 2 }));
+wtf.test(`HorizontalNode should support align y "bottom" when there is no vertical overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_y: "bottom", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1126,8 +1310,8 @@ wtf.test(`HorizontalLayoutNode should support align y "bottom" when there is no 
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support align y "bottom" when there is vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ align_y: "bottom", height: 8 }, new MockNode({ w: 0, h: 2 }), new MockNode({ w: 0, h: 10 }));
+wtf.test(`HorizontalNode should support align y "bottom" when there is vertical overflow.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ align_y: "bottom", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 10 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1186,8 +1370,8 @@ wtf.test(`HorizontalLayoutNode should support align y "bottom" when there is ver
         }
     ]);
 });
-wtf.test(`HorizontalLayoutNode should support gap.`, (assert) => {
-    let node = new horizontal_1.HorizontalLayoutNode({ gap: 1 }, new MockNode({ w: 2, h: 0 }), new MockNode({ w: 2, h: 0 }));
+wtf.test(`HorizontalNode should support gap.`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ gap: [1] }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1225,6 +1409,66 @@ wtf.test(`HorizontalLayoutNode should support gap.`, (assert) => {
                     },
                     "position": {
                         "x": 3,
+                        "y": 0
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 2,
+                                "h": 0
+                            },
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ]
+                }
+            ],
+            "prefix": [],
+            "suffix": []
+        }
+    ]);
+});
+wtf.test(`HorizontalNode should support gap "20%".`, (assert) => {
+    let node = new horizontal_1.HorizontalNode({ gap: [20, "%"], width: 50 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 50,
+                "h": 0
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 2,
+                        "h": 0
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 2,
+                                "h": 0
+                            },
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ]
+                },
+                {
+                    "size": {
+                        "w": 2,
+                        "h": 0
+                    },
+                    "position": {
+                        "x": 12,
                         "y": 0
                     },
                     "atoms": [

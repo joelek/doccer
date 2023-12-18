@@ -220,12 +220,12 @@ exports.COMMANDS = [
     },
     {
         type: "showText",
-        operands: [operands_1.STRING],
+        operands: [operands_1.TEXT],
         operator: "Tj"
     },
     {
         type: "showTexts",
-        operands: [new operands_1.ArrayOperand(new operands_1.UnionOperand(operands_1.STRING, operands_1.REAL))],
+        operands: [new operands_1.ArrayOperand(new operands_1.UnionOperand(operands_1.TEXT, operands_1.REAL))],
         operator: "TJ"
     },
     {
@@ -285,12 +285,12 @@ exports.COMMANDS = [
     },
     {
         type: "moveToNextLineAndShowText",
-        operands: [operands_1.STRING],
+        operands: [operands_1.TEXT],
         operator: "'"
     },
     {
         type: "setWordAndCharacterSpacingMoveToNextLineAndShowText",
-        operands: [operands_1.REAL, operands_1.REAL, operands_1.STRING],
+        operands: [operands_1.REAL, operands_1.REAL, operands_1.TEXT],
         operator: "''"
     }
 ];

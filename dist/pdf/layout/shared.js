@@ -1,7 +1,127 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ParentNode = exports.ChildNode = exports.Node = exports.Atom = exports.Rect = void 0;
+exports.ParentNode = exports.ChildNode = exports.Node = exports.NodeLength = exports.Length = exports.Atom = exports.Rect = exports.Size = exports.Path = exports.Color = void 0;
 const content = require("../content");
+exports.Color = {
+    setFillColor(color, context) {
+        if ("i" in color) {
+            context.setFillColorGrayscale(color.i);
+        }
+        else if ("r" in color && "g" in color && "b" in color) {
+            context.setfillColorRGB(color.r, color.g, color.b);
+        }
+        else if ("c" in color && "m" in color && "y" in color && "k" in color) {
+            context.setFillColorCMYK(color.c, color.m, color.y, color.k);
+        }
+    },
+    setStrokeColor(color, context) {
+        if ("i" in color) {
+            context.setStrokeColorGrayscale(color.i);
+        }
+        else if ("r" in color && "g" in color && "b" in color) {
+            context.setStrokeColorRGB(color.r, color.g, color.b);
+        }
+        else if ("c" in color && "m" in color && "y" in color && "k" in color) {
+            context.setStrokeColorCMYK(color.c, color.m, color.y, color.k);
+        }
+    }
+};
+exports.Path = {
+    append(path, context) {
+        context.beginNewSubpath(path.start.x, path.start.y);
+        for (let [cp0, cp1, ep] of path.segments) {
+            if (cp0 === 0) {
+                if (cp1 === 0) {
+                    context.appendLineSegment(ep.x, ep.y);
+                }
+                else {
+                    context.appendCubicBezierCurveWithReplicatedInitalPoint(cp1.x, cp1.y, ep.x, ep.y);
+                }
+            }
+            else {
+                if (cp1 === 0) {
+                    context.appendCubicBezierCurveWithReplicatedFinalPoint(cp0.x, cp0.y, ep.x, ep.y);
+                }
+                else {
+                    context.appendCubicBezierCurve(cp0.x, cp0.y, cp1.x, cp1.y, ep.x, ep.y);
+                }
+            }
+        }
+        if (path.closed) {
+            context.closeSubpath();
+        }
+    },
+    createRectangle(size) {
+        let x1 = 0;
+        let x2 = size.w;
+        let y1 = 0;
+        let y2 = 0 - size.h;
+        let path = {
+            start: {
+                x: x1,
+                y: y1
+            },
+            segments: [
+                [0, 0, { x: x1, y: y2 }],
+                [0, 0, { x: x2, y: y2 }],
+                [0, 0, { x: x2, y: y1 }]
+            ],
+            closed: true
+        };
+        return path;
+    },
+    createRoundedRectangle(size, border_radius) {
+        border_radius = Math.min(border_radius, size.h * 0.5);
+        border_radius = Math.min(border_radius, size.w * 0.5);
+        if (border_radius === 0) {
+            return this.createRectangle(size);
+        }
+        let f = (Math.SQRT2 - 1) * 4 / 3;
+        let c1 = border_radius * f;
+        let c2 = border_radius - c1;
+        let x1 = 0;
+        let x2 = c2;
+        let x3 = border_radius;
+        let x4 = (size.w - border_radius);
+        let x5 = (size.w - c2);
+        let x6 = size.w;
+        let y1 = 0 - 0;
+        let y2 = 0 - c2;
+        let y3 = 0 - border_radius;
+        let y4 = 0 - (size.h - border_radius);
+        let y5 = 0 - (size.h - c2);
+        let y6 = 0 - size.h;
+        let path = {
+            start: {
+                x: x1,
+                y: y4
+            },
+            segments: [
+                [{ x: x1, y: y5 }, { x: x2, y: y6 }, { x: x3, y: y6 }],
+                [0, 0, { x: x4, y: y6 }],
+                [{ x: x5, y: y6 }, { x: x6, y: y5 }, { x: x6, y: y4 }],
+                [0, 0, { x: x6, y: y3 }],
+                [{ x: x6, y: y2 }, { x: x5, y: y1 }, { x: x4, y: y1 }],
+                [0, 0, { x: x3, y: y1 }],
+                [{ x: x2, y: y1 }, { x: x1, y: y2 }, { x: x1, y: y3 }]
+            ],
+            closed: true
+        };
+        return path;
+    }
+};
+exports.Size = {
+    constrain(intrinsic_size, target_size) {
+        if (target_size != null) {
+            if (target_size.w != null) {
+                intrinsic_size.w = target_size.w;
+            }
+            if (target_size.h != null) {
+                intrinsic_size.h = target_size.h;
+            }
+        }
+    }
+};
 exports.Rect = {
     getUnion(one, two) {
         let x = Math.min(one.x, two.x);
@@ -21,7 +141,7 @@ exports.Atom = {
         let context = content.createContext();
         context.saveGraphicsState();
         if (atom.position != null && (atom.position.x !== 0 || atom.position.y !== 0)) {
-            context.concatenateMatrix(1, 0, 0, 1, atom.position.x, atom.position.y);
+            context.concatenateMatrix(1, 0, 0, 1, atom.position.x, 0 - atom.position.y);
         }
         return context.getCommands();
     },
@@ -75,8 +195,34 @@ exports.Atom = {
         }
     }
 };
-const Length = {
+exports.Length = {
     getComputedLength(length, relative_to) {
+        if (typeof length === "number") {
+            return length;
+        }
+        else {
+            if (length[1] === "%") {
+                if (relative_to == null) {
+                    throw new Error(`Unexpected relative length within intrinsic length!`);
+                }
+                return length[0] * 0.01 * relative_to;
+            }
+            else {
+                return length[0];
+            }
+        }
+    },
+    isValid(length) {
+        if (typeof length === "number") {
+            return length >= 0;
+        }
+        else {
+            return length[0] >= 0;
+        }
+    }
+};
+exports.NodeLength = {
+    getComputedLength(length, relative_to, fraction_length) {
         if (length === "intrinsic") {
             return;
         }
@@ -86,36 +232,30 @@ const Length = {
             }
             return relative_to;
         }
-        if (typeof length === "string") {
-            if (relative_to == null) {
-                throw new Error(`Unexpected relative length within intrinsic length!`);
+        if (Array.isArray(length) && length[1] === "fr") {
+            if (fraction_length == null) {
+                throw new Error(`Unexpected fractional length within intrinsic length!`);
             }
-            return Math.max(0, Number.parseFloat(length.slice(0, -1))) * 0.01 * relative_to;
+            return length[0] * fraction_length;
         }
-        return length;
+        return exports.Length.getComputedLength(length, relative_to);
+    },
+    isFractional(length) {
+        return Array.isArray(length) && length[1] === "fr";
     }
 };
 class Node {
     node_style;
-    appendNodeShape(context, size) {
-        let rect = {
-            x: 0,
-            y: 0,
-            w: size.w,
-            h: size.h
-        };
-        context.appendRectangle(rect.x, 0 - rect.y - rect.h, rect.w, rect.h);
-    }
-    createPrefixCommands(size) {
+    createPrefixCommands(path) {
         let context = content.createContext();
         if (this.node_style.overflow === "hidden") {
-            this.appendNodeShape(context, size);
+            exports.Path.append(path, context);
             context.setClippingPathUsingNonZeroWindingNumberRule();
             context.endPath();
         }
         return context.getCommands();
     }
-    createSuffixCommands(size) {
+    createSuffixCommands(path) {
         let context = content.createContext();
         return context.getCommands();
     }
@@ -130,16 +270,6 @@ class Node {
             };
         }
         ;
-    }
-    constrainSegmentSize(intrinsic_size, target_size) {
-        if (target_size != null) {
-            if (target_size.w != null) {
-                intrinsic_size.w = target_size.w;
-            }
-            if (target_size.h != null) {
-                intrinsic_size.h = target_size.h;
-            }
-        }
     }
     constructor(style) {
         style = style ?? {};
@@ -163,9 +293,9 @@ class Node {
     getWidth() {
         return this.node_style.width;
     }
-    static getTargetSize(node, parent_target_size) {
-        let w = Length.getComputedLength(node.getWidth(), parent_target_size?.w);
-        let h = Length.getComputedLength(node.getHeight(), parent_target_size?.h);
+    static getTargetSize(node, parent_target_size, fraction_size) {
+        let w = exports.NodeLength.getComputedLength(node.getWidth(), parent_target_size.w, fraction_size?.w);
+        let h = exports.NodeLength.getComputedLength(node.getHeight(), parent_target_size.h, fraction_size?.h);
         return {
             w,
             h

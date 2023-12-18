@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UnionOperand = exports.STRING = exports.StringOperand = exports.NAME = exports.NameOperand = exports.REAL_ARRAY = exports.ArrayOperand = exports.REAL = exports.RealOperand = exports.INTEGER = exports.IntegerOperand = exports.Operand = void 0;
+exports.TEXT = exports.UnionOperand = exports.BYTESTRING = exports.BytestringOperand = exports.STRING = exports.StringOperand = exports.NAME = exports.NameOperand = exports.REAL_ARRAY = exports.ArrayOperand = exports.REAL = exports.RealOperand = exports.INTEGER = exports.IntegerOperand = exports.Operand = void 0;
 const format_1 = require("../format");
 class Operand {
     constructor() { }
@@ -12,6 +12,9 @@ class IntegerOperand extends Operand {
         super();
     }
     getToken(value) {
+        if (typeof value !== "number") {
+            throw new Error();
+        }
         return new format_1.PDFInteger(value).tokenize().join(" ");
     }
 }
@@ -23,6 +26,9 @@ class RealOperand extends Operand {
         super();
     }
     getToken(value) {
+        if (typeof value !== "number") {
+            throw new Error();
+        }
         return new format_1.PDFReal(Number.parseFloat(value.toFixed(3))).tokenize().join(" ");
     }
 }
@@ -36,6 +42,9 @@ class ArrayOperand extends Operand {
         this.operand = operand;
     }
     getToken(value) {
+        if (!Array.isArray(value)) {
+            throw new Error();
+        }
         return "[" + value.map((value) => this.operand.getToken(value)).join(" ") + "]";
     }
 }
@@ -47,6 +56,9 @@ class NameOperand extends Operand {
         super();
     }
     getToken(value) {
+        if (typeof value !== "string") {
+            throw new Error();
+        }
         return new format_1.PDFName(value).tokenize().join(" ");
     }
 }
@@ -58,12 +70,29 @@ class StringOperand extends Operand {
         super();
     }
     getToken(value) {
+        if (typeof value !== "string") {
+            throw new Error();
+        }
         return new format_1.PDFString(value).tokenize().join(" ");
     }
 }
 exports.StringOperand = StringOperand;
 ;
 exports.STRING = new StringOperand();
+class BytestringOperand extends Operand {
+    constructor() {
+        super();
+    }
+    getToken(value) {
+        if (!(value instanceof Uint8Array)) {
+            throw new Error();
+        }
+        return new format_1.PDFBytestring(value).tokenize().join(" ");
+    }
+}
+exports.BytestringOperand = BytestringOperand;
+;
+exports.BYTESTRING = new BytestringOperand();
 class UnionOperand extends Operand {
     operands;
     constructor(...operands) {
@@ -82,3 +111,4 @@ class UnionOperand extends Operand {
 }
 exports.UnionOperand = UnionOperand;
 ;
+exports.TEXT = new UnionOperand(exports.STRING, exports.BYTESTRING);

@@ -1,23 +1,41 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HorizontalLayoutNode = void 0;
+exports.HorizontalNode = void 0;
 const content = require("../content");
 const shared_1 = require("./shared");
-class HorizontalLayoutNode extends shared_1.ParentNode {
+class HorizontalNode extends shared_1.ParentNode {
     style;
-    createPrefixCommands(size) {
+    createPrefixCommands(path) {
         let context = content.createContext();
         return [
-            ...super.createPrefixCommands(size),
+            ...super.createPrefixCommands(path),
             ...context.getCommands()
         ];
     }
-    createSuffixCommands(size) {
+    createSuffixCommands(path) {
         let context = content.createContext();
         return [
             ...context.getCommands(),
-            ...super.createSuffixCommands(size)
+            ...super.createSuffixCommands(path)
         ];
+    }
+    getFractions() {
+        let w = 0;
+        let h = 0;
+        for (let child of this.children) {
+            let width = child.getWidth();
+            if (shared_1.NodeLength.isFractional(width)) {
+                w = w + width[0];
+            }
+            let height = child.getHeight();
+            if (shared_1.NodeLength.isFractional(height)) {
+                h = Math.max(h, height[0]);
+            }
+        }
+        return {
+            w,
+            h
+        };
     }
     constructor(style, ...children) {
         super(style, ...children);
@@ -25,7 +43,7 @@ class HorizontalLayoutNode extends shared_1.ParentNode {
         let align_x = style.align_x ?? "left";
         let align_y = style.align_y ?? "top";
         let gap = style.gap ?? 0;
-        if (gap < 0) {
+        if (!shared_1.Length.isValid(gap)) {
             throw new Error();
         }
         this.style = {
@@ -34,11 +52,12 @@ class HorizontalLayoutNode extends shared_1.ParentNode {
             gap
         };
     }
-    createSegments(segment_size, segment_left, target_size) {
+    createSegments(segment_size, segment_left, target_size, options) {
         if (target_size == null) {
             target_size = shared_1.Node.getTargetSize(this, segment_size);
         }
         segment_left = this.getSegmentLeft(segment_left);
+        let gap = shared_1.Length.getComputedLength(this.style.gap, target_size.w);
         let content_segment_size = {
             w: 0,
             h: Math.max(0, segment_size.h)
@@ -52,8 +71,24 @@ class HorizontalLayoutNode extends shared_1.ParentNode {
             h: target_size.h == null ? undefined : Math.max(0, target_size.h)
         };
         let column_rows = [];
+        let column_widths = [];
         let max_column_rows = 0;
-        for (let child of this.children) {
+        let fraction_size = {
+            w: content_target_size.w,
+            h: content_target_size.h
+        };
+        if (fraction_size.w != null) {
+            fraction_size.w = Math.max(0, fraction_size.w - Math.max(0, this.children.length - 1) * gap);
+        }
+        let fractions = this.getFractions();
+        if (fraction_size.h != null) {
+            fraction_size.h /= fractions.h;
+        }
+        for (let [index, child] of this.children.entries()) {
+            let width = child.getWidth();
+            if (shared_1.NodeLength.isFractional(width)) {
+                continue;
+            }
             let child_segment_size = {
                 w: 0,
                 h: content_segment_size.h
@@ -62,15 +97,38 @@ class HorizontalLayoutNode extends shared_1.ParentNode {
                 w: 0,
                 h: content_segment_left.h
             };
-            let child_target_size = shared_1.Node.getTargetSize(child, content_target_size);
-            let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size);
-            column_rows.push(rows);
+            let child_target_size = shared_1.Node.getTargetSize(child, content_target_size, fraction_size);
+            let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size, options);
+            column_rows[index] = rows;
+            let column_width = rows.reduce((max, row) => Math.max(max, row.size.w), 0);
+            column_widths[index] = column_width;
+            if (fraction_size.w != null) {
+                fraction_size.w = Math.max(0, fraction_size.w - column_width);
+            }
             max_column_rows = Math.max(max_column_rows, rows.length);
         }
-        let column_widths = [];
-        for (let column_row of column_rows) {
-            let column_width = column_row.reduce((max, row) => Math.max(max, row.size.w), 0);
-            column_widths.push(column_width);
+        if (fraction_size.w != null) {
+            fraction_size.w /= fractions.w;
+        }
+        for (let [index, child] of this.children.entries()) {
+            let width = child.getWidth();
+            if (!shared_1.NodeLength.isFractional(width)) {
+                continue;
+            }
+            let child_segment_size = {
+                w: 0,
+                h: content_segment_size.h
+            };
+            let child_segment_left = {
+                w: 0,
+                h: content_segment_left.h
+            };
+            let child_target_size = shared_1.Node.getTargetSize(child, content_target_size, fraction_size);
+            let rows = child.createSegments(child_segment_size, child_segment_left, child_target_size, options);
+            column_rows[index] = rows;
+            max_column_rows = Math.max(max_column_rows, rows.length);
+            let column_width = rows.reduce((max, row) => Math.max(max, row.size.w), 0);
+            column_widths[index] = column_width;
         }
         let rows = [];
         if (this.node_style.segmentation === "auto") {
@@ -104,9 +162,8 @@ class HorizontalLayoutNode extends shared_1.ParentNode {
                     atoms: []
                 };
             }
-            let gap = 0;
-            let index = 0;
-            for (let column_rows of columns) {
+            let current_gap = 0;
+            for (let [index, column_rows] of columns.entries()) {
                 let column_width = column_widths[index];
                 let column = {
                     size: {
@@ -114,7 +171,7 @@ class HorizontalLayoutNode extends shared_1.ParentNode {
                         h: 0
                     },
                     position: {
-                        x: current_segment.size.w + gap,
+                        x: current_segment.size.w + current_gap,
                         y: 0
                     },
                     atoms: []
@@ -134,13 +191,12 @@ class HorizontalLayoutNode extends shared_1.ParentNode {
                 current_segment.atoms.push(column);
                 current_segment.size.w = Math.max(current_segment.size.w, column.position.x + column.size.w);
                 current_segment.size.h = Math.max(current_segment.size.h, column.position.y + column.size.h);
-                gap = this.style.gap;
-                index += 1;
+                current_gap = gap;
             }
         }
         segments.push(current_segment);
         for (let segment of segments) {
-            this.constrainSegmentSize(segment.size, content_target_size);
+            shared_1.Size.constrain(segment.size, content_target_size);
         }
         if (this.style.align_x === "center") {
             for (let segment of segments) {
@@ -175,11 +231,12 @@ class HorizontalLayoutNode extends shared_1.ParentNode {
             }
         }
         for (let segment of segments) {
-            segment.prefix = this.createPrefixCommands(segment.size);
-            segment.suffix = this.createSuffixCommands(segment.size);
+            let path = shared_1.Path.createRectangle(segment.size);
+            segment.prefix = this.createPrefixCommands(path);
+            segment.suffix = this.createSuffixCommands(path);
         }
         return segments;
     }
 }
-exports.HorizontalLayoutNode = HorizontalLayoutNode;
+exports.HorizontalNode = HorizontalNode;
 ;

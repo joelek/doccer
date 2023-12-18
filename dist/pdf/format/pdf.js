@@ -1,10 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PDFFile = exports.PDFStreamObject = exports.PDFStream = exports.PDFObject = exports.PDFArray = exports.PDFReal = exports.PDFInteger = exports.PDFTrue = exports.PDFFalse = exports.PDFVersion = exports.PDFNull = exports.PDFReference = exports.PDFRecord = exports.PDFRecordMember = exports.PDFName = exports.PDFDate = exports.PDFString = exports.PDFBytestring = exports.PDFType = exports.PDFEntity = exports.PDFParser = exports.PDFTokenizer = exports.tokenization = void 0;
+exports.PDFFile = exports.PDFStreamObject = exports.PDFStream = exports.PDFObject = exports.PDFArray = exports.PDFReal = exports.PDFInteger = exports.PDFTrue = exports.PDFFalse = exports.PDFVersion = exports.PDFNull = exports.PDFReference = exports.PDFRecord = exports.PDFRecordMember = exports.PDFName = exports.PDFDate = exports.PDFString = exports.PDFBytestring = exports.PDFType = exports.PDFEntity = exports.PDFParser = exports.PDFTokenizer = void 0;
 const tokenization_1 = require("./tokenization");
 const utils_1 = require("./utils");
 const codepages = require("../codepages");
-exports.tokenization = require("./tokenization");
 exports.PDFTokenizer = {
     create() {
         return new tokenization_1.Tokenizer({
@@ -519,6 +518,9 @@ class PDFObject extends PDFEntity {
         this.generation = generation;
         this.value = value;
     }
+    getReference() {
+        return new PDFReference(this.id, this.generation);
+    }
     tokenize() {
         let lines = [];
         lines.push(`${this.id.tokenize().join(" ")} ${this.generation.tokenize().join(" ")} obj`);
@@ -578,6 +580,9 @@ class PDFStreamObject extends PDFEntity {
         this.generation = generation;
         this.properties = properties;
         this.stream = stream;
+    }
+    getReference() {
+        return new PDFReference(this.id, this.generation);
     }
     tokenize() {
         let lines = [];

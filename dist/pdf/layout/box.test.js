@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const wtf = require("@joelek/wtf");
 const shared_1 = require("./shared");
 const box_1 = require("./box");
-class MockNode extends shared_1.ChildNode {
+class MockSegmentedNode extends shared_1.ChildNode {
     sizes;
     constructor(...sizes) {
         super();
@@ -24,6 +24,22 @@ class MockNode extends shared_1.ChildNode {
     }
 }
 ;
+class MockNode extends shared_1.ChildNode {
+    constructor(style) {
+        super(style);
+    }
+    createSegments(segment_size, segment_left, target_size) {
+        return [
+            {
+                size: {
+                    w: target_size?.w ?? 0,
+                    h: target_size?.h ?? 0
+                }
+            }
+        ];
+    }
+}
+;
 wtf.test(`BoxNode should support height.`, (assert) => {
     let node = new box_1.BoxNode({ height: 10 });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
@@ -40,7 +56,7 @@ wtf.test(`BoxNode should support height.`, (assert) => {
     ]);
 });
 wtf.test(`BoxNode should support height "50%".`, (assert) => {
-    let node = new box_1.BoxNode({ height: "50%" });
+    let node = new box_1.BoxNode({ height: [50, "%"] });
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -70,7 +86,7 @@ wtf.test(`BoxNode should support height "extrinsic".`, (assert) => {
     ]);
 });
 wtf.test(`BoxNode should support height "intrinsic".`, (assert) => {
-    let node = new box_1.BoxNode({ height: "intrinsic" }, new MockNode({ w: 0, h: 10 }));
+    let node = new box_1.BoxNode({ height: "intrinsic" }, new MockSegmentedNode({ w: 0, h: 10 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -106,7 +122,11 @@ wtf.test(`BoxNode should support overflow "hidden".`, (assert) => {
             },
             "atoms": [],
             "prefix": [
-                "0 0 0 0 re",
+                "0 0 m",
+                "0 0 l",
+                "0 0 l",
+                "0 0 l",
+                "h",
                 "W",
                 "n"
             ],
@@ -130,7 +150,7 @@ wtf.test(`BoxNode should support overflow "visible".`, (assert) => {
     ]);
 });
 wtf.test(`BoxNode should support segmentation "auto".`, (assert) => {
-    let node = new box_1.BoxNode({ segmentation: "auto" }, new MockNode({ w: 0, h: 2 }), new MockNode({ w: 0, h: 2 }));
+    let node = new box_1.BoxNode({ segmentation: "auto" }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
     assert.equals(atoms, [
         {
@@ -176,7 +196,7 @@ wtf.test(`BoxNode should support segmentation "auto".`, (assert) => {
     ]);
 });
 wtf.test(`BoxNode should support segmentation "none".`, (assert) => {
-    let node = new box_1.BoxNode({ segmentation: "none" }, new MockNode({ w: 0, h: 2 }), new MockNode({ w: 0, h: 2 }));
+    let node = new box_1.BoxNode({ segmentation: "none" }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
     assert.equals(atoms, [
         {
@@ -227,7 +247,7 @@ wtf.test(`BoxNode should support width.`, (assert) => {
     ]);
 });
 wtf.test(`BoxNode should support width "50%".`, (assert) => {
-    let node = new box_1.BoxNode({ width: "50%" });
+    let node = new box_1.BoxNode({ width: [50, "%"] });
     let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -257,7 +277,7 @@ wtf.test(`BoxNode should support width "extrinsic".`, (assert) => {
     ]);
 });
 wtf.test(`BoxNode should support width "intrinsic".`, (assert) => {
-    let node = new box_1.BoxNode({ width: "intrinsic" }, new MockNode({ w: 10, h: 0 }));
+    let node = new box_1.BoxNode({ width: "intrinsic" }, new MockSegmentedNode({ w: 10, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -283,7 +303,7 @@ wtf.test(`BoxNode should support width "intrinsic".`, (assert) => {
     ]);
 });
 wtf.test(`BoxNode should support background color.`, (assert) => {
-    let node = new box_1.BoxNode({ background_color: [0.1, 0.2, 0.3] });
+    let node = new box_1.BoxNode({ background_color: { r: 0.1, g: 0.2, b: 0.3 } });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -294,7 +314,11 @@ wtf.test(`BoxNode should support background color.`, (assert) => {
             "atoms": [],
             "prefix": [
                 "0.1 0.2 0.3 rg",
-                "0 0 0 0 re",
+                "0 0 m",
+                "0 0 l",
+                "0 0 l",
+                "0 0 l",
+                "h",
                 "f"
             ],
             "suffix": []
@@ -302,7 +326,7 @@ wtf.test(`BoxNode should support background color.`, (assert) => {
     ]);
 });
 wtf.test(`BoxNode should support border color.`, (assert) => {
-    let node = new box_1.BoxNode({ border_color: [0.1, 0.2, 0.3] });
+    let node = new box_1.BoxNode({ border_color: { r: 0.1, g: 0.2, b: 0.3 } });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -319,7 +343,7 @@ wtf.test(`BoxNode should support border color.`, (assert) => {
     ]);
 });
 wtf.test(`BoxNode should support border radius when clipping.`, (assert) => {
-    let node = new box_1.BoxNode({ border_radius: 1, overflow: "hidden", width: 4, height: 4 });
+    let node = new box_1.BoxNode({ border_radius: [1], overflow: "hidden", width: 4, height: 4 });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -329,8 +353,7 @@ wtf.test(`BoxNode should support border radius when clipping.`, (assert) => {
             },
             "atoms": [],
             "prefix": [
-                "0 -1 m",
-                "0 -3 l",
+                "0 -3 m",
                 "0 -3.552 0.448 -4 1 -4 c",
                 "3 -4 l",
                 "3.552 -4 4 -3.552 4 -3 c",
@@ -346,8 +369,35 @@ wtf.test(`BoxNode should support border radius when clipping.`, (assert) => {
         }
     ]);
 });
+wtf.test(`BoxNode should support border radius "20%" when clipping.`, (assert) => {
+    let node = new box_1.BoxNode({ border_radius: [20, "%"], overflow: "hidden", width: 50, height: 50 });
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 50,
+                "h": 50
+            },
+            "atoms": [],
+            "prefix": [
+                "0 -40 m",
+                "0 -45.523 4.477 -50 10 -50 c",
+                "40 -50 l",
+                "45.523 -50 50 -45.523 50 -40 c",
+                "50 -10 l",
+                "50 -4.477 45.523 0 40 0 c",
+                "10 0 l",
+                "4.477 0 0 -4.477 0 -10 c",
+                "h",
+                "W",
+                "n"
+            ],
+            "suffix": []
+        }
+    ]);
+});
 wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
-    let node = new box_1.BoxNode({ border_radius: 1, background_color: [0, 0, 0], width: 4, height: 4 });
+    let node = new box_1.BoxNode({ border_radius: [1], background_color: { r: 0, g: 0, b: 0 }, width: 4, height: 4 });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -358,8 +408,7 @@ wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
             "atoms": [],
             "prefix": [
                 "0 0 0 rg",
-                "0 -1 m",
-                "0 -3 l",
+                "0 -3 m",
                 "0 -3.552 0.448 -4 1 -4 c",
                 "3 -4 l",
                 "3.552 -4 4 -3.552 4 -3 c",
@@ -374,8 +423,35 @@ wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
         }
     ]);
 });
+wtf.test(`BoxNode should support border radius "20%" when filling.`, (assert) => {
+    let node = new box_1.BoxNode({ border_radius: [20, "%"], background_color: { r: 0, g: 0, b: 0 }, width: 50, height: 50 });
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 50,
+                "h": 50
+            },
+            "atoms": [],
+            "prefix": [
+                "0 0 0 rg",
+                "0 -40 m",
+                "0 -45.523 4.477 -50 10 -50 c",
+                "40 -50 l",
+                "45.523 -50 50 -45.523 50 -40 c",
+                "50 -10 l",
+                "50 -4.477 45.523 0 40 0 c",
+                "10 0 l",
+                "4.477 0 0 -4.477 0 -10 c",
+                "h",
+                "f"
+            ],
+            "suffix": []
+        }
+    ]);
+});
 wtf.test(`BoxNode should support border radius when stroking.`, (assert) => {
-    let node = new box_1.BoxNode({ border_radius: 2, border_width: 1, width: 8, height: 8 });
+    let node = new box_1.BoxNode({ border_radius: [2], border_width: [1], width: 8, height: 8 });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -388,8 +464,7 @@ wtf.test(`BoxNode should support border radius when stroking.`, (assert) => {
             "suffix": [
                 "1 0 0 1 0.5 -0.5 cm",
                 "1 w",
-                "0 -1.5 m",
-                "0 -5.5 l",
+                "0 -5.5 m",
                 "0 -6.328 0.672 -7 1.5 -7 c",
                 "5.5 -7 l",
                 "6.328 -7 7 -6.328 7 -5.5 c",
@@ -403,8 +478,90 @@ wtf.test(`BoxNode should support border radius when stroking.`, (assert) => {
         }
     ]);
 });
+wtf.test(`BoxNode should support border radius "20%" when stroking.`, (assert) => {
+    let node = new box_1.BoxNode({ border_radius: [20, "%"], border_width: [1], width: 50, height: 50 });
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 50,
+                "h": 50
+            },
+            "atoms": [],
+            "prefix": [],
+            "suffix": [
+                "1 0 0 1 0.5 -0.5 cm",
+                "1 w",
+                "0 -39.5 m",
+                "0 -44.747 4.253 -49 9.5 -49 c",
+                "39.5 -49 l",
+                "44.747 -49 49 -44.747 49 -39.5 c",
+                "49 -9.5 l",
+                "49 -4.253 44.747 0 39.5 0 c",
+                "9.5 0 l",
+                "4.253 0 0 -4.253 0 -9.5 c",
+                "h",
+                "S"
+            ]
+        }
+    ]);
+});
+wtf.test(`BoxNode should reduce border radius when greater than 50% of width.`, (assert) => {
+    let node = new box_1.BoxNode({ border_radius: [6], overflow: "hidden", width: 10, height: 50 });
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 10,
+                "h": 50
+            },
+            "atoms": [],
+            "prefix": [
+                "0 -45 m",
+                "0 -47.761 2.239 -50 5 -50 c",
+                "5 -50 l",
+                "7.761 -50 10 -47.761 10 -45 c",
+                "10 -5 l",
+                "10 -2.239 7.761 0 5 0 c",
+                "5 0 l",
+                "2.239 0 0 -2.239 0 -5 c",
+                "h",
+                "W",
+                "n"
+            ],
+            "suffix": []
+        }
+    ]);
+});
+wtf.test(`BoxNode should reduce border radius when greater than 50% of height.`, (assert) => {
+    let node = new box_1.BoxNode({ border_radius: [6], overflow: "hidden", width: 50, height: 10 });
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 50,
+                "h": 10
+            },
+            "atoms": [],
+            "prefix": [
+                "0 -5 m",
+                "0 -7.761 2.239 -10 5 -10 c",
+                "45 -10 l",
+                "47.761 -10 50 -7.761 50 -5 c",
+                "50 -5 l",
+                "50 -2.239 47.761 0 45 0 c",
+                "5 0 l",
+                "2.239 0 0 -2.239 0 -5 c",
+                "h",
+                "W",
+                "n"
+            ],
+            "suffix": []
+        }
+    ]);
+});
 wtf.test(`BoxNode should support border width.`, (assert) => {
-    let node = new box_1.BoxNode({ border_width: 1 });
+    let node = new box_1.BoxNode({ border_width: [1] });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -417,22 +574,113 @@ wtf.test(`BoxNode should support border width.`, (assert) => {
             "suffix": [
                 "1 0 0 1 0.5 -0.5 cm",
                 "1 w",
-                "0 -1 1 1 re",
+                "0 0 m",
+                "0 -1 l",
+                "1 -1 l",
+                "1 0 l",
+                "h",
+                "S"
+            ]
+        }
+    ]);
+});
+wtf.test(`BoxNode should support border width "20%".`, (assert) => {
+    let node = new box_1.BoxNode({ border_width: [20, "%"], width: 50 });
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 50,
+                "h": 20
+            },
+            "atoms": [],
+            "prefix": [],
+            "suffix": [
+                "1 0 0 1 5 -5 cm",
+                "10 w",
+                "0 0 m",
+                "0 -10 l",
+                "40 -10 l",
+                "40 0 l",
+                "h",
                 "S"
             ]
         }
     ]);
 });
 wtf.test(`BoxNode should support padding.`, (assert) => {
-    let node = new box_1.BoxNode({ padding: 1 });
+    let node = new box_1.BoxNode({ padding: [1] }, new MockSegmentedNode({ w: 2, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
             "size": {
-                "w": 2,
-                "h": 2
+                "w": 4,
+                "h": 4
             },
-            "atoms": [],
+            "atoms": [
+                {
+                    "size": {
+                        "w": 2,
+                        "h": 2
+                    },
+                    "position": {
+                        "x": 1,
+                        "y": 1
+                    }
+                }
+            ],
+            "prefix": [],
+            "suffix": []
+        }
+    ]);
+});
+wtf.test(`BoxNode should support padding "20%".`, (assert) => {
+    let node = new box_1.BoxNode({ padding: [20, "%"], width: 50 }, new MockSegmentedNode({ w: 2, h: 2 }));
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 50,
+                "h": 22
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 2,
+                        "h": 2
+                    },
+                    "position": {
+                        "x": 10,
+                        "y": 10
+                    }
+                }
+            ],
+            "prefix": [],
+            "suffix": []
+        }
+    ]);
+});
+wtf.test(`BoxNode should provide children with the correct target size.`, (assert) => {
+    let node = new box_1.BoxNode({ padding: [1], width: 4, height: 4 }, new MockNode({ width: "extrinsic", height: "extrinsic" }));
+    let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 4,
+                "h": 4
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 2,
+                        "h": 2
+                    },
+                    "position": {
+                        "x": 1,
+                        "y": 1
+                    }
+                }
+            ],
             "prefix": [],
             "suffix": []
         }

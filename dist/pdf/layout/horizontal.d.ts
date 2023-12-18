@@ -1,13 +1,14 @@
-import { Atom, ChildNode, NodeStyle, ParentNode, Size } from "./shared";
-export type HorizontalLayoutStyle = {
+import { Atom, ChildNode, CreateSegmentsOptions, Length, NodeStyle, ParentNode, Path, Size } from "./shared";
+export type HorizontalStyle = {
     align_x: "left" | "center" | "right";
     align_y: "top" | "middle" | "bottom";
-    gap: number;
+    gap: Length;
 };
-export declare class HorizontalLayoutNode extends ParentNode {
-    protected style: HorizontalLayoutStyle;
-    protected createPrefixCommands(size: Size): Array<string>;
-    protected createSuffixCommands(size: Size): Array<string>;
-    constructor(style?: Partial<NodeStyle & HorizontalLayoutStyle>, ...children: Array<ChildNode>);
-    createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>): Array<Atom>;
+export declare class HorizontalNode extends ParentNode {
+    protected style: HorizontalStyle;
+    protected createPrefixCommands(path: Path): Array<string>;
+    protected createSuffixCommands(path: Path): Array<string>;
+    protected getFractions(): Size;
+    constructor(style?: Partial<NodeStyle & HorizontalStyle>, ...children: Array<ChildNode>);
+    createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom>;
 }
