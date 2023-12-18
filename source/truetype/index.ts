@@ -577,6 +577,7 @@ function parseNameData(buffer: ArrayBuffer) {
 			name_id: number;
 			byte_length: number;
 			byte_offset: number;
+			string: string;
 		}>;
 		for (let i = 0; i < count; i++) {
 			let platform_id = dw.getInt16(o); o += 2;
@@ -592,9 +593,9 @@ function parseNameData(buffer: ArrayBuffer) {
 				name_id,
 				byte_length,
 				byte_offset,
+				string: ""
 			});
 		}
-		let strings = [] as Array<string>;
 		for (let name_record of name_records) {
 			if (name_record.platform_id === 0) {
 				if (name_record.platform_specific_id === 4) {
@@ -602,7 +603,7 @@ function parseNameData(buffer: ArrayBuffer) {
 					for (let o = string_offset + name_record.byte_offset; o < string_offset + name_record.byte_offset + name_record.byte_length; o += 2) {
 						characters.push(String.fromCharCode(dw.getUint8(o + 0) << 8 | dw.getUint8(o + 1)));
 					}
-					strings.push(characters.join(""));
+					name_record.string = characters.join("");
 				} else {
 					throw new Error(`Expected a supported platform specific id!`);
 				}
@@ -611,14 +612,13 @@ function parseNameData(buffer: ArrayBuffer) {
 				for (let o = string_offset + name_record.byte_offset; o < string_offset + name_record.byte_offset + name_record.byte_length; o += 2) {
 					characters.push(String.fromCharCode(dw.getUint8(o + 0) << 8 | dw.getUint8(o + 1)));
 				}
-				strings.push(characters.join(""));
+				name_record.string = characters.join("");
 			} else {
 				throw new Error(`Expected a supported platform id!`);
 			}
 		}
 		return {
-			name_records,
-			strings
+			name_records
 		};
 	} else {
 		throw new Error(`Expected a supported format!`);
