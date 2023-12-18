@@ -566,7 +566,63 @@ type GlyfData = ReturnType<typeof parseGlyfData>;
 function parseNameData(buffer: ArrayBuffer) {
 	let dw = new DataView(buffer);
 	let o = 0;
-	return {};
+	let format = dw.getInt16(o); o += 2;
+	let count = dw.getInt16(o); o += 2;
+	let string_offset = dw.getInt16(o); o += 2;
+	if (format === 0) {
+		let name_records = [] as Array<{
+			platform_id: number;
+			platform_specific_id: number;
+			language_id: number;
+			name_id: number;
+			byte_length: number;
+			byte_offset: number;
+		}>;
+		for (let i = 0; i < count; i++) {
+			let platform_id = dw.getInt16(o); o += 2;
+			let platform_specific_id = dw.getInt16(o); o += 2;
+			let language_id = dw.getInt16(o); o += 2;
+			let name_id = dw.getInt16(o); o += 2;
+			let byte_length = dw.getInt16(o); o += 2;
+			let byte_offset = dw.getInt16(o); o += 2;
+			name_records.push({
+				platform_id,
+				platform_specific_id,
+				language_id,
+				name_id,
+				byte_length,
+				byte_offset,
+			});
+		}
+		let strings = [] as Array<string>;
+		for (let name_record of name_records) {
+			if (name_record.platform_id === 0) {
+				if (name_record.platform_specific_id === 4) {
+					let characters = [];
+					for (let o = string_offset + name_record.byte_offset; o < string_offset + name_record.byte_offset + name_record.byte_length; o += 2) {
+						characters.push(String.fromCharCode(dw.getUint8(o + 0) << 8 | dw.getUint8(o + 1)));
+					}
+					strings.push(characters.join(""));
+				} else {
+					throw new Error(`Expected a supported platform specific id!`);
+				}
+			} else if (name_record.platform_id === 3) {
+				let characters = [];
+				for (let o = string_offset + name_record.byte_offset; o < string_offset + name_record.byte_offset + name_record.byte_length; o += 2) {
+					characters.push(String.fromCharCode(dw.getUint8(o + 0) << 8 | dw.getUint8(o + 1)));
+				}
+				strings.push(characters.join(""));
+			} else {
+				throw new Error(`Expected a supported platform id!`);
+			}
+		}
+		return {
+			name_records,
+			strings
+		};
+	} else {
+		throw new Error(`Expected a supported format!`);
+	}
 };
 
 type NameData = ReturnType<typeof parseNameData>;
