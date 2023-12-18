@@ -46,7 +46,6 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add support for absolute length units.
 * Implement style extension.
 * Re-use style types from EDF schema.
-* Read all font attributes from truetype data.
 * Use "extrinsic" as default width for all node types.
 * Move string encoding to stdlib.
 * Move generic tokenizer to stdlib.
