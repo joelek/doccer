@@ -792,6 +792,10 @@ export class Typesetter {
 	protected fallback_box: Box;
 	protected options: Options;
 
+	protected getCharacterBox(character: string): Box {
+		return this.glyph_data.get(character)?.box ?? this.fallback_box;
+	}
+
 	protected getKerning(prefix: string, suffix: string): number {
 		if (prefix === "") {
 			return 0;
@@ -914,8 +918,29 @@ export class Typesetter {
 		];
 	}
 
-	getCharacterBox(character: string): Box {
-		return this.glyph_data.get(character)?.box ?? this.fallback_box;
+	getAscent(): number {
+		let box = this.getCharacterBox("");
+		return box.y_max;
+	}
+
+	getCapHeight(): number {
+		let box = this.getCharacterBox("I");
+		return box.y_max;
+	}
+
+	getDescent(): number {
+		let box = this.getCharacterBox("");
+		return box.y_min;
+	}
+
+	getStemWidth(): number {
+		let box = this.getCharacterBox("l");
+		return box.x_max - box.x_min;
+	}
+
+	getXHeight(): number {
+		let box = this.getCharacterBox("x");
+		return box.y_max;
 	}
 
 	getGlyphIndexArray(string: string): Uint8Array {

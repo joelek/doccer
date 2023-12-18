@@ -82,16 +82,16 @@ export class TextNode extends ChildNode {
 
 	protected getLineOffsetY(): number {
 		if (this.style.line_anchor === "meanline") {
-			return (0 - this.typesetter.getCharacterBox("x").y_max) * this.style.font_size;
+			return (0 - this.typesetter.getXHeight()) * this.style.font_size;
 		}
 		if (this.style.line_anchor === "capline") {
-			return (0 - this.typesetter.getCharacterBox("I").y_max) * this.style.font_size;
+			return (0 - this.typesetter.getCapHeight()) * this.style.font_size;
 		}
 		if (this.style.line_anchor === "topline") {
-			return (0 - this.typesetter.getCharacterBox("").y_max) * this.style.font_size;
+			return (0 - this.typesetter.getAscent()) * this.style.font_size;
 		}
 		if (this.style.line_anchor === "bottomline") {
-			return (0 - 1 + this.typesetter.getCharacterBox("").y_min) * this.style.font_size;
+			return (0 - 1 + this.typesetter.getDescent()) * this.style.font_size;
 		}
 		if (this.style.line_anchor === "baseline") {
 			return (0 - 1) * this.style.font_size;
