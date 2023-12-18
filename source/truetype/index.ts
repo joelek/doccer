@@ -659,11 +659,16 @@ export type Box = {
 	y_max: number;
 };
 
+export type GlyphData = {
+	index: number;
+	box: Box;
+};
+
 export class Typesetter {
 	protected widths: Map<string, number>;
 	protected fallback_width: number;
 	protected kernings: Map<string, number>;
-	protected boxes: Map<string, Box>;
+	protected glyph_data: Map<string, GlyphData>;
 	protected fallback_box: Box;
 	protected options: Options;
 
@@ -704,11 +709,11 @@ export class Typesetter {
 		return Array.from(string.match(/\S+/g) ?? []);
 	}
 
-	constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, boxes?: Map<string, Box>, fallback_box?: Box, options?: Partial<Options>) {
+	constructor(widths: Map<string, number>, fallback_width: number, kernings?: Map<string, number>, glyph_data?: Map<string, GlyphData>, fallback_box?: Box, options?: Partial<Options>) {
 		this.widths = widths;
 		this.fallback_width = fallback_width;
 		this.kernings = kernings ?? new Map();
-		this.boxes = boxes ?? new Map();
+		this.glyph_data = glyph_data ?? new Map();
 		this.fallback_box = fallback_box ?? {
 			x_min: 0,
 			y_min: 0,
@@ -790,7 +795,7 @@ export class Typesetter {
 	}
 
 	getCharacterBox(character: string): Box {
-		return this.boxes.get(character) ?? this.fallback_box;
+		return this.glyph_data.get(character)?.box ?? this.fallback_box;
 	}
 
 	measureString(string: string): number {
@@ -808,7 +813,7 @@ export class Typesetter {
 	}
 
 	withOptions(options: Partial<Options>): Typesetter {
-		return new Typesetter(this.widths, this.fallback_width, this.kernings, this.boxes, this.fallback_box, options);
+		return new Typesetter(this.widths, this.fallback_width, this.kernings, this.glyph_data, this.fallback_box, options);
 	}
 
 	wrapString(string: string, target_width: number): Array<MeasuredLine> {
@@ -880,28 +885,32 @@ export class Typesetter {
 	static createFromFont(font: TrueTypeData): Typesetter {
 		let widths = new Map<string, number>();
 		let kernings = new Map<string, number>();
-		let boxes = new Map<string, Box>();
+		let glyph_data = new Map<string, GlyphData>();
 		for (let { code_point, index } of font.cmap.mappings) {
 			let metrics = font.hmtx.metrics[index];
 			let key = String.fromCodePoint(code_point);
 			let glyph = font.glyf.glyphs[index];
 			widths.set(key, metrics.advance_width / font.head.units_per_em);
-			boxes.set(key, {
+			let box: Box = {
 				x_min: glyph.x_min / font.head.units_per_em,
 				y_min: glyph.y_min / font.head.units_per_em,
 				x_max: glyph.x_max / font.head.units_per_em,
 				y_max: glyph.y_max / font.head.units_per_em,
+			};
+			glyph_data.set(key, {
+				index,
+				box
 			});
 		}
 		let fallback_width = font.hmtx.metrics[0].advance_width / font.head.units_per_em;
-		let fallback_box = {
+		let fallback_box: Box = {
 			x_min: font.head.x_min / font.head.units_per_em,
 			y_min: font.head.y_min / font.head.units_per_em,
 			x_max: font.head.x_max / font.head.units_per_em,
 			y_max: font.head.y_max / font.head.units_per_em,
 		};
 		// TODO: Parse kernings.
-		return new Typesetter(widths, fallback_width, kernings, boxes, fallback_box);
+		return new Typesetter(widths, fallback_width, kernings, glyph_data, fallback_box);
 	}
 };
 
