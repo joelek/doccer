@@ -2008,15 +2008,18 @@ wtf.test(`TextNode should support letter spacing`, (assert) => {
 });
 
 wtf.test(`TextNode should support line anchor "meanline".`, (assert) => {
-	let boxes = new Map<string, truetype.Box>();
-	boxes.set("x", {
-		x_min: 0.0,
-		y_min: 0.1,
-		x_max: 0.0,
-		y_max: 0.2
+	let glyph_data = new Map<string, truetype.GlyphData>();
+	glyph_data.set("x", {
+		index: 10,
+		box: {
+			x_min: 0.0,
+			y_min: 0.1,
+			x_max: 0.0,
+			y_max: 0.2
+		}
 	});
 	let font_handler = new truetype.FontHandler()
-		.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1, undefined, boxes, undefined));
+		.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1, undefined, glyph_data, undefined));
 	let node = new TextNode("aaaa", font_handler, { line_anchor: "meanline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
@@ -2067,15 +2070,18 @@ wtf.test(`TextNode should support line anchor "meanline".`, (assert) => {
 });
 
 wtf.test(`TextNode should support line anchor "capline".`, (assert) => {
-	let boxes = new Map<string, truetype.Box>();
-	boxes.set("I", {
-		x_min: 0.0,
-		y_min: 0.3,
-		x_max: 0.0,
-		y_max: 0.4
+	let glyph_data = new Map<string, truetype.GlyphData>();
+	glyph_data.set("I", {
+		index: 10,
+		box: {
+			x_min: 0.0,
+			y_min: 0.3,
+			x_max: 0.0,
+			y_max: 0.4
+		}
 	});
 	let font_handler = new truetype.FontHandler()
-		.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1, undefined, boxes, undefined));
+		.addTypesetter("sans-serif", "normal", "normal", new truetype.Typesetter(new Map(), 1, undefined, glyph_data, undefined));
 	let node = new TextNode("aaaa", font_handler, { line_anchor: "capline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
