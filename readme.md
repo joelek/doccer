@@ -34,13 +34,26 @@ NB: This project targets TypeScript 4 in strict mode.
 
 ## Roadmap
 
-* Add support for work-break.
+* Add support for word-break.
 * Add support for fractional widths and heights to BoxNode.
 * Improve PDF serialization.
-* Create schema for extensible document format.
-* Create converter from extensible document format to PDF.
 * Add command-line tool.
 * Add ImageNode.
 * Add support for compound paths.
 * Move Typesetter and FontHandler from truetype subproject.
 * Move layout from pdf subproject.
+* Improve computation of binary offsets in PDF serialization.
+* Add support for absolute length units.
+* Implement style extension.
+* Re-use style types from EDF schema.
+* Read all font attributes from truetype data.
+* Use "extrinsic" as default width for all node types.
+* Move string encoding to stdlib.
+* Move generic tokenizer to stdlib.
+* Move codepage handling to stdlib.
+* Add stdlib dependency.
+* Document features.
+* Consider extracting truetype subproject into own project.
+* Move font size into Typesetter.
+* Consider improving handling of missing characters in PDF conversion.
+* Add support for prefix and suffix nodes.
