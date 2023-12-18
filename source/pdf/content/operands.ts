@@ -12,6 +12,9 @@ export class IntegerOperand extends Operand<number> {
 	}
 
 	getToken(value: number): string {
+		if (typeof value !== "number") {
+			throw new Error();
+		}
 		return new PDFInteger(value).tokenize().join(" ");
 	}
 };
@@ -24,6 +27,9 @@ export class RealOperand extends Operand<number> {
 	}
 
 	getToken(value: number): string {
+		if (typeof value !== "number") {
+			throw new Error();
+		}
 		return new PDFReal(Number.parseFloat(value.toFixed(3))).tokenize().join(" ");
 	}
 };
@@ -39,6 +45,9 @@ export class ArrayOperand<A> extends Operand<Array<A>> {
 	}
 
 	getToken(value: Array<A>): string {
+		if (!Array.isArray(value)) {
+			throw new Error();
+		}
 		return "[" + value.map((value) => this.operand.getToken(value)).join(" ") + "]";
 	}
 };
@@ -51,6 +60,9 @@ export class NameOperand extends Operand<string> {
 	}
 
 	getToken(value: string): string {
+		if (typeof value !== "string") {
+			throw new Error();
+		}
 		return new PDFName(value).tokenize().join(" ");
 	}
 };
@@ -78,6 +90,9 @@ export class BytestringOperand extends Operand<Uint8Array> {
 	}
 
 	getToken(value: Uint8Array): string {
+		if (!(value instanceof Uint8Array)) {
+			throw new Error();
+		}
 		return new PDFBytestring(value).tokenize().join(" ");
 	}
 };
