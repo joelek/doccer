@@ -566,9 +566,9 @@ type GlyfData = ReturnType<typeof parseGlyfData>;
 function parseNameData(buffer: ArrayBuffer) {
 	let dw = new DataView(buffer);
 	let o = 0;
-	let format = dw.getInt16(o); o += 2;
-	let count = dw.getInt16(o); o += 2;
-	let string_offset = dw.getInt16(o); o += 2;
+	let format = dw.getUint16(o); o += 2;
+	let count = dw.getUint16(o); o += 2;
+	let string_offset = dw.getUint16(o); o += 2;
 	if (format === 0) {
 		let name_records = [] as Array<{
 			platform_id: number;
@@ -580,12 +580,12 @@ function parseNameData(buffer: ArrayBuffer) {
 			string: string;
 		}>;
 		for (let i = 0; i < count; i++) {
-			let platform_id = dw.getInt16(o); o += 2;
-			let platform_specific_id = dw.getInt16(o); o += 2;
-			let language_id = dw.getInt16(o); o += 2;
-			let name_id = dw.getInt16(o); o += 2;
-			let byte_length = dw.getInt16(o); o += 2;
-			let byte_offset = dw.getInt16(o); o += 2;
+			let platform_id = dw.getUint16(o); o += 2;
+			let platform_specific_id = dw.getUint16(o); o += 2;
+			let language_id = dw.getUint16(o); o += 2;
+			let name_id = dw.getUint16(o); o += 2;
+			let byte_length = dw.getUint16(o); o += 2;
+			let byte_offset = dw.getUint16(o); o += 2;
 			name_records.push({
 				platform_id,
 				platform_specific_id,
