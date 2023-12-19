@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TextNode = void 0;
-const content = require("../content");
-const content_1 = require("../content");
+const content = require("../../pdf/content");
+const content_1 = require("../../pdf/content");
 const shared_1 = require("./shared");
 class TextNode extends shared_1.ChildNode {
     content;

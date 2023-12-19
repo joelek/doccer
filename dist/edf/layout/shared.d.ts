@@ -1,4 +1,4 @@
-import * as content from "../content";
+import * as content from "../../pdf/content";
 export type GrayscaleColor = {
     i: number;
 };

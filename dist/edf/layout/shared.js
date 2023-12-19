@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParentNode = exports.ChildNode = exports.Node = exports.NodeLength = exports.Length = exports.Atom = exports.Rect = exports.Size = exports.Path = exports.Color = void 0;
-const content = require("../content");
+const content = require("../../pdf/content");
 exports.Color = {
     setFillColor(color, context) {
         if ("i" in color) {

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VerticalNode = void 0;
-const content = require("../content");
+const content = require("../../pdf/content");
 const shared_1 = require("./shared");
 class VerticalNode extends shared_1.ParentNode {
     style;

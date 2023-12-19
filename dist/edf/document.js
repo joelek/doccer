@@ -5,6 +5,8 @@ const stdlib = require("@joelek/ts-stdlib");
 const pdf = require("../pdf");
 const truetype = require("../truetype");
 const format_1 = require("./format");
+const layout = require("./layout");
+const fonts_1 = require("./fonts");
 function makeToUnicode(font) {
     let lines = [];
     lines.push(`/CIDInit /ProcSet findresource begin`);
@@ -32,16 +34,16 @@ exports.makeToUnicode = makeToUnicode;
 ;
 function createNodeClasses(font_handler, node) {
     if (format_1.TextNode.is(node)) {
-        return new pdf.layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), node.style);
+        return new layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), node.style);
     }
     if (format_1.BoxNode.is(node)) {
-        return new pdf.layout.BoxNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+        return new layout.BoxNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
     }
     if (format_1.VerticalNode.is(node)) {
-        return new pdf.layout.VerticalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+        return new layout.VerticalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
     }
     if (format_1.HorizontalNode.is(node)) {
-        return new pdf.layout.HorizontalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+        return new layout.HorizontalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
     }
     throw new Error();
 }
@@ -62,7 +64,7 @@ exports.DocumentUtils = {
             new pdf.format.PDFRecordMember(new pdf.format.PDFName("Font"), pdf_fonts)
         ]));
         pdf_file.objects.push(resources);
-        let font_handler = new truetype.FontHandler();
+        let font_handler = new fonts_1.FontHandler();
         for (let key in document.fonts) {
             let filename = document.fonts[key];
             if (filename == null) {
@@ -78,7 +80,7 @@ exports.DocumentUtils = {
                 buffer = stdlib.data.chunk.Chunk.fromString(file, "base64");
             }
             let truetype_font = truetype.parseTrueTypeData(buffer.buffer);
-            let typesetter = truetype.Typesetter.createFromFont(truetype_font);
+            let typesetter = fonts_1.Typesetter.createFromFont(truetype_font);
             font_handler.addTypesetter(key, typesetter);
             {
                 let pdf_cid_system_info = new pdf.format.PDFObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
@@ -158,7 +160,7 @@ exports.DocumentUtils = {
         ]));
         pdf_file.objects.push(pages);
         for (let segment of segments) {
-            let commands = pdf.layout.Atom.getCommandsFromAtom(segment);
+            let commands = layout.Atom.getCommandsFromAtom(segment);
             let context = pdf.content.createContext();
             context.concatenateMatrix(72 / 25.4, 0, 0, 72 / 25.4, 0, segment_size.h * 72 / 25.4);
             commands.unshift(...context.getCommands());

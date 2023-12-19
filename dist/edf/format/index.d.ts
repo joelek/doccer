@@ -301,7 +301,7 @@ export declare namespace Autoguard {
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
             width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            color?: "transparent" | {
+            color?: {
                 i: number;
             } | {
                 r: number;
@@ -312,7 +312,7 @@ export declare namespace Autoguard {
                 m: number;
                 y: number;
                 k: number;
-            } | undefined;
+            } | "transparent" | undefined;
             columns?: number | undefined;
             font_size?: number | undefined;
             gutter?: number | [number] | [number, "%"] | undefined;
@@ -320,7 +320,7 @@ export declare namespace Autoguard {
             line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
             line_height?: number | undefined;
             orphans?: number | undefined;
-            text_align?: "end" | "center" | "start" | undefined;
+            text_align?: "end" | "start" | "center" | undefined;
             text_transform?: "none" | "lowercase" | "uppercase" | undefined;
             white_space?: "wrap" | "nowrap" | undefined;
             word_spacing?: number | undefined;
@@ -335,7 +335,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                color?: "transparent" | {
+                color?: {
                     i: number;
                 } | {
                     r: number;
@@ -346,7 +346,7 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | undefined;
+                } | "transparent" | undefined;
                 columns?: number | undefined;
                 font_size?: number | undefined;
                 gutter?: number | [number] | [number, "%"] | undefined;
@@ -354,7 +354,7 @@ export declare namespace Autoguard {
                 line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
                 line_height?: number | undefined;
                 orphans?: number | undefined;
-                text_align?: "end" | "center" | "start" | undefined;
+                text_align?: "end" | "start" | "center" | undefined;
                 text_transform?: "none" | "lowercase" | "uppercase" | undefined;
                 white_space?: "wrap" | "nowrap" | undefined;
                 word_spacing?: number | undefined;
@@ -366,7 +366,7 @@ export declare namespace Autoguard {
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
             width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            background_color?: "transparent" | {
+            background_color?: {
                 i: number;
             } | {
                 r: number;
@@ -377,8 +377,8 @@ export declare namespace Autoguard {
                 m: number;
                 y: number;
                 k: number;
-            } | undefined;
-            border_color?: "transparent" | {
+            } | "transparent" | undefined;
+            border_color?: {
                 i: number;
             } | {
                 r: number;
@@ -389,7 +389,7 @@ export declare namespace Autoguard {
                 m: number;
                 y: number;
                 k: number;
-            } | undefined;
+            } | "transparent" | undefined;
             border_radius?: number | [number] | [number, "%"] | undefined;
             border_width?: number | [number] | [number, "%"] | undefined;
             padding?: number | [number] | [number, "%"] | undefined;
@@ -405,7 +405,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                background_color?: "transparent" | {
+                background_color?: {
                     i: number;
                 } | {
                     r: number;
@@ -416,8 +416,8 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | undefined;
-                border_color?: "transparent" | {
+                } | "transparent" | undefined;
+                border_color?: {
                     i: number;
                 } | {
                     r: number;
@@ -428,7 +428,7 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | undefined;
+                } | "transparent" | undefined;
                 border_radius?: number | [number] | [number, "%"] | undefined;
                 border_width?: number | [number] | [number, "%"] | undefined;
                 padding?: number | [number] | [number, "%"] | undefined;
@@ -440,7 +440,7 @@ export declare namespace Autoguard {
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
             width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            align_x?: "left" | "center" | "right" | undefined;
+            align_x?: "center" | "left" | "right" | undefined;
             align_y?: "top" | "middle" | "bottom" | undefined;
             gap?: number | [number] | [number, "%"] | undefined;
         }>;
@@ -455,7 +455,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                align_x?: "left" | "center" | "right" | undefined;
+                align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
                 gap?: number | [number] | [number, "%"] | undefined;
             } | undefined;
@@ -466,7 +466,7 @@ export declare namespace Autoguard {
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
             width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            align_x?: "left" | "center" | "right" | undefined;
+            align_x?: "center" | "left" | "right" | undefined;
             align_y?: "top" | "middle" | "bottom" | undefined;
             gap?: number | [number] | [number, "%"] | undefined;
         }>;
@@ -481,7 +481,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                align_x?: "left" | "center" | "right" | undefined;
+                align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
                 gap?: number | [number] | [number, "%"] | undefined;
             } | undefined;
@@ -493,7 +493,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                background_color?: "transparent" | {
+                background_color?: {
                     i: number;
                 } | {
                     r: number;
@@ -504,8 +504,8 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | undefined;
-                border_color?: "transparent" | {
+                } | "transparent" | undefined;
+                border_color?: {
                     i: number;
                 } | {
                     r: number;
@@ -516,7 +516,7 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | undefined;
+                } | "transparent" | undefined;
                 border_radius?: number | [number] | [number, "%"] | undefined;
                 border_width?: number | [number] | [number, "%"] | undefined;
                 padding?: number | [number] | [number, "%"] | undefined;
@@ -527,7 +527,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                align_x?: "left" | "center" | "right" | undefined;
+                align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
                 gap?: number | [number] | [number, "%"] | undefined;
             }> | undefined;
@@ -537,7 +537,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                color?: "transparent" | {
+                color?: {
                     i: number;
                 } | {
                     r: number;
@@ -548,7 +548,7 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | undefined;
+                } | "transparent" | undefined;
                 columns?: number | undefined;
                 font_size?: number | undefined;
                 gutter?: number | [number] | [number, "%"] | undefined;
@@ -556,7 +556,7 @@ export declare namespace Autoguard {
                 line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
                 line_height?: number | undefined;
                 orphans?: number | undefined;
-                text_align?: "end" | "center" | "start" | undefined;
+                text_align?: "end" | "start" | "center" | undefined;
                 text_transform?: "none" | "lowercase" | "uppercase" | undefined;
                 white_space?: "wrap" | "nowrap" | undefined;
                 word_spacing?: number | undefined;
@@ -567,7 +567,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                align_x?: "left" | "center" | "right" | undefined;
+                align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
                 gap?: number | [number] | [number, "%"] | undefined;
             }> | undefined;
@@ -589,7 +589,7 @@ export declare namespace Autoguard {
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
                     width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    background_color?: "transparent" | {
+                    background_color?: {
                         i: number;
                     } | {
                         r: number;
@@ -600,8 +600,8 @@ export declare namespace Autoguard {
                         m: number;
                         y: number;
                         k: number;
-                    } | undefined;
-                    border_color?: "transparent" | {
+                    } | "transparent" | undefined;
+                    border_color?: {
                         i: number;
                     } | {
                         r: number;
@@ -612,7 +612,7 @@ export declare namespace Autoguard {
                         m: number;
                         y: number;
                         k: number;
-                    } | undefined;
+                    } | "transparent" | undefined;
                     border_radius?: number | [number] | [number, "%"] | undefined;
                     border_width?: number | [number] | [number, "%"] | undefined;
                     padding?: number | [number] | [number, "%"] | undefined;
@@ -623,7 +623,7 @@ export declare namespace Autoguard {
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
                     width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    align_x?: "left" | "center" | "right" | undefined;
+                    align_x?: "center" | "left" | "right" | undefined;
                     align_y?: "top" | "middle" | "bottom" | undefined;
                     gap?: number | [number] | [number, "%"] | undefined;
                 }> | undefined;
@@ -633,7 +633,7 @@ export declare namespace Autoguard {
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
                     width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    color?: "transparent" | {
+                    color?: {
                         i: number;
                     } | {
                         r: number;
@@ -644,7 +644,7 @@ export declare namespace Autoguard {
                         m: number;
                         y: number;
                         k: number;
-                    } | undefined;
+                    } | "transparent" | undefined;
                     columns?: number | undefined;
                     font_size?: number | undefined;
                     gutter?: number | [number] | [number, "%"] | undefined;
@@ -652,7 +652,7 @@ export declare namespace Autoguard {
                     line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
                     line_height?: number | undefined;
                     orphans?: number | undefined;
-                    text_align?: "end" | "center" | "start" | undefined;
+                    text_align?: "end" | "start" | "center" | undefined;
                     text_transform?: "none" | "lowercase" | "uppercase" | undefined;
                     white_space?: "wrap" | "nowrap" | undefined;
                     word_spacing?: number | undefined;
@@ -663,7 +663,7 @@ export declare namespace Autoguard {
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
                     width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    align_x?: "left" | "center" | "right" | undefined;
+                    align_x?: "center" | "left" | "right" | undefined;
                     align_y?: "top" | "middle" | "bottom" | undefined;
                     gap?: number | [number] | [number, "%"] | undefined;
                 }> | undefined;
