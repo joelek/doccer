@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StyleHandler = exports.RecursiveTemplateError = exports.MissingTemplateError = void 0;
+exports.StyleHandler = exports.MissingColorError = exports.RecursiveTemplateError = exports.MissingTemplateError = void 0;
 class MissingTemplateError extends Error {
     template;
     type;
@@ -29,8 +29,21 @@ class RecursiveTemplateError extends Error {
 }
 exports.RecursiveTemplateError = RecursiveTemplateError;
 ;
+class MissingColorError extends Error {
+    color;
+    constructor(color) {
+        super();
+        this.color = color;
+    }
+    toString() {
+        return `Expected color "${this.color}" to exist!`;
+    }
+}
+exports.MissingColorError = MissingColorError;
+;
 class StyleHandler {
     templates;
+    colors;
     getStyle(type, style, exclude) {
         if (style == null) {
             return;
@@ -52,20 +65,52 @@ class StyleHandler {
             ...style
         };
     }
-    constructor(templates) {
+    getColor(color) {
+        if (color == null) {
+            return;
+        }
+        if (typeof color === "string") {
+            if (color === "transparent") {
+                return "transparent";
+            }
+            let swatch_color = this.colors[color];
+            if (swatch_color == null) {
+                throw new MissingColorError(color);
+            }
+            return swatch_color;
+        }
+        return color;
+    }
+    constructor(templates, colors) {
         this.templates = templates ?? {};
+        this.colors = colors ?? {};
     }
     getBoxStyle(style) {
-        return this.getStyle("box", style, []);
+        style = this.getStyle("box", style, []);
+        return {
+            ...style,
+            background_color: this.getColor(style?.background_color),
+            border_color: this.getColor(style?.border_color)
+        };
     }
     getHorizontalStyle(style) {
-        return this.getStyle("horizontal", style, []);
+        style = this.getStyle("horizontal", style, []);
+        return {
+            ...style
+        };
     }
     getTextStyle(style) {
-        return this.getStyle("text", style, []);
+        style = this.getStyle("text", style, []);
+        return {
+            ...style,
+            color: this.getColor(style?.color)
+        };
     }
     getVerticalStyle(style) {
-        return this.getStyle("vertical", style, []);
+        style = this.getStyle("vertical", style, []);
+        return {
+            ...style
+        };
     }
 }
 exports.StyleHandler = StyleHandler;

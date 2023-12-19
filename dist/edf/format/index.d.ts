@@ -92,6 +92,7 @@ export type ParentNode = autoguard.guards.Intersection<[
 export declare const TextStyle: autoguard.serialization.MessageGuard<TextStyle>;
 export type TextStyle = autoguard.guards.Object<{}, {
     "color": autoguard.guards.Union<[
+        autoguard.guards.String,
         autoguard.guards.StringLiteral<"transparent">,
         autoguard.guards.Reference<Color>
     ]>;
@@ -144,10 +145,12 @@ export type TextNode = autoguard.guards.Intersection<[
 export declare const BoxStyle: autoguard.serialization.MessageGuard<BoxStyle>;
 export type BoxStyle = autoguard.guards.Object<{}, {
     "background_color": autoguard.guards.Union<[
+        autoguard.guards.String,
         autoguard.guards.StringLiteral<"transparent">,
         autoguard.guards.Reference<Color>
     ]>;
     "border_color": autoguard.guards.Union<[
+        autoguard.guards.String,
         autoguard.guards.StringLiteral<"transparent">,
         autoguard.guards.Reference<Color>
     ]>;
@@ -228,6 +231,8 @@ export type HorizontalNode = autoguard.guards.Intersection<[
         "style": autoguard.guards.Reference<HorizontalNodeStyle>;
     }>
 ]>;
+export declare const Colors: autoguard.serialization.MessageGuard<Colors>;
+export type Colors = autoguard.guards.Record<autoguard.guards.Reference<Color>>;
 export declare const Templates: autoguard.serialization.MessageGuard<Templates>;
 export type Templates = autoguard.guards.Object<{}, {
     "box": autoguard.guards.Record<autoguard.guards.Reference<BoxNodeStyle>>;
@@ -240,6 +245,7 @@ export type Document = autoguard.guards.Object<{
     "content": autoguard.guards.Reference<Node>;
     "size": autoguard.guards.Reference<Size>;
 }, {
+    "colors": autoguard.guards.Reference<Colors>;
     "files": autoguard.guards.Record<autoguard.guards.Reference<PaddedBase64URL>>;
     "fonts": autoguard.guards.Record<autoguard.guards.String>;
     "templates": autoguard.guards.Reference<Templates>;
@@ -304,7 +310,7 @@ export declare namespace Autoguard {
             }>;
         }>;
         TextStyle: autoguard.guards.ReferenceGuard<{
-            color?: {
+            color?: string | {
                 i: number;
             } | {
                 r: number;
@@ -315,7 +321,7 @@ export declare namespace Autoguard {
                 m: number;
                 y: number;
                 k: number;
-            } | "transparent" | undefined;
+            } | undefined;
             columns?: number | undefined;
             font_size?: number | undefined;
             gutter?: number | [number] | [number, "%"] | undefined;
@@ -334,7 +340,7 @@ export declare namespace Autoguard {
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
             width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            color?: {
+            color?: string | {
                 i: number;
             } | {
                 r: number;
@@ -345,7 +351,7 @@ export declare namespace Autoguard {
                 m: number;
                 y: number;
                 k: number;
-            } | "transparent" | undefined;
+            } | undefined;
             columns?: number | undefined;
             font_size?: number | undefined;
             gutter?: number | [number] | [number, "%"] | undefined;
@@ -368,7 +374,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                color?: {
+                color?: string | {
                     i: number;
                 } | {
                     r: number;
@@ -379,7 +385,7 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | "transparent" | undefined;
+                } | undefined;
                 columns?: number | undefined;
                 font_size?: number | undefined;
                 gutter?: number | [number] | [number, "%"] | undefined;
@@ -394,7 +400,7 @@ export declare namespace Autoguard {
             } | undefined;
         }>;
         BoxStyle: autoguard.guards.ReferenceGuard<{
-            background_color?: {
+            background_color?: string | {
                 i: number;
             } | {
                 r: number;
@@ -405,8 +411,8 @@ export declare namespace Autoguard {
                 m: number;
                 y: number;
                 k: number;
-            } | "transparent" | undefined;
-            border_color?: {
+            } | undefined;
+            border_color?: string | {
                 i: number;
             } | {
                 r: number;
@@ -417,7 +423,7 @@ export declare namespace Autoguard {
                 m: number;
                 y: number;
                 k: number;
-            } | "transparent" | undefined;
+            } | undefined;
             border_radius?: number | [number] | [number, "%"] | undefined;
             border_width?: number | [number] | [number, "%"] | undefined;
             padding?: number | [number] | [number, "%"] | undefined;
@@ -428,7 +434,7 @@ export declare namespace Autoguard {
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
             width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            background_color?: {
+            background_color?: string | {
                 i: number;
             } | {
                 r: number;
@@ -439,8 +445,8 @@ export declare namespace Autoguard {
                 m: number;
                 y: number;
                 k: number;
-            } | "transparent" | undefined;
-            border_color?: {
+            } | undefined;
+            border_color?: string | {
                 i: number;
             } | {
                 r: number;
@@ -451,7 +457,7 @@ export declare namespace Autoguard {
                 m: number;
                 y: number;
                 k: number;
-            } | "transparent" | undefined;
+            } | undefined;
             border_radius?: number | [number] | [number, "%"] | undefined;
             border_width?: number | [number] | [number, "%"] | undefined;
             padding?: number | [number] | [number, "%"] | undefined;
@@ -467,7 +473,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                background_color?: {
+                background_color?: string | {
                     i: number;
                 } | {
                     r: number;
@@ -478,8 +484,8 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | "transparent" | undefined;
-                border_color?: {
+                } | undefined;
+                border_color?: string | {
                     i: number;
                 } | {
                     r: number;
@@ -490,7 +496,7 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | "transparent" | undefined;
+                } | undefined;
                 border_radius?: number | [number] | [number, "%"] | undefined;
                 border_width?: number | [number] | [number, "%"] | undefined;
                 padding?: number | [number] | [number, "%"] | undefined;
@@ -558,6 +564,7 @@ export declare namespace Autoguard {
                 gap?: number | [number] | [number, "%"] | undefined;
             } | undefined;
         }>;
+        Colors: autoguard.guards.ReferenceGuard<Colors>;
         Templates: autoguard.guards.ReferenceGuard<{
             box?: autoguard.guards.Record<{
                 template?: string | undefined;
@@ -565,7 +572,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                background_color?: {
+                background_color?: string | {
                     i: number;
                 } | {
                     r: number;
@@ -576,8 +583,8 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | "transparent" | undefined;
-                border_color?: {
+                } | undefined;
+                border_color?: string | {
                     i: number;
                 } | {
                     r: number;
@@ -588,7 +595,7 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | "transparent" | undefined;
+                } | undefined;
                 border_radius?: number | [number] | [number, "%"] | undefined;
                 border_width?: number | [number] | [number, "%"] | undefined;
                 padding?: number | [number] | [number, "%"] | undefined;
@@ -609,7 +616,7 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                color?: {
+                color?: string | {
                     i: number;
                 } | {
                     r: number;
@@ -620,7 +627,7 @@ export declare namespace Autoguard {
                     m: number;
                     y: number;
                     k: number;
-                } | "transparent" | undefined;
+                } | undefined;
                 columns?: number | undefined;
                 font_size?: number | undefined;
                 gutter?: number | [number] | [number, "%"] | undefined;
@@ -652,6 +659,7 @@ export declare namespace Autoguard {
                 w: number;
                 h: number;
             };
+            colors?: Colors | undefined;
             files?: autoguard.guards.Record<string> | undefined;
             fonts?: autoguard.guards.Record<string> | undefined;
             templates?: {
@@ -661,7 +669,7 @@ export declare namespace Autoguard {
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
                     width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    background_color?: {
+                    background_color?: string | {
                         i: number;
                     } | {
                         r: number;
@@ -672,8 +680,8 @@ export declare namespace Autoguard {
                         m: number;
                         y: number;
                         k: number;
-                    } | "transparent" | undefined;
-                    border_color?: {
+                    } | undefined;
+                    border_color?: string | {
                         i: number;
                     } | {
                         r: number;
@@ -684,7 +692,7 @@ export declare namespace Autoguard {
                         m: number;
                         y: number;
                         k: number;
-                    } | "transparent" | undefined;
+                    } | undefined;
                     border_radius?: number | [number] | [number, "%"] | undefined;
                     border_width?: number | [number] | [number, "%"] | undefined;
                     padding?: number | [number] | [number, "%"] | undefined;
@@ -705,7 +713,7 @@ export declare namespace Autoguard {
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
                     width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    color?: {
+                    color?: string | {
                         i: number;
                     } | {
                         r: number;
@@ -716,7 +724,7 @@ export declare namespace Autoguard {
                         m: number;
                         y: number;
                         k: number;
-                    } | "transparent" | undefined;
+                    } | undefined;
                     columns?: number | undefined;
                     font_size?: number | undefined;
                     gutter?: number | [number] | [number, "%"] | undefined;

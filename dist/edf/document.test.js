@@ -16,10 +16,17 @@ wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
             text: {
                 default: {
                     font_size: 4,
-                    color: { r: 0, g: 0, b: 0 },
+                    color: "default",
                     line_height: 8,
                     width: "extrinsic"
                 }
+            }
+        },
+        colors: {
+            default: {
+                r: 0,
+                g: 0,
+                b: 0
             }
         },
         content: {

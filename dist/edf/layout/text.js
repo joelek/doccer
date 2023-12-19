@@ -20,7 +20,7 @@ class TextNode extends shared_1.ChildNode {
         if (this.style.word_spacing > 0) {
             context.setWordSpacing(this.style.word_spacing);
         }
-        if (this.style.color !== "transparent") {
+        if (typeof this.style.color !== "string") {
             shared_1.Color.setFillColor(this.style.color, context);
         }
         else {

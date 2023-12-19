@@ -150,7 +150,7 @@ exports.DocumentUtils = {
                 pdf_file.objects.push(pdf_type0_font);
             }
         }
-        let style_handler = new styles_1.StyleHandler(document.templates);
+        let style_handler = new styles_1.StyleHandler(document.templates, document.colors);
         let segment_size = document.size;
         let node = createNodeClasses(font_handler, style_handler, document.content);
         let segments = node.createSegments(segment_size, segment_size, undefined, { text_operand: "bytestring" });

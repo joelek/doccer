@@ -7,7 +7,7 @@ class BoxNode extends shared_1.ParentNode {
     style;
     createPrefixCommands(path) {
         let context = content.createContext();
-        if (this.style.background_color !== "transparent") {
+        if (typeof this.style.background_color !== "string") {
             shared_1.Color.setFillColor(this.style.background_color, context);
             shared_1.Path.append(path, context);
             context.fillUsingNonZeroWindingNumberRule();
@@ -26,7 +26,7 @@ class BoxNode extends shared_1.ParentNode {
     }
     createBorderCommands(size, border_width, border_radius) {
         let context = content.createContext();
-        if (this.style.border_color !== "transparent") {
+        if (typeof this.style.border_color !== "string") {
             shared_1.Color.setStrokeColor(this.style.border_color, context);
         }
         if (border_width > 0) {
