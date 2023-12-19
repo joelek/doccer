@@ -57,7 +57,7 @@ guard ParentNode: ChildNode & {
 };
 
 guard TextStyle: {
-	color?: "transparent" | Color,
+	color?: string | "transparent" | Color,
 	columns?: PositiveInteger,
 	font_size?: NonNegativeNumber,
 	gutter?: Length,
@@ -81,8 +81,8 @@ guard TextNode: ChildNode & {
 };
 
 guard BoxStyle: {
-	background_color?: "transparent" | Color,
-	border_color?: "transparent" | Color,
+	background_color?: string | "transparent" | Color,
+	border_color?: string | "transparent" | Color,
 	border_radius?: Length,
 	border_width?: Length,
 	padding?: Length
@@ -121,6 +121,10 @@ guard HorizontalNode: ParentNode & {
 	style?: HorizontalNodeStyle
 };
 
+guard Colors: {
+	Color
+};
+
 guard Templates: {
 	box?: { BoxNodeStyle },
 	horizontal?: { HorizontalNodeStyle },
@@ -129,6 +133,7 @@ guard Templates: {
 };
 
 guard Document: {
+	colors?: Colors,
 	content: Node,
 	files?: { PaddedBase64URL },
 	fonts?: { string },

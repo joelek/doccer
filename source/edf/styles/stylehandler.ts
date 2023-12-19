@@ -30,10 +30,24 @@ export class RecursiveTemplateError extends Error {
 	}
 };
 
+export class MissingColorError extends Error {
+	protected color: string;
+
+	constructor(color: string) {
+		super();
+		this.color = color;
+	}
+
+	toString(): string {
+		return `Expected color "${this.color}" to exist!`;
+	}
+};
+
 type Style<A extends keyof format.Templates> = Exclude<Required<format.Templates>[A][string], undefined>;
 
 export class StyleHandler {
 	protected templates: format.Templates;
+	protected colors: format.Colors;
 
 	protected getStyle<A extends keyof format.Templates>(type: A, style: Style<A> | undefined, exclude: Array<string>): Style<A> | undefined {
 		if (style == null) {
@@ -57,23 +71,56 @@ export class StyleHandler {
 		};
 	}
 
-	constructor(templates: format.Templates | undefined) {
+	protected getColor(color?: string | "transparent" | format.Color): "transparent" | format.Color | undefined {
+		if (color == null) {
+			return;
+		}
+		if (typeof color === "string") {
+			if (color === "transparent") {
+				return "transparent";
+			}
+			let swatch_color = this.colors[color];
+			if (swatch_color == null) {
+				throw new MissingColorError(color);
+			}
+			return swatch_color;
+		}
+		return color;
+	}
+
+	constructor(templates: format.Templates | undefined, colors: format.Colors | undefined) {
 		this.templates = templates ?? {};
+		this.colors = colors ?? {};
 	}
 
 	getBoxStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
-		return this.getStyle("box", style, []);
+		style = this.getStyle("box", style, []);
+		return {
+			...style,
+			background_color: this.getColor(style?.background_color),
+			border_color: this.getColor(style?.border_color)
+		};
 	}
 
-	getHorizontalStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
-		return this.getStyle("horizontal", style, []);
+	getHorizontalStyle(style?: format.HorizontalNodeStyle): format.HorizontalNodeStyle | undefined {
+		style = this.getStyle("horizontal", style, []);
+		return {
+			...style
+		};
 	}
 
-	getTextStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
-		return this.getStyle("text", style, []);
+	getTextStyle(style?: format.TextNodeStyle): format.TextNodeStyle | undefined {
+		style = this.getStyle("text", style, []);
+		return {
+			...style,
+			color: this.getColor(style?.color)
+		};
 	}
 
-	getVerticalStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
-		return this.getStyle("vertical", style, []);
+	getVerticalStyle(style?: format.VerticalNodeStyle): format.VerticalNodeStyle | undefined {
+		style = this.getStyle("vertical", style, []);
+		return {
+			...style
+		};
 	}
 };

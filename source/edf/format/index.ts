@@ -184,6 +184,7 @@ export type ParentNode = autoguard.guards.Intersection<[
 
 export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autoguard.guards.Object.of({}, {
 	"color": autoguard.guards.Union.of(
+		autoguard.guards.String,
 		autoguard.guards.StringLiteral.of("transparent"),
 		autoguard.guards.Reference.of(() => Color)
 	),
@@ -219,6 +220,7 @@ export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autogu
 
 export type TextStyle = autoguard.guards.Object<{}, {
 	"color": autoguard.guards.Union<[
+		autoguard.guards.String,
 		autoguard.guards.StringLiteral<"transparent">,
 		autoguard.guards.Reference<Color>
 	]>,
@@ -288,10 +290,12 @@ export type TextNode = autoguard.guards.Intersection<[
 
 export const BoxStyle: autoguard.serialization.MessageGuard<BoxStyle> = autoguard.guards.Object.of({}, {
 	"background_color": autoguard.guards.Union.of(
+		autoguard.guards.String,
 		autoguard.guards.StringLiteral.of("transparent"),
 		autoguard.guards.Reference.of(() => Color)
 	),
 	"border_color": autoguard.guards.Union.of(
+		autoguard.guards.String,
 		autoguard.guards.StringLiteral.of("transparent"),
 		autoguard.guards.Reference.of(() => Color)
 	),
@@ -302,10 +306,12 @@ export const BoxStyle: autoguard.serialization.MessageGuard<BoxStyle> = autoguar
 
 export type BoxStyle = autoguard.guards.Object<{}, {
 	"background_color": autoguard.guards.Union<[
+		autoguard.guards.String,
 		autoguard.guards.StringLiteral<"transparent">,
 		autoguard.guards.Reference<Color>
 	]>,
 	"border_color": autoguard.guards.Union<[
+		autoguard.guards.String,
 		autoguard.guards.StringLiteral<"transparent">,
 		autoguard.guards.Reference<Color>
 	]>,
@@ -460,6 +466,10 @@ export type HorizontalNode = autoguard.guards.Intersection<[
 	}>
 ]>;
 
+export const Colors: autoguard.serialization.MessageGuard<Colors> = autoguard.guards.Record.of(autoguard.guards.Reference.of(() => Color));
+
+export type Colors = autoguard.guards.Record<autoguard.guards.Reference<Color>>;
+
 export const Templates: autoguard.serialization.MessageGuard<Templates> = autoguard.guards.Object.of({}, {
 	"box": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => BoxNodeStyle)),
 	"horizontal": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => HorizontalNodeStyle)),
@@ -478,6 +488,7 @@ export const Document: autoguard.serialization.MessageGuard<Document> = autoguar
 	"content": autoguard.guards.Reference.of(() => Node),
 	"size": autoguard.guards.Reference.of(() => Size)
 }, {
+	"colors": autoguard.guards.Reference.of(() => Colors),
 	"files": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => PaddedBase64URL)),
 	"fonts": autoguard.guards.Record.of(autoguard.guards.String),
 	"templates": autoguard.guards.Reference.of(() => Templates)
@@ -487,6 +498,7 @@ export type Document = autoguard.guards.Object<{
 	"content": autoguard.guards.Reference<Node>,
 	"size": autoguard.guards.Reference<Size>
 }, {
+	"colors": autoguard.guards.Reference<Colors>,
 	"files": autoguard.guards.Record<autoguard.guards.Reference<PaddedBase64URL>>,
 	"fonts": autoguard.guards.Record<autoguard.guards.String>,
 	"templates": autoguard.guards.Reference<Templates>
@@ -522,6 +534,7 @@ export namespace Autoguard {
 		"HorizontalStyle": autoguard.guards.Reference.of(() => HorizontalStyle),
 		"HorizontalNodeStyle": autoguard.guards.Reference.of(() => HorizontalNodeStyle),
 		"HorizontalNode": autoguard.guards.Reference.of(() => HorizontalNode),
+		"Colors": autoguard.guards.Reference.of(() => Colors),
 		"Templates": autoguard.guards.Reference.of(() => Templates),
 		"Document": autoguard.guards.Reference.of(() => Document)
 	};

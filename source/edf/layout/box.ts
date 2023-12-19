@@ -9,7 +9,7 @@ export class BoxNode extends ParentNode {
 
 	protected createPrefixCommands(path: Path): Array<string> {
 		let context = content.createContext();
-		if (this.style.background_color !== "transparent") {
+		if (typeof this.style.background_color !== "string") {
 			Color.setFillColor(this.style.background_color, context);
 			Path.append(path, context);
 			context.fillUsingNonZeroWindingNumberRule();
@@ -30,7 +30,7 @@ export class BoxNode extends ParentNode {
 
 	protected createBorderCommands(size: Size, border_width: number, border_radius: number): Array<string> {
 		let context = content.createContext();
-		if (this.style.border_color !== "transparent") {
+		if (typeof this.style.border_color !== "string") {
 			Color.setStrokeColor(this.style.border_color, context);
 		}
 		if (border_width > 0) {

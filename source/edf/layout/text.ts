@@ -23,7 +23,7 @@ export class TextNode extends ChildNode {
 		if (this.style.word_spacing > 0) {
 			context.setWordSpacing(this.style.word_spacing);
 		}
-		if (this.style.color !== "transparent") {
+		if (typeof this.style.color !== "string") {
 			Color.setFillColor(this.style.color, context);
 		} else {
 			context.setTextRenderingMode(TextRenderingMode.INVISIBLE);
