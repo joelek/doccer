@@ -196,7 +196,7 @@ export type VerticalNode = autoguard.guards.Intersection<[
     autoguard.guards.Object<{
         "type": autoguard.guards.StringLiteral<"vertical">;
     }, {
-        "style": autoguard.guards.Reference<VerticalStyle>;
+        "style": autoguard.guards.Reference<VerticalNodeStyle>;
     }>
 ]>;
 export declare const HorizontalStyle: autoguard.serialization.MessageGuard<HorizontalStyle>;
@@ -517,6 +517,11 @@ export declare namespace Autoguard {
                 type: string;
             }>;
             style?: {
+                extends?: string | undefined;
+                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                overflow?: "hidden" | "visible" | undefined;
+                segmentation?: "auto" | "none" | undefined;
+                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
                 gap?: number | [number] | [number, "%"] | undefined;

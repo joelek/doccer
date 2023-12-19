@@ -88,7 +88,7 @@ exports.VerticalNodeStyle = autoguard.guards.Intersection.of(autoguard.guards.Re
 exports.VerticalNode = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => exports.ParentNode), autoguard.guards.Object.of({
     "type": autoguard.guards.StringLiteral.of("vertical")
 }, {
-    "style": autoguard.guards.Reference.of(() => exports.VerticalStyle)
+    "style": autoguard.guards.Reference.of(() => exports.VerticalNodeStyle)
 }));
 exports.HorizontalStyle = autoguard.guards.Object.of({}, {
     "align_x": autoguard.guards.Union.of(autoguard.guards.StringLiteral.of("left"), autoguard.guards.StringLiteral.of("center"), autoguard.guards.StringLiteral.of("right")),
