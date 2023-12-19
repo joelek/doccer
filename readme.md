@@ -40,8 +40,6 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add command-line tool.
 * Add ImageNode.
 * Add support for compound paths.
-* Move Typesetter and FontHandler from truetype subproject.
-* Move layout from pdf subproject.
 * Improve computation of binary offsets in PDF serialization.
 * Add support for absolute length units.
 * Implement style extension.
