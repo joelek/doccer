@@ -197,5 +197,28 @@ exports.DocumentUtils = {
         }
         pdf_file.trailer.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Size"), new pdf.format.PDFInteger(id)), new pdf.format.PDFRecordMember(new pdf.format.PDFName("Root"), catalog.getReference()));
         return pdf_file;
+    },
+    embedResources(document) {
+        let files = {};
+        for (let key in document.fonts) {
+            let filename = document.fonts[key];
+            if (filename == null) {
+                continue;
+            }
+            let file = document.files?.[filename];
+            let buffer;
+            if (file == null) {
+                // @ts-ignore
+                buffer = require("fs").readFileSync(filename);
+            }
+            else {
+                buffer = stdlib.data.chunk.Chunk.fromString(file, "base64");
+            }
+            files[key] = stdlib.data.chunk.Chunk.toString(buffer, "base64");
+        }
+        return {
+            ...document,
+            files
+        };
     }
 };
