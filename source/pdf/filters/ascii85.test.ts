@@ -1,13 +1,13 @@
+import * as stdlib from "@joelek/ts-stdlib";
 import * as wtf from "@joelek/wtf";
 import { Ascii85 } from "./ascii85";
-import { Codec } from "../format/utils";
 
 wtf.test(`Ascii85 should encode "Man sure.".`, (assert) => {
-	assert.equals(Ascii85.encode(Codec.encodeAsciiBuffer("Man sure.")), "9jqo^F*2M7/c~>");
+	assert.equals(Ascii85.encode(stdlib.data.chunk.Chunk.fromString("Man sure.", "binary")), "9jqo^F*2M7/c~>");
 });
 
 wtf.test(`Ascii85 should decode "Man sure.".`, (assert) => {
-	assert.equals(Ascii85.decode("9jqo^F*2M7/c~>"), Codec.encodeAsciiBuffer("Man sure."));
+	assert.equals(Ascii85.decode("9jqo^F*2M7/c~>"), stdlib.data.chunk.Chunk.fromString("Man sure.", "binary"));
 });
 
 wtf.test(`Ascii85 should encode buffers with a byte length of 0.`, (assert) => {

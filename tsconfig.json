@@ -11,9 +11,6 @@
 	"include": [],
 	"references": [
 		{
-			"path": "./source/codepage/"
-		},
-		{
 			"path": "./source/edf/"
 		},
 		{

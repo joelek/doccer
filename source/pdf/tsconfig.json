@@ -9,12 +9,5 @@
 		"./",
 		"./cp_pdfdoc.json"
 	],
-	"references": [
-		{
-			"path": "../codepage/"
-		},
-		{
-			"path": "../truetype/"
-		}
-	]
+	"references": []
 }
