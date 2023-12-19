@@ -1,4 +1,4 @@
-guard Base64: string("^([A-Za-z0-9+/]{3})*([A-Za-z0-9+/]{2}[=]{1}|[A-Za-z0-9+/]{1}[=]{2})?$");
+guard PaddedBase64URL: string("^([A-Za-z0-9-_]{4})*([A-Za-z0-9-_]{3}[=]{1}|[A-Za-z0-9-_]{2}[=]{2})?$");
 
 guard NonNegativeNumber: number(0, *);
 
@@ -130,7 +130,7 @@ guard Templates: {
 
 guard Document: {
 	content: Node,
-	files?: { Base64 },
+	files?: { PaddedBase64URL },
 	fonts?: { string },
 	size: Size,
 	templates?: Templates

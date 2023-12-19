@@ -2,9 +2,9 @@
 
 import * as autoguard from "@joelek/ts-autoguard/dist/lib-shared";
 
-export const Base64: autoguard.serialization.MessageGuard<Base64> = new autoguard.guards.StringGuard(new RegExp("^([A-Za-z0-9+/]{3})*([A-Za-z0-9+/]{2}[=]{1}|[A-Za-z0-9+/]{1}[=]{2})?$"));
+export const PaddedBase64URL: autoguard.serialization.MessageGuard<PaddedBase64URL> = new autoguard.guards.StringGuard(new RegExp("^([A-Za-z0-9-_]{4})*([A-Za-z0-9-_]{3}[=]{1}|[A-Za-z0-9-_]{2}[=]{2})?$"));
 
-export type Base64 = autoguard.guards.String;
+export type PaddedBase64URL = autoguard.guards.String;
 
 export const NonNegativeNumber: autoguard.serialization.MessageGuard<NonNegativeNumber> = new autoguard.guards.NumberGuard(0, undefined);
 
@@ -478,7 +478,7 @@ export const Document: autoguard.serialization.MessageGuard<Document> = autoguar
 	"content": autoguard.guards.Reference.of(() => Node),
 	"size": autoguard.guards.Reference.of(() => Size)
 }, {
-	"files": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => Base64)),
+	"files": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => PaddedBase64URL)),
 	"fonts": autoguard.guards.Record.of(autoguard.guards.String),
 	"templates": autoguard.guards.Reference.of(() => Templates)
 });
@@ -487,14 +487,14 @@ export type Document = autoguard.guards.Object<{
 	"content": autoguard.guards.Reference<Node>,
 	"size": autoguard.guards.Reference<Size>
 }, {
-	"files": autoguard.guards.Record<autoguard.guards.Reference<Base64>>,
+	"files": autoguard.guards.Record<autoguard.guards.Reference<PaddedBase64URL>>,
 	"fonts": autoguard.guards.Record<autoguard.guards.String>,
 	"templates": autoguard.guards.Reference<Templates>
 }>;
 
 export namespace Autoguard {
 	export const Guards = {
-		"Base64": autoguard.guards.Reference.of(() => Base64),
+		"PaddedBase64URL": autoguard.guards.Reference.of(() => PaddedBase64URL),
 		"NonNegativeNumber": autoguard.guards.Reference.of(() => NonNegativeNumber),
 		"PositiveInteger": autoguard.guards.Reference.of(() => PositiveInteger),
 		"ColorComponent": autoguard.guards.Reference.of(() => ColorComponent),
