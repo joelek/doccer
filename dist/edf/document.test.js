@@ -44,5 +44,4 @@ wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
     };
     let pdf_file = document_1.DocumentUtils.convertToPDF(document);
     assert.instanceof(pdf_file, pdf.format.PDFFile);
-    console.log(pdf_file.tokenize().join("\n"));
 });

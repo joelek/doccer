@@ -1,6 +1,6 @@
-import { Tokenizer } from "./tokenization";
+import * as stdlib from "@joelek/ts-stdlib";
 export declare const PDFTokenizer: {
-    create(): Tokenizer<{
+    create(): stdlib.data.tokenization.Tokenizer<{
         null: RegExp;
         true: RegExp;
         false: RegExp;
@@ -47,7 +47,7 @@ export declare const PDFTokenizer: {
 };
 export type PDFTokenizer = ReturnType<(typeof PDFTokenizer)["create"]>;
 export declare const PDFParser: {
-    createFromBuffer(buffer: Uint8Array): import("./tokenization").Parser<{
+    createFromBuffer(buffer: Uint8Array): stdlib.data.tokenization.Parser<{
         null: RegExp;
         true: RegExp;
         false: RegExp;
@@ -91,7 +91,7 @@ export declare const PDFParser: {
         XREF_OFFSET: RegExp;
         XREF_GENERATION: RegExp;
     }>;
-    createFromString(string: string): import("./tokenization").Parser<{
+    createFromString(string: string): stdlib.data.tokenization.Parser<{
         null: RegExp;
         true: RegExp;
         false: RegExp;

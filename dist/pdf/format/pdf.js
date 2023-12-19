@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PDFFile = exports.PDFStreamObject = exports.PDFStream = exports.PDFObject = exports.PDFArray = exports.PDFReal = exports.PDFInteger = exports.PDFTrue = exports.PDFFalse = exports.PDFVersion = exports.PDFNull = exports.PDFReference = exports.PDFRecord = exports.PDFRecordMember = exports.PDFName = exports.PDFDate = exports.PDFString = exports.PDFBytestring = exports.PDFType = exports.PDFEntity = exports.PDFParser = exports.PDFTokenizer = void 0;
-const tokenization_1 = require("./tokenization");
-const utils_1 = require("./utils");
+const stdlib = require("@joelek/ts-stdlib");
 const codepages = require("../codepages");
 exports.PDFTokenizer = {
     create() {
-        return new tokenization_1.Tokenizer({
+        return new stdlib.data.tokenization.Tokenizer({
             "null": /null/i,
             "true": /true/i,
             "false": /false/i,
@@ -54,7 +53,7 @@ exports.PDFTokenizer = {
 };
 exports.PDFParser = {
     createFromBuffer(buffer) {
-        let string = utils_1.Codec.decodeAsciiBuffer(buffer);
+        let string = stdlib.data.chunk.Chunk.toString(buffer, "binary");
         let tokenizer = exports.PDFTokenizer.create();
         return tokenizer.tokenize(string);
     },
@@ -99,7 +98,7 @@ class PDFBytestring extends PDFType {
             string = string.replaceAll(/([0-9A-Fa-f]{1,2})/g, (_, match) => {
                 return String.fromCharCode(Number.parseInt(match.padEnd(2, "0"), 16));
             });
-            let value = utils_1.Codec.encodeAsciiBuffer(string);
+            let value = stdlib.data.chunk.Chunk.fromString(string, "binary");
             return new PDFBytestring(value);
         });
     }
@@ -116,7 +115,7 @@ class PDFString extends PDFType {
         let lines = [];
         try {
             let buffer = codepages.CP_PDFDOC.encode(this.value);
-            let string = utils_1.Codec.decodeAsciiBuffer(buffer);
+            let string = stdlib.data.chunk.Chunk.toString(buffer, "binary");
             string = string.replaceAll("\\", "\\\\");
             string = string.replaceAll(")", "\\)");
             string = string.replaceAll(/([^\x20-\x7E])/g, (_, match) => {
@@ -161,7 +160,8 @@ class PDFString extends PDFType {
                 return String.fromCharCode(Number.parseInt(match, 8));
             });
             if (string.startsWith("\xFE\xFF")) {
-                string = utils_1.Codec.utf16FromAscii(string.slice(2));
+                let buffer = stdlib.data.chunk.Chunk.fromString(string.slice(2), "binary");
+                string = stdlib.data.chunk.Chunk.toString(buffer, "utf16be");
             }
             return new PDFString(string);
         });
@@ -231,7 +231,8 @@ class PDFName extends PDFType {
     }
     tokenize() {
         let lines = [];
-        let ascii = utils_1.Codec.asciiFromUnicode(this.value);
+        let buffer = stdlib.data.chunk.Chunk.fromString(this.value, "utf-8");
+        let ascii = stdlib.data.chunk.Chunk.toString(buffer, "binary");
         let escaped = ascii.replaceAll(/([^\x21-\x24\x26-\x27\x2A-\x2E\x30-\x3B\x3D\x3F-\x5A\x5C\x5E-\x7A\x7C\x7E])/g, (_, match) => {
             return `#${match.charCodeAt(0).toString(16).padStart(2, "0").toUpperCase()}`;
         });
@@ -245,7 +246,8 @@ class PDFName extends PDFType {
             string = string.replaceAll(/[#]([0-9A-Fa-f]{2})/g, (_, match) => {
                 return String.fromCharCode(Number.parseInt(match, 16));
             });
-            string = utils_1.Codec.unicodeFromAscii(string);
+            let buffer = stdlib.data.chunk.Chunk.fromString(string, "binary");
+            string = stdlib.data.chunk.Chunk.toString(buffer, "utf-8");
             return new PDFName(string);
         });
     }
@@ -549,14 +551,14 @@ class PDFStream extends PDFEntity {
     }
     tokenize() {
         let lines = [];
-        lines.push(`stream\n${utils_1.Codec.decodeAsciiBuffer(this.value)}\nendstream`);
+        lines.push(`stream\n${stdlib.data.chunk.Chunk.toString(this.value, "binary")}\nendstream`);
         return lines;
     }
     static parseFrom(parser) {
         return parser.parse(["WS", "COMMENT"], (read, peek, skip) => {
             let string = read("STREAM").value;
             string = string.slice(string.startsWith("stream\r\n") ? 8 : 7, string.endsWith("\r\nendstream") ? -11 : -10);
-            let value = utils_1.Codec.encodeAsciiBuffer(string);
+            let value = stdlib.data.chunk.Chunk.fromString(string, "binary");
             return new PDFStream(value);
         });
     }

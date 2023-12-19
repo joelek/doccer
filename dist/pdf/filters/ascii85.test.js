@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const stdlib = require("@joelek/ts-stdlib");
 const wtf = require("@joelek/wtf");
 const ascii85_1 = require("./ascii85");
-const utils_1 = require("../format/utils");
 wtf.test(`Ascii85 should encode "Man sure.".`, (assert) => {
-    assert.equals(ascii85_1.Ascii85.encode(utils_1.Codec.encodeAsciiBuffer("Man sure.")), "9jqo^F*2M7/c~>");
+    assert.equals(ascii85_1.Ascii85.encode(stdlib.data.chunk.Chunk.fromString("Man sure.", "binary")), "9jqo^F*2M7/c~>");
 });
 wtf.test(`Ascii85 should decode "Man sure.".`, (assert) => {
-    assert.equals(ascii85_1.Ascii85.decode("9jqo^F*2M7/c~>"), utils_1.Codec.encodeAsciiBuffer("Man sure."));
+    assert.equals(ascii85_1.Ascii85.decode("9jqo^F*2M7/c~>"), stdlib.data.chunk.Chunk.fromString("Man sure.", "binary"));
 });
 wtf.test(`Ascii85 should encode buffers with a byte length of 0.`, (assert) => {
     assert.equals(ascii85_1.Ascii85.encode(Uint8Array.of()), "~>");
