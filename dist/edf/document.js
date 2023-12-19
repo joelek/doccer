@@ -78,7 +78,7 @@ exports.DocumentUtils = {
                 buffer = require("fs").readFileSync(filename);
             }
             else {
-                buffer = stdlib.data.chunk.Chunk.fromString(file, "base64");
+                buffer = stdlib.data.chunk.Chunk.fromString(file, "base64url");
             }
             let truetype_font = truetype.parseTrueTypeData(buffer.buffer);
             let typesetter = fonts_1.Typesetter.createFromFont(truetype_font);
@@ -212,9 +212,10 @@ exports.DocumentUtils = {
                 buffer = require("fs").readFileSync(filename);
             }
             else {
-                buffer = stdlib.data.chunk.Chunk.fromString(file, "base64");
+                buffer = stdlib.data.chunk.Chunk.fromString(file, "base64url");
             }
-            files[key] = stdlib.data.chunk.Chunk.toString(buffer, "base64");
+            let padded_base64url = stdlib.data.chunk.Chunk.toString(buffer, "base64").replaceAll("+", "-").replaceAll("/", "_");
+            files[key] = padded_base64url;
         }
         return {
             ...document,

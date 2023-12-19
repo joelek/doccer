@@ -1,6 +1,6 @@
 import * as autoguard from "@joelek/ts-autoguard/dist/lib-shared";
-export declare const Base64: autoguard.serialization.MessageGuard<Base64>;
-export type Base64 = autoguard.guards.String;
+export declare const PaddedBase64URL: autoguard.serialization.MessageGuard<PaddedBase64URL>;
+export type PaddedBase64URL = autoguard.guards.String;
 export declare const NonNegativeNumber: autoguard.serialization.MessageGuard<NonNegativeNumber>;
 export type NonNegativeNumber = autoguard.guards.Number;
 export declare const PositiveInteger: autoguard.serialization.MessageGuard<PositiveInteger>;
@@ -240,13 +240,13 @@ export type Document = autoguard.guards.Object<{
     "content": autoguard.guards.Reference<Node>;
     "size": autoguard.guards.Reference<Size>;
 }, {
-    "files": autoguard.guards.Record<autoguard.guards.Reference<Base64>>;
+    "files": autoguard.guards.Record<autoguard.guards.Reference<PaddedBase64URL>>;
     "fonts": autoguard.guards.Record<autoguard.guards.String>;
     "templates": autoguard.guards.Reference<Templates>;
 }>;
 export declare namespace Autoguard {
     const Guards: {
-        Base64: autoguard.guards.ReferenceGuard<string>;
+        PaddedBase64URL: autoguard.guards.ReferenceGuard<string>;
         NonNegativeNumber: autoguard.guards.ReferenceGuard<number>;
         PositiveInteger: autoguard.guards.ReferenceGuard<number>;
         ColorComponent: autoguard.guards.ReferenceGuard<number>;
