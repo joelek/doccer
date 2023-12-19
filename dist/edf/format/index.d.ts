@@ -58,7 +58,7 @@ export type Size = autoguard.guards.Object<{
 }, {}>;
 export declare const Style: autoguard.serialization.MessageGuard<Style>;
 export type Style = autoguard.guards.Object<{}, {
-    "extends": autoguard.guards.String;
+    "template": autoguard.guards.String;
 }>;
 export declare const NodeStyle: autoguard.serialization.MessageGuard<NodeStyle>;
 export type NodeStyle = autoguard.guards.Object<{}, {
@@ -228,8 +228,8 @@ export type HorizontalNode = autoguard.guards.Intersection<[
         "style": autoguard.guards.Reference<HorizontalNodeStyle>;
     }>
 ]>;
-export declare const Styles: autoguard.serialization.MessageGuard<Styles>;
-export type Styles = autoguard.guards.Object<{}, {
+export declare const Templates: autoguard.serialization.MessageGuard<Templates>;
+export type Templates = autoguard.guards.Object<{}, {
     "box": autoguard.guards.Record<autoguard.guards.Reference<BoxNodeStyle>>;
     "horizontal": autoguard.guards.Record<autoguard.guards.Reference<HorizontalNodeStyle>>;
     "text": autoguard.guards.Record<autoguard.guards.Reference<TextNodeStyle>>;
@@ -242,7 +242,7 @@ export type Document = autoguard.guards.Object<{
 }, {
     "files": autoguard.guards.Record<autoguard.guards.Reference<Base64>>;
     "fonts": autoguard.guards.Record<autoguard.guards.String>;
-    "styles": autoguard.guards.Reference<Styles>;
+    "templates": autoguard.guards.Reference<Templates>;
 }>;
 export declare namespace Autoguard {
     const Guards: {
@@ -283,7 +283,7 @@ export declare namespace Autoguard {
             h: number;
         }>;
         Style: autoguard.guards.ReferenceGuard<{
-            extends?: string | undefined;
+            template?: string | undefined;
         }>;
         NodeStyle: autoguard.guards.ReferenceGuard<{
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
@@ -329,7 +329,7 @@ export declare namespace Autoguard {
             word_spacing?: number | undefined;
         }>;
         TextNodeStyle: autoguard.guards.ReferenceGuard<{
-            extends?: string | undefined;
+            template?: string | undefined;
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
@@ -363,7 +363,7 @@ export declare namespace Autoguard {
             content: string;
             font: string;
             style?: {
-                extends?: string | undefined;
+                template?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
@@ -423,7 +423,7 @@ export declare namespace Autoguard {
             padding?: number | [number] | [number, "%"] | undefined;
         }>;
         BoxNodeStyle: autoguard.guards.ReferenceGuard<{
-            extends?: string | undefined;
+            template?: string | undefined;
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
@@ -462,7 +462,7 @@ export declare namespace Autoguard {
                 type: string;
             }>;
             style?: {
-                extends?: string | undefined;
+                template?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
@@ -502,7 +502,7 @@ export declare namespace Autoguard {
             gap?: number | [number] | [number, "%"] | undefined;
         }>;
         VerticalNodeStyle: autoguard.guards.ReferenceGuard<{
-            extends?: string | undefined;
+            template?: string | undefined;
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
@@ -517,7 +517,7 @@ export declare namespace Autoguard {
                 type: string;
             }>;
             style?: {
-                extends?: string | undefined;
+                template?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
@@ -533,7 +533,7 @@ export declare namespace Autoguard {
             gap?: number | [number] | [number, "%"] | undefined;
         }>;
         HorizontalNodeStyle: autoguard.guards.ReferenceGuard<{
-            extends?: string | undefined;
+            template?: string | undefined;
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
@@ -548,7 +548,7 @@ export declare namespace Autoguard {
                 type: string;
             }>;
             style?: {
-                extends?: string | undefined;
+                template?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
@@ -558,9 +558,9 @@ export declare namespace Autoguard {
                 gap?: number | [number] | [number, "%"] | undefined;
             } | undefined;
         }>;
-        Styles: autoguard.guards.ReferenceGuard<{
+        Templates: autoguard.guards.ReferenceGuard<{
             box?: autoguard.guards.Record<{
-                extends?: string | undefined;
+                template?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
@@ -594,7 +594,7 @@ export declare namespace Autoguard {
                 padding?: number | [number] | [number, "%"] | undefined;
             }> | undefined;
             horizontal?: autoguard.guards.Record<{
-                extends?: string | undefined;
+                template?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
@@ -604,7 +604,7 @@ export declare namespace Autoguard {
                 gap?: number | [number] | [number, "%"] | undefined;
             }> | undefined;
             text?: autoguard.guards.Record<{
-                extends?: string | undefined;
+                template?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
@@ -634,7 +634,7 @@ export declare namespace Autoguard {
                 word_spacing?: number | undefined;
             }> | undefined;
             vertical?: autoguard.guards.Record<{
-                extends?: string | undefined;
+                template?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
@@ -654,9 +654,9 @@ export declare namespace Autoguard {
             };
             files?: autoguard.guards.Record<string> | undefined;
             fonts?: autoguard.guards.Record<string> | undefined;
-            styles?: {
+            templates?: {
                 box?: autoguard.guards.Record<{
-                    extends?: string | undefined;
+                    template?: string | undefined;
                     height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
@@ -690,7 +690,7 @@ export declare namespace Autoguard {
                     padding?: number | [number] | [number, "%"] | undefined;
                 }> | undefined;
                 horizontal?: autoguard.guards.Record<{
-                    extends?: string | undefined;
+                    template?: string | undefined;
                     height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
@@ -700,7 +700,7 @@ export declare namespace Autoguard {
                     gap?: number | [number] | [number, "%"] | undefined;
                 }> | undefined;
                 text?: autoguard.guards.Record<{
-                    extends?: string | undefined;
+                    template?: string | undefined;
                     height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
@@ -730,7 +730,7 @@ export declare namespace Autoguard {
                     word_spacing?: number | undefined;
                 }> | undefined;
                 vertical?: autoguard.guards.Record<{
-                    extends?: string | undefined;
+                    template?: string | undefined;
                     height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;

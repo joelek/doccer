@@ -12,6 +12,16 @@ wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
             w: 210,
             h: 297
         },
+        templates: {
+            text: {
+                default: {
+                    font_size: 4,
+                    color: { r: 0, g: 0, b: 0 },
+                    line_height: 8,
+                    width: "extrinsic"
+                }
+            }
+        },
         content: {
             type: "box",
             style: {
@@ -23,12 +33,9 @@ wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
                     type: "text",
                     font: "DMSans-Regular",
                     style: {
-                        font_size: 4,
-                        color: { r: 0, g: 0, b: 0 },
+                        template: "default",
                         gutter: 20,
-                        columns: 3,
-                        line_height: 8,
-                        width: "extrinsic"
+                        columns: 3
                     },
                     content: "Det här är en text med både pi (π) och raketemoji (🚀)."
                 }
@@ -37,4 +44,5 @@ wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
     };
     let pdf_file = document_1.DocumentUtils.convertToPDF(document);
     assert.instanceof(pdf_file, pdf.format.PDFFile);
+    console.log(pdf_file.tokenize().join("\n"));
 });

@@ -7,6 +7,7 @@ const truetype = require("../truetype");
 const format_1 = require("./format");
 const layout = require("./layout");
 const fonts_1 = require("./fonts");
+const styles_1 = require("./styles");
 function makeToUnicode(font) {
     let lines = [];
     lines.push(`/CIDInit /ProcSet findresource begin`);
@@ -32,18 +33,18 @@ function makeToUnicode(font) {
 }
 exports.makeToUnicode = makeToUnicode;
 ;
-function createNodeClasses(font_handler, node) {
+function createNodeClasses(font_handler, style_handler, node) {
     if (format_1.TextNode.is(node)) {
-        return new layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), node.style);
+        return new layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), style_handler.getTextStyle(node.style));
     }
     if (format_1.BoxNode.is(node)) {
-        return new layout.BoxNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+        return new layout.BoxNode(style_handler.getBoxStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
     }
     if (format_1.VerticalNode.is(node)) {
-        return new layout.VerticalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+        return new layout.VerticalNode(style_handler.getVerticalStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
     }
     if (format_1.HorizontalNode.is(node)) {
-        return new layout.HorizontalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+        return new layout.HorizontalNode(style_handler.getHorizontalStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
     }
     throw new Error();
 }
@@ -149,8 +150,9 @@ exports.DocumentUtils = {
                 pdf_file.objects.push(pdf_type0_font);
             }
         }
+        let style_handler = new styles_1.StyleHandler(document.templates);
         let segment_size = document.size;
-        let node = createNodeClasses(font_handler, document.content);
+        let node = createNodeClasses(font_handler, style_handler, document.content);
         let segments = node.createSegments(segment_size, segment_size, undefined, { text_operand: "bytestring" });
         let kids = new pdf.format.PDFArray([]);
         let pages = new pdf.format.PDFObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
