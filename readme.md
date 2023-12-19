@@ -42,7 +42,6 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add support for compound paths.
 * Improve computation of binary offsets in PDF serialization.
 * Add support for absolute length units.
-* Implement style extension.
 * Use "extrinsic" as default width for all node types.
 * Move string encoding to stdlib.
 * Move generic tokenizer to stdlib.
