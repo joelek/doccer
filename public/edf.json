@@ -1,0 +1,42 @@
+{
+	"fonts": {
+		"DMSans-Regular": "./public/DMSans-Regular.ttf"
+	},
+	"size": {
+		"w": 210,
+		"h": 297
+	},
+	"templates": {
+		"text": {
+			"default": {
+				"font_size": 4,
+				"color": {
+					"r": 0,
+					"g": 0,
+					"b": 0
+				},
+				"line_height": 8,
+				"width": "extrinsic"
+			}
+		}
+	},
+	"content": {
+		"type": "box",
+		"style": {
+			"padding": 20,
+			"width": "extrinsic"
+		},
+		"children": [
+			{
+				"type": "text",
+				"font": "DMSans-Regular",
+				"style": {
+					"template": "default",
+					"gutter": 20,
+					"columns": 3
+				},
+				"content": "Det här är en text med både pi (π) och raketemoji (🚀)."
+			}
+		]
+	}
+}
