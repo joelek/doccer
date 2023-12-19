@@ -51,3 +51,5 @@ NB: This project targets TypeScript 4 in strict mode.
 * Parse ligature data from truetype font.
 * Parse PDF increments.
 * Serialize PDF increments.
+* Add color swatches to EDF format.
+* Consider adding variables to EDF format.
