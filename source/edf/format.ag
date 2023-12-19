@@ -59,10 +59,7 @@ guard ParentNode: ChildNode & {
 guard TextStyle: NodeStyle & {
 	color?: "transparent" | Color,
 	columns?: PositiveInteger,
-	font_family?: string,
 	font_size?: NonNegativeNumber,
-	font_style?: "normal" | "italic",
-	font_weight?: "normal" | "bold",
 	gutter?: Length,
 	letter_spacing?: NonNegativeNumber,
 	line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline",
@@ -76,8 +73,9 @@ guard TextStyle: NodeStyle & {
 
 guard TextNode: ChildNode & {
 	type: "text",
-	style?: TextStyle,
-	content: string
+	content: string,
+	font: string,
+	style?: TextStyle
 };
 
 guard BoxStyle: NodeStyle & {
@@ -115,13 +113,6 @@ guard HorizontalNode: ParentNode & {
 	style?: HorizontalStyle
 };
 
-guard Font: {
-	family: string,
-	style: "normal" | "italic",
-	weight: "normal" | "bold",
-	file: string
-};
-
 guard Styles: {
 	box?: { BoxStyle },
 	horizontal?: { HorizontalStyle },
@@ -132,7 +123,7 @@ guard Styles: {
 guard Document: {
 	content: Node,
 	files?: { Base64 },
-	fonts?: Font[],
+	fonts?: { string },
 	size: Size,
 	styles?: Styles
 };

@@ -1125,63 +1125,47 @@ export class Typesetter {
 	}
 };
 
-export type Font = {
-	family: string;
-	style: "normal" | "italic";
-	weight: "normal" | "bold";
+export type FontHandlerEntry = {
 	typesetter: Typesetter;
+	type_id: number;
 };
 
 export class FontHandler {
-	protected fonts: Array<Font>;
+	protected entries: Map<string, FontHandlerEntry>;
+	protected type_id: number;
 
 	constructor() {
-		this.fonts = new Array();
+		this.entries = new Map();
+		this.type_id = 0;
 	}
 
-	addTypesetter(family: string, style: "normal" | "italic", weight: "normal" | "bold", typesetter: Typesetter): FontHandler {
-		this.fonts.push({
-			family,
-			style,
-			weight,
-			typesetter
+	addTypesetter(key: string, typesetter: Typesetter): FontHandler {
+		let entry = this.entries.get(key);
+		if (entry != null) {
+			throw new Error();
+		}
+		let type_id = this.type_id;
+		this.entries.set(key, {
+			typesetter,
+			type_id
 		});
+		this.type_id += 1;
 		return this;
 	}
 
-	[Symbol.iterator](): Iterator<[number, Font]> {
-		return this.fonts.entries();
-	}
-
-	getTypeId(typesetter: Typesetter): number {
-		let index = this.fonts.findIndex((font) => {
-			if (font.typesetter !== typesetter) {
-				return;
-			}
-			return font;
-		});
-		if (index < 0) {
+	getTypesetter(key: string): Typesetter {
+		let entry = this.entries.get(key);
+		if (entry == null) {
 			throw new Error();
 		}
-		return index;
+		return entry.typesetter;
 	}
 
-	getTypesetter(family: string, style: "normal" | "italic", weight: "normal" | "bold"): Typesetter {
-		let index = this.fonts.findIndex((font) => {
-			if (font.family !== family) {
-				return;
-			}
-			if (font.style !== style) {
-				return;
-			}
-			if (font.weight !== weight) {
-				return;
-			}
-			return font;
-		});
-		if (index < 0) {
+	getTypeId(key: string): number {
+		let entry = this.entries.get(key);
+		if (entry == null) {
 			throw new Error();
 		}
-		return this.fonts[index].typesetter;
+		return entry.type_id;
 	}
 };

@@ -196,16 +196,7 @@ export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autogu
 			autoguard.guards.Reference.of(() => Color)
 		),
 		"columns": autoguard.guards.Reference.of(() => PositiveInteger),
-		"font_family": autoguard.guards.String,
 		"font_size": autoguard.guards.Reference.of(() => NonNegativeNumber),
-		"font_style": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("normal"),
-			autoguard.guards.StringLiteral.of("italic")
-		),
-		"font_weight": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("normal"),
-			autoguard.guards.StringLiteral.of("bold")
-		),
 		"gutter": autoguard.guards.Reference.of(() => Length),
 		"letter_spacing": autoguard.guards.Reference.of(() => NonNegativeNumber),
 		"line_anchor": autoguard.guards.Union.of(
@@ -243,16 +234,7 @@ export type TextStyle = autoguard.guards.Intersection<[
 			autoguard.guards.Reference<Color>
 		]>,
 		"columns": autoguard.guards.Reference<PositiveInteger>,
-		"font_family": autoguard.guards.String,
 		"font_size": autoguard.guards.Reference<NonNegativeNumber>,
-		"font_style": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"normal">,
-			autoguard.guards.StringLiteral<"italic">
-		]>,
-		"font_weight": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"normal">,
-			autoguard.guards.StringLiteral<"bold">
-		]>,
 		"gutter": autoguard.guards.Reference<Length>,
 		"letter_spacing": autoguard.guards.Reference<NonNegativeNumber>,
 		"line_anchor": autoguard.guards.Union<[
@@ -286,7 +268,8 @@ export const TextNode: autoguard.serialization.MessageGuard<TextNode> = autoguar
 	autoguard.guards.Reference.of(() => ChildNode),
 	autoguard.guards.Object.of({
 		"type": autoguard.guards.StringLiteral.of("text"),
-		"content": autoguard.guards.String
+		"content": autoguard.guards.String,
+		"font": autoguard.guards.String
 	}, {
 		"style": autoguard.guards.Reference.of(() => TextStyle)
 	})
@@ -296,7 +279,8 @@ export type TextNode = autoguard.guards.Intersection<[
 	autoguard.guards.Reference<ChildNode>,
 	autoguard.guards.Object<{
 		"type": autoguard.guards.StringLiteral<"text">,
-		"content": autoguard.guards.String
+		"content": autoguard.guards.String,
+		"font": autoguard.guards.String
 	}, {
 		"style": autoguard.guards.Reference<TextStyle>
 	}>
@@ -458,32 +442,6 @@ export type HorizontalNode = autoguard.guards.Intersection<[
 	}>
 ]>;
 
-export const Font: autoguard.serialization.MessageGuard<Font> = autoguard.guards.Object.of({
-	"family": autoguard.guards.String,
-	"style": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("normal"),
-		autoguard.guards.StringLiteral.of("italic")
-	),
-	"weight": autoguard.guards.Union.of(
-		autoguard.guards.StringLiteral.of("normal"),
-		autoguard.guards.StringLiteral.of("bold")
-	),
-	"file": autoguard.guards.String
-}, {});
-
-export type Font = autoguard.guards.Object<{
-	"family": autoguard.guards.String,
-	"style": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"normal">,
-		autoguard.guards.StringLiteral<"italic">
-	]>,
-	"weight": autoguard.guards.Union<[
-		autoguard.guards.StringLiteral<"normal">,
-		autoguard.guards.StringLiteral<"bold">
-	]>,
-	"file": autoguard.guards.String
-}, {}>;
-
 export const Styles: autoguard.serialization.MessageGuard<Styles> = autoguard.guards.Object.of({}, {
 	"box": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => BoxStyle)),
 	"horizontal": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => HorizontalStyle)),
@@ -503,7 +461,7 @@ export const Document: autoguard.serialization.MessageGuard<Document> = autoguar
 	"size": autoguard.guards.Reference.of(() => Size)
 }, {
 	"files": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => Base64)),
-	"fonts": autoguard.guards.Array.of(autoguard.guards.Reference.of(() => Font)),
+	"fonts": autoguard.guards.Record.of(autoguard.guards.String),
 	"styles": autoguard.guards.Reference.of(() => Styles)
 });
 
@@ -512,7 +470,7 @@ export type Document = autoguard.guards.Object<{
 	"size": autoguard.guards.Reference<Size>
 }, {
 	"files": autoguard.guards.Record<autoguard.guards.Reference<Base64>>,
-	"fonts": autoguard.guards.Array<autoguard.guards.Reference<Font>>,
+	"fonts": autoguard.guards.Record<autoguard.guards.String>,
 	"styles": autoguard.guards.Reference<Styles>
 }>;
 
@@ -542,7 +500,6 @@ export namespace Autoguard {
 		"VerticalNode": autoguard.guards.Reference.of(() => VerticalNode),
 		"HorizontalStyle": autoguard.guards.Reference.of(() => HorizontalStyle),
 		"HorizontalNode": autoguard.guards.Reference.of(() => HorizontalNode),
-		"Font": autoguard.guards.Reference.of(() => Font),
 		"Styles": autoguard.guards.Reference.of(() => Styles),
 		"Document": autoguard.guards.Reference.of(() => Document)
 	};
