@@ -5,6 +5,7 @@ import * as format from "./format";
 import { BoxNode, Document, HorizontalNode, TextNode, VerticalNode } from "./format";
 import * as layout from "./layout";
 import { FontHandler, Typesetter } from "./fonts";
+import { StyleHandler } from "./styles";
 
 export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 	let lines = [] as Array<string>;
@@ -30,18 +31,18 @@ export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 	return buffer;
 };
 
-export function createNodeClasses(font_handler: FontHandler, node: format.Node): layout.Node {
+export function createNodeClasses(font_handler: FontHandler, style_handler: StyleHandler, node: format.Node): layout.Node {
 	if (TextNode.is(node)) {
-		return new layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), node.style);
+		return new layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), style_handler.getTextStyle(node.style));
 	}
 	if (BoxNode.is(node)) {
-		return new layout.BoxNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+		return new layout.BoxNode(style_handler.getBoxStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
 	}
 	if (VerticalNode.is(node)) {
-		return new layout.VerticalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+		return new layout.VerticalNode(style_handler.getVerticalStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
 	}
 	if (HorizontalNode.is(node)) {
-		return new layout.HorizontalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+		return new layout.HorizontalNode(style_handler.getHorizontalStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
 	}
 	throw new Error();
 };
@@ -180,8 +181,9 @@ export const DocumentUtils = {
 				pdf_file.objects.push(pdf_type0_font);
 			}
 		}
+		let style_handler = new StyleHandler(document.templates);
 		let segment_size = document.size;
-		let node = createNodeClasses(font_handler, document.content);
+		let node = createNodeClasses(font_handler, style_handler, document.content);
 		let segments = node.createSegments(segment_size, segment_size, undefined, { text_operand: "bytestring" });
 		let kids = new pdf.format.PDFArray([]);
 		let pages = new pdf.format.PDFObject(

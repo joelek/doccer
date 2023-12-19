@@ -117,11 +117,11 @@ export type Size = autoguard.guards.Object<{
 }, {}>;
 
 export const Style: autoguard.serialization.MessageGuard<Style> = autoguard.guards.Object.of({}, {
-	"extends": autoguard.guards.String
+	"template": autoguard.guards.String
 });
 
 export type Style = autoguard.guards.Object<{}, {
-	"extends": autoguard.guards.String
+	"template": autoguard.guards.String
 }>;
 
 export const NodeStyle: autoguard.serialization.MessageGuard<NodeStyle> = autoguard.guards.Object.of({}, {
@@ -460,14 +460,14 @@ export type HorizontalNode = autoguard.guards.Intersection<[
 	}>
 ]>;
 
-export const Styles: autoguard.serialization.MessageGuard<Styles> = autoguard.guards.Object.of({}, {
+export const Templates: autoguard.serialization.MessageGuard<Templates> = autoguard.guards.Object.of({}, {
 	"box": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => BoxNodeStyle)),
 	"horizontal": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => HorizontalNodeStyle)),
 	"text": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => TextNodeStyle)),
 	"vertical": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => VerticalNodeStyle))
 });
 
-export type Styles = autoguard.guards.Object<{}, {
+export type Templates = autoguard.guards.Object<{}, {
 	"box": autoguard.guards.Record<autoguard.guards.Reference<BoxNodeStyle>>,
 	"horizontal": autoguard.guards.Record<autoguard.guards.Reference<HorizontalNodeStyle>>,
 	"text": autoguard.guards.Record<autoguard.guards.Reference<TextNodeStyle>>,
@@ -480,7 +480,7 @@ export const Document: autoguard.serialization.MessageGuard<Document> = autoguar
 }, {
 	"files": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => Base64)),
 	"fonts": autoguard.guards.Record.of(autoguard.guards.String),
-	"styles": autoguard.guards.Reference.of(() => Styles)
+	"templates": autoguard.guards.Reference.of(() => Templates)
 });
 
 export type Document = autoguard.guards.Object<{
@@ -489,7 +489,7 @@ export type Document = autoguard.guards.Object<{
 }, {
 	"files": autoguard.guards.Record<autoguard.guards.Reference<Base64>>,
 	"fonts": autoguard.guards.Record<autoguard.guards.String>,
-	"styles": autoguard.guards.Reference<Styles>
+	"templates": autoguard.guards.Reference<Templates>
 }>;
 
 export namespace Autoguard {
@@ -522,7 +522,7 @@ export namespace Autoguard {
 		"HorizontalStyle": autoguard.guards.Reference.of(() => HorizontalStyle),
 		"HorizontalNodeStyle": autoguard.guards.Reference.of(() => HorizontalNodeStyle),
 		"HorizontalNode": autoguard.guards.Reference.of(() => HorizontalNode),
-		"Styles": autoguard.guards.Reference.of(() => Styles),
+		"Templates": autoguard.guards.Reference.of(() => Templates),
 		"Document": autoguard.guards.Reference.of(() => Document)
 	};
 

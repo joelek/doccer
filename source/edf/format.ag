@@ -34,7 +34,7 @@ guard Size: {
 };
 
 guard Style: {
-	extends?: string
+	template?: string
 };
 
 guard NodeStyle: {
@@ -121,7 +121,7 @@ guard HorizontalNode: ParentNode & {
 	style?: HorizontalNodeStyle
 };
 
-guard Styles: {
+guard Templates: {
 	box?: { BoxNodeStyle },
 	horizontal?: { HorizontalNodeStyle },
 	text?: { TextNodeStyle },
@@ -133,5 +133,5 @@ guard Document: {
 	files?: { Base64 },
 	fonts?: { string },
 	size: Size,
-	styles?: Styles
+	templates?: Templates
 };
