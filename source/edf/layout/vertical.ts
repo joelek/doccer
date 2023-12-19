@@ -1,11 +1,8 @@
 import * as content from "../../pdf/content";
 import { Atom, ChildNode, CreateSegmentsOptions, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
+import * as format from "../format";
 
-export type VerticalStyle = {
-	align_x: "left" | "center" | "right";
-	align_y: "top" | "middle" | "bottom";
-	gap: Length;
-};
+export type VerticalStyle = Required<format.VerticalStyle>;
 
 export class VerticalNode extends ParentNode {
 	protected style: VerticalStyle;

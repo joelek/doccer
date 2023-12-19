@@ -1,13 +1,8 @@
 import * as content from "../../pdf/content";
 import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, Node, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
+import * as format from "../format";
 
-export type BoxStyle = {
-	background_color: "transparent" | Color;
-	border_color: "transparent" | Color;
-	border_radius: Length;
-	border_width: Length;
-	padding: Length;
-};
+export type BoxStyle = Required<format.BoxStyle>;
 
 export class BoxNode extends ParentNode {
 	protected style: BoxStyle;

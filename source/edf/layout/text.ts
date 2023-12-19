@@ -1,23 +1,10 @@
-import * as truetype from "../../truetype";
 import * as content from "../../pdf/content";
 import { TextRenderingMode } from "../../pdf/content";
 import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
 import { MeasuredLine, Typesetter } from "../fonts";
+import * as format from "../format";
 
-export type TextStyle = {
-	color: "transparent" | Color;
-	columns: number;
-	font_size: number;
-	gutter: Length;
-	letter_spacing: number;
-	line_anchor: "meanline" | "capline" | "topline" | "bottomline" | "baseline";
-	line_height: number;
-	orphans: number;
-	text_align: "start" | "center" | "end";
-	text_transform: "none" | "lowercase" | "uppercase";
-	white_space: "wrap" | "nowrap";
-	word_spacing: number;
-};
+export type TextStyle = Required<format.TextStyle>;
 
 export class TextNode extends ChildNode {
 	protected content: string;

@@ -1,23 +1,7 @@
 import * as content from "../../pdf/content";
+import * as format from "../format";
 
-export type GrayscaleColor = {
-	i: number;
-};
-
-export type RGBColor = {
-	r: number;
-	g: number;
-	b: number;
-};
-
-export type CMYKColor = {
-	c: number;
-	m: number;
-	y: number;
-	k: number;
-};
-
-export type Color = GrayscaleColor | RGBColor | CMYKColor;
+export type Color = format.Color;
 
 export const Color = {
 	setFillColor(color: Color, context: content.Context): void {
@@ -251,7 +235,7 @@ export const Atom = {
 	}
 };
 
-export type Length = number | [number] | [number, "%"];
+export type Length = format.Length;
 
 export const Length = {
 	getComputedLength(length: Length, relative_to: number | undefined): number {
@@ -278,7 +262,7 @@ export const Length = {
 	}
 };
 
-export type NodeLength = Length | [number, "fr"] | "intrinsic" | "extrinsic";
+export type NodeLength = format.NodeLength;
 
 export const NodeLength = {
 	getComputedLength(length: NodeLength, relative_to: number | undefined, fraction_length: number | undefined): number | undefined {
@@ -309,12 +293,7 @@ export type CreateSegmentsOptions = {
 	text_operand: "bytestring" | "string";
 };
 
-export type NodeStyle = {
-	height: NodeLength;
-	overflow: "hidden" | "visible";
-	segmentation: "auto" | "none";
-	width: NodeLength;
-};
+export type NodeStyle = Required<format.NodeStyle>;
 
 export abstract class Node {
 	protected node_style: NodeStyle;

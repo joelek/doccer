@@ -124,37 +124,31 @@ export type Style = autoguard.guards.Object<{}, {
 	"extends": autoguard.guards.String
 }>;
 
-export const NodeStyle: autoguard.serialization.MessageGuard<NodeStyle> = autoguard.guards.Intersection.of(
-	autoguard.guards.Reference.of(() => Style),
-	autoguard.guards.Object.of({}, {
-		"height": autoguard.guards.Reference.of(() => NodeLength),
-		"overflow": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("hidden"),
-			autoguard.guards.StringLiteral.of("visible")
-		),
-		"segmentation": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("auto"),
-			autoguard.guards.StringLiteral.of("none")
-		),
-		"width": autoguard.guards.Reference.of(() => NodeLength)
-	})
-);
+export const NodeStyle: autoguard.serialization.MessageGuard<NodeStyle> = autoguard.guards.Object.of({}, {
+	"height": autoguard.guards.Reference.of(() => NodeLength),
+	"overflow": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("hidden"),
+		autoguard.guards.StringLiteral.of("visible")
+	),
+	"segmentation": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("auto"),
+		autoguard.guards.StringLiteral.of("none")
+	),
+	"width": autoguard.guards.Reference.of(() => NodeLength)
+});
 
-export type NodeStyle = autoguard.guards.Intersection<[
-	autoguard.guards.Reference<Style>,
-	autoguard.guards.Object<{}, {
-		"height": autoguard.guards.Reference<NodeLength>,
-		"overflow": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"hidden">,
-			autoguard.guards.StringLiteral<"visible">
-		]>,
-		"segmentation": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"auto">,
-			autoguard.guards.StringLiteral<"none">
-		]>,
-		"width": autoguard.guards.Reference<NodeLength>
-	}>
-]>;
+export type NodeStyle = autoguard.guards.Object<{}, {
+	"height": autoguard.guards.Reference<NodeLength>,
+	"overflow": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"hidden">,
+		autoguard.guards.StringLiteral<"visible">
+	]>,
+	"segmentation": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"auto">,
+		autoguard.guards.StringLiteral<"none">
+	]>,
+	"width": autoguard.guards.Reference<NodeLength>
+}>;
 
 export const Node: autoguard.serialization.MessageGuard<Node> = autoguard.guards.Object.of({
 	"type": autoguard.guards.String
@@ -188,80 +182,86 @@ export type ParentNode = autoguard.guards.Intersection<[
 	}, {}>
 ]>;
 
-export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autoguard.guards.Intersection.of(
+export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autoguard.guards.Object.of({}, {
+	"color": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("transparent"),
+		autoguard.guards.Reference.of(() => Color)
+	),
+	"columns": autoguard.guards.Reference.of(() => PositiveInteger),
+	"font_size": autoguard.guards.Reference.of(() => NonNegativeNumber),
+	"gutter": autoguard.guards.Reference.of(() => Length),
+	"letter_spacing": autoguard.guards.Reference.of(() => NonNegativeNumber),
+	"line_anchor": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("meanline"),
+		autoguard.guards.StringLiteral.of("capline"),
+		autoguard.guards.StringLiteral.of("topline"),
+		autoguard.guards.StringLiteral.of("bottomline"),
+		autoguard.guards.StringLiteral.of("baseline")
+	),
+	"line_height": autoguard.guards.Reference.of(() => NonNegativeNumber),
+	"orphans": autoguard.guards.Reference.of(() => PositiveInteger),
+	"text_align": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("start"),
+		autoguard.guards.StringLiteral.of("center"),
+		autoguard.guards.StringLiteral.of("end")
+	),
+	"text_transform": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("none"),
+		autoguard.guards.StringLiteral.of("lowercase"),
+		autoguard.guards.StringLiteral.of("uppercase")
+	),
+	"white_space": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("wrap"),
+		autoguard.guards.StringLiteral.of("nowrap")
+	),
+	"word_spacing": autoguard.guards.Reference.of(() => NonNegativeNumber)
+});
+
+export type TextStyle = autoguard.guards.Object<{}, {
+	"color": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"transparent">,
+		autoguard.guards.Reference<Color>
+	]>,
+	"columns": autoguard.guards.Reference<PositiveInteger>,
+	"font_size": autoguard.guards.Reference<NonNegativeNumber>,
+	"gutter": autoguard.guards.Reference<Length>,
+	"letter_spacing": autoguard.guards.Reference<NonNegativeNumber>,
+	"line_anchor": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"meanline">,
+		autoguard.guards.StringLiteral<"capline">,
+		autoguard.guards.StringLiteral<"topline">,
+		autoguard.guards.StringLiteral<"bottomline">,
+		autoguard.guards.StringLiteral<"baseline">
+	]>,
+	"line_height": autoguard.guards.Reference<NonNegativeNumber>,
+	"orphans": autoguard.guards.Reference<PositiveInteger>,
+	"text_align": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"start">,
+		autoguard.guards.StringLiteral<"center">,
+		autoguard.guards.StringLiteral<"end">
+	]>,
+	"text_transform": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"none">,
+		autoguard.guards.StringLiteral<"lowercase">,
+		autoguard.guards.StringLiteral<"uppercase">
+	]>,
+	"white_space": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"wrap">,
+		autoguard.guards.StringLiteral<"nowrap">
+	]>,
+	"word_spacing": autoguard.guards.Reference<NonNegativeNumber>
+}>;
+
+export const TextNodeStyle: autoguard.serialization.MessageGuard<TextNodeStyle> = autoguard.guards.Intersection.of(
+	autoguard.guards.Reference.of(() => Style),
 	autoguard.guards.Reference.of(() => NodeStyle),
-	autoguard.guards.Object.of({}, {
-		"color": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("transparent"),
-			autoguard.guards.Reference.of(() => Color)
-		),
-		"columns": autoguard.guards.Reference.of(() => PositiveInteger),
-		"font_size": autoguard.guards.Reference.of(() => NonNegativeNumber),
-		"gutter": autoguard.guards.Reference.of(() => Length),
-		"letter_spacing": autoguard.guards.Reference.of(() => NonNegativeNumber),
-		"line_anchor": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("meanline"),
-			autoguard.guards.StringLiteral.of("capline"),
-			autoguard.guards.StringLiteral.of("topline"),
-			autoguard.guards.StringLiteral.of("bottomline"),
-			autoguard.guards.StringLiteral.of("baseline")
-		),
-		"line_height": autoguard.guards.Reference.of(() => NonNegativeNumber),
-		"orphans": autoguard.guards.Reference.of(() => PositiveInteger),
-		"text_align": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("start"),
-			autoguard.guards.StringLiteral.of("center"),
-			autoguard.guards.StringLiteral.of("end")
-		),
-		"text_transform": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("none"),
-			autoguard.guards.StringLiteral.of("lowercase"),
-			autoguard.guards.StringLiteral.of("uppercase")
-		),
-		"white_space": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("wrap"),
-			autoguard.guards.StringLiteral.of("nowrap")
-		),
-		"word_spacing": autoguard.guards.Reference.of(() => NonNegativeNumber)
-	})
+	autoguard.guards.Reference.of(() => TextStyle)
 );
 
-export type TextStyle = autoguard.guards.Intersection<[
+export type TextNodeStyle = autoguard.guards.Intersection<[
+	autoguard.guards.Reference<Style>,
 	autoguard.guards.Reference<NodeStyle>,
-	autoguard.guards.Object<{}, {
-		"color": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"transparent">,
-			autoguard.guards.Reference<Color>
-		]>,
-		"columns": autoguard.guards.Reference<PositiveInteger>,
-		"font_size": autoguard.guards.Reference<NonNegativeNumber>,
-		"gutter": autoguard.guards.Reference<Length>,
-		"letter_spacing": autoguard.guards.Reference<NonNegativeNumber>,
-		"line_anchor": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"meanline">,
-			autoguard.guards.StringLiteral<"capline">,
-			autoguard.guards.StringLiteral<"topline">,
-			autoguard.guards.StringLiteral<"bottomline">,
-			autoguard.guards.StringLiteral<"baseline">
-		]>,
-		"line_height": autoguard.guards.Reference<NonNegativeNumber>,
-		"orphans": autoguard.guards.Reference<PositiveInteger>,
-		"text_align": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"start">,
-			autoguard.guards.StringLiteral<"center">,
-			autoguard.guards.StringLiteral<"end">
-		]>,
-		"text_transform": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"none">,
-			autoguard.guards.StringLiteral<"lowercase">,
-			autoguard.guards.StringLiteral<"uppercase">
-		]>,
-		"white_space": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"wrap">,
-			autoguard.guards.StringLiteral<"nowrap">
-		]>,
-		"word_spacing": autoguard.guards.Reference<NonNegativeNumber>
-	}>
+	autoguard.guards.Reference<TextStyle>
 ]>;
 
 export const TextNode: autoguard.serialization.MessageGuard<TextNode> = autoguard.guards.Intersection.of(
@@ -271,7 +271,7 @@ export const TextNode: autoguard.serialization.MessageGuard<TextNode> = autoguar
 		"content": autoguard.guards.String,
 		"font": autoguard.guards.String
 	}, {
-		"style": autoguard.guards.Reference.of(() => TextStyle)
+		"style": autoguard.guards.Reference.of(() => TextNodeStyle)
 	})
 );
 
@@ -282,42 +282,48 @@ export type TextNode = autoguard.guards.Intersection<[
 		"content": autoguard.guards.String,
 		"font": autoguard.guards.String
 	}, {
-		"style": autoguard.guards.Reference<TextStyle>
+		"style": autoguard.guards.Reference<TextNodeStyle>
 	}>
 ]>;
 
-export const BoxStyle: autoguard.serialization.MessageGuard<BoxStyle> = autoguard.guards.Intersection.of(
+export const BoxStyle: autoguard.serialization.MessageGuard<BoxStyle> = autoguard.guards.Object.of({}, {
+	"background_color": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("transparent"),
+		autoguard.guards.Reference.of(() => Color)
+	),
+	"border_color": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("transparent"),
+		autoguard.guards.Reference.of(() => Color)
+	),
+	"border_radius": autoguard.guards.Reference.of(() => Length),
+	"border_width": autoguard.guards.Reference.of(() => Length),
+	"padding": autoguard.guards.Reference.of(() => Length)
+});
+
+export type BoxStyle = autoguard.guards.Object<{}, {
+	"background_color": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"transparent">,
+		autoguard.guards.Reference<Color>
+	]>,
+	"border_color": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"transparent">,
+		autoguard.guards.Reference<Color>
+	]>,
+	"border_radius": autoguard.guards.Reference<Length>,
+	"border_width": autoguard.guards.Reference<Length>,
+	"padding": autoguard.guards.Reference<Length>
+}>;
+
+export const BoxNodeStyle: autoguard.serialization.MessageGuard<BoxNodeStyle> = autoguard.guards.Intersection.of(
+	autoguard.guards.Reference.of(() => Style),
 	autoguard.guards.Reference.of(() => NodeStyle),
-	autoguard.guards.Object.of({}, {
-		"background_color": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("transparent"),
-			autoguard.guards.Reference.of(() => Color)
-		),
-		"border_color": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("transparent"),
-			autoguard.guards.Reference.of(() => Color)
-		),
-		"border_radius": autoguard.guards.Reference.of(() => Length),
-		"border_width": autoguard.guards.Reference.of(() => Length),
-		"padding": autoguard.guards.Reference.of(() => Length)
-	})
+	autoguard.guards.Reference.of(() => BoxStyle)
 );
 
-export type BoxStyle = autoguard.guards.Intersection<[
+export type BoxNodeStyle = autoguard.guards.Intersection<[
+	autoguard.guards.Reference<Style>,
 	autoguard.guards.Reference<NodeStyle>,
-	autoguard.guards.Object<{}, {
-		"background_color": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"transparent">,
-			autoguard.guards.Reference<Color>
-		]>,
-		"border_color": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"transparent">,
-			autoguard.guards.Reference<Color>
-		]>,
-		"border_radius": autoguard.guards.Reference<Length>,
-		"border_width": autoguard.guards.Reference<Length>,
-		"padding": autoguard.guards.Reference<Length>
-	}>
+	autoguard.guards.Reference<BoxStyle>
 ]>;
 
 export const BoxNode: autoguard.serialization.MessageGuard<BoxNode> = autoguard.guards.Intersection.of(
@@ -325,7 +331,7 @@ export const BoxNode: autoguard.serialization.MessageGuard<BoxNode> = autoguard.
 	autoguard.guards.Object.of({
 		"type": autoguard.guards.StringLiteral.of("box")
 	}, {
-		"style": autoguard.guards.Reference.of(() => BoxStyle)
+		"style": autoguard.guards.Reference.of(() => BoxNodeStyle)
 	})
 );
 
@@ -334,42 +340,48 @@ export type BoxNode = autoguard.guards.Intersection<[
 	autoguard.guards.Object<{
 		"type": autoguard.guards.StringLiteral<"box">
 	}, {
-		"style": autoguard.guards.Reference<BoxStyle>
+		"style": autoguard.guards.Reference<BoxNodeStyle>
 	}>
 ]>;
 
-export const VerticalStyle: autoguard.serialization.MessageGuard<VerticalStyle> = autoguard.guards.Intersection.of(
+export const VerticalStyle: autoguard.serialization.MessageGuard<VerticalStyle> = autoguard.guards.Object.of({}, {
+	"align_x": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("left"),
+		autoguard.guards.StringLiteral.of("center"),
+		autoguard.guards.StringLiteral.of("right")
+	),
+	"align_y": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("top"),
+		autoguard.guards.StringLiteral.of("middle"),
+		autoguard.guards.StringLiteral.of("bottom")
+	),
+	"gap": autoguard.guards.Reference.of(() => Length)
+});
+
+export type VerticalStyle = autoguard.guards.Object<{}, {
+	"align_x": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"left">,
+		autoguard.guards.StringLiteral<"center">,
+		autoguard.guards.StringLiteral<"right">
+	]>,
+	"align_y": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"top">,
+		autoguard.guards.StringLiteral<"middle">,
+		autoguard.guards.StringLiteral<"bottom">
+	]>,
+	"gap": autoguard.guards.Reference<Length>
+}>;
+
+export const VerticalNodeStyle: autoguard.serialization.MessageGuard<VerticalNodeStyle> = autoguard.guards.Intersection.of(
+	autoguard.guards.Reference.of(() => Style),
 	autoguard.guards.Reference.of(() => NodeStyle),
-	autoguard.guards.Object.of({}, {
-		"align_x": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("left"),
-			autoguard.guards.StringLiteral.of("center"),
-			autoguard.guards.StringLiteral.of("right")
-		),
-		"align_y": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("top"),
-			autoguard.guards.StringLiteral.of("middle"),
-			autoguard.guards.StringLiteral.of("bottom")
-		),
-		"gap": autoguard.guards.Reference.of(() => Length)
-	})
+	autoguard.guards.Reference.of(() => VerticalStyle)
 );
 
-export type VerticalStyle = autoguard.guards.Intersection<[
+export type VerticalNodeStyle = autoguard.guards.Intersection<[
+	autoguard.guards.Reference<Style>,
 	autoguard.guards.Reference<NodeStyle>,
-	autoguard.guards.Object<{}, {
-		"align_x": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"left">,
-			autoguard.guards.StringLiteral<"center">,
-			autoguard.guards.StringLiteral<"right">
-		]>,
-		"align_y": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"top">,
-			autoguard.guards.StringLiteral<"middle">,
-			autoguard.guards.StringLiteral<"bottom">
-		]>,
-		"gap": autoguard.guards.Reference<Length>
-	}>
+	autoguard.guards.Reference<VerticalStyle>
 ]>;
 
 export const VerticalNode: autoguard.serialization.MessageGuard<VerticalNode> = autoguard.guards.Intersection.of(
@@ -390,38 +402,44 @@ export type VerticalNode = autoguard.guards.Intersection<[
 	}>
 ]>;
 
-export const HorizontalStyle: autoguard.serialization.MessageGuard<HorizontalStyle> = autoguard.guards.Intersection.of(
+export const HorizontalStyle: autoguard.serialization.MessageGuard<HorizontalStyle> = autoguard.guards.Object.of({}, {
+	"align_x": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("left"),
+		autoguard.guards.StringLiteral.of("center"),
+		autoguard.guards.StringLiteral.of("right")
+	),
+	"align_y": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("top"),
+		autoguard.guards.StringLiteral.of("middle"),
+		autoguard.guards.StringLiteral.of("bottom")
+	),
+	"gap": autoguard.guards.Reference.of(() => Length)
+});
+
+export type HorizontalStyle = autoguard.guards.Object<{}, {
+	"align_x": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"left">,
+		autoguard.guards.StringLiteral<"center">,
+		autoguard.guards.StringLiteral<"right">
+	]>,
+	"align_y": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"top">,
+		autoguard.guards.StringLiteral<"middle">,
+		autoguard.guards.StringLiteral<"bottom">
+	]>,
+	"gap": autoguard.guards.Reference<Length>
+}>;
+
+export const HorizontalNodeStyle: autoguard.serialization.MessageGuard<HorizontalNodeStyle> = autoguard.guards.Intersection.of(
+	autoguard.guards.Reference.of(() => Style),
 	autoguard.guards.Reference.of(() => NodeStyle),
-	autoguard.guards.Object.of({}, {
-		"align_x": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("left"),
-			autoguard.guards.StringLiteral.of("center"),
-			autoguard.guards.StringLiteral.of("right")
-		),
-		"align_y": autoguard.guards.Union.of(
-			autoguard.guards.StringLiteral.of("top"),
-			autoguard.guards.StringLiteral.of("middle"),
-			autoguard.guards.StringLiteral.of("bottom")
-		),
-		"gap": autoguard.guards.Reference.of(() => Length)
-	})
+	autoguard.guards.Reference.of(() => HorizontalStyle)
 );
 
-export type HorizontalStyle = autoguard.guards.Intersection<[
+export type HorizontalNodeStyle = autoguard.guards.Intersection<[
+	autoguard.guards.Reference<Style>,
 	autoguard.guards.Reference<NodeStyle>,
-	autoguard.guards.Object<{}, {
-		"align_x": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"left">,
-			autoguard.guards.StringLiteral<"center">,
-			autoguard.guards.StringLiteral<"right">
-		]>,
-		"align_y": autoguard.guards.Union<[
-			autoguard.guards.StringLiteral<"top">,
-			autoguard.guards.StringLiteral<"middle">,
-			autoguard.guards.StringLiteral<"bottom">
-		]>,
-		"gap": autoguard.guards.Reference<Length>
-	}>
+	autoguard.guards.Reference<HorizontalStyle>
 ]>;
 
 export const HorizontalNode: autoguard.serialization.MessageGuard<HorizontalNode> = autoguard.guards.Intersection.of(
@@ -429,7 +447,7 @@ export const HorizontalNode: autoguard.serialization.MessageGuard<HorizontalNode
 	autoguard.guards.Object.of({
 		"type": autoguard.guards.StringLiteral.of("horizontal")
 	}, {
-		"style": autoguard.guards.Reference.of(() => HorizontalStyle)
+		"style": autoguard.guards.Reference.of(() => HorizontalNodeStyle)
 	})
 );
 
@@ -438,22 +456,22 @@ export type HorizontalNode = autoguard.guards.Intersection<[
 	autoguard.guards.Object<{
 		"type": autoguard.guards.StringLiteral<"horizontal">
 	}, {
-		"style": autoguard.guards.Reference<HorizontalStyle>
+		"style": autoguard.guards.Reference<HorizontalNodeStyle>
 	}>
 ]>;
 
 export const Styles: autoguard.serialization.MessageGuard<Styles> = autoguard.guards.Object.of({}, {
-	"box": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => BoxStyle)),
-	"horizontal": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => HorizontalStyle)),
-	"text": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => TextStyle)),
-	"vertical": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => VerticalStyle))
+	"box": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => BoxNodeStyle)),
+	"horizontal": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => HorizontalNodeStyle)),
+	"text": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => TextNodeStyle)),
+	"vertical": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => VerticalNodeStyle))
 });
 
 export type Styles = autoguard.guards.Object<{}, {
-	"box": autoguard.guards.Record<autoguard.guards.Reference<BoxStyle>>,
-	"horizontal": autoguard.guards.Record<autoguard.guards.Reference<HorizontalStyle>>,
-	"text": autoguard.guards.Record<autoguard.guards.Reference<TextStyle>>,
-	"vertical": autoguard.guards.Record<autoguard.guards.Reference<VerticalStyle>>
+	"box": autoguard.guards.Record<autoguard.guards.Reference<BoxNodeStyle>>,
+	"horizontal": autoguard.guards.Record<autoguard.guards.Reference<HorizontalNodeStyle>>,
+	"text": autoguard.guards.Record<autoguard.guards.Reference<TextNodeStyle>>,
+	"vertical": autoguard.guards.Record<autoguard.guards.Reference<VerticalNodeStyle>>
 }>;
 
 export const Document: autoguard.serialization.MessageGuard<Document> = autoguard.guards.Object.of({
@@ -493,12 +511,16 @@ export namespace Autoguard {
 		"ChildNode": autoguard.guards.Reference.of(() => ChildNode),
 		"ParentNode": autoguard.guards.Reference.of(() => ParentNode),
 		"TextStyle": autoguard.guards.Reference.of(() => TextStyle),
+		"TextNodeStyle": autoguard.guards.Reference.of(() => TextNodeStyle),
 		"TextNode": autoguard.guards.Reference.of(() => TextNode),
 		"BoxStyle": autoguard.guards.Reference.of(() => BoxStyle),
+		"BoxNodeStyle": autoguard.guards.Reference.of(() => BoxNodeStyle),
 		"BoxNode": autoguard.guards.Reference.of(() => BoxNode),
 		"VerticalStyle": autoguard.guards.Reference.of(() => VerticalStyle),
+		"VerticalNodeStyle": autoguard.guards.Reference.of(() => VerticalNodeStyle),
 		"VerticalNode": autoguard.guards.Reference.of(() => VerticalNode),
 		"HorizontalStyle": autoguard.guards.Reference.of(() => HorizontalStyle),
+		"HorizontalNodeStyle": autoguard.guards.Reference.of(() => HorizontalNodeStyle),
 		"HorizontalNode": autoguard.guards.Reference.of(() => HorizontalNode),
 		"Styles": autoguard.guards.Reference.of(() => Styles),
 		"Document": autoguard.guards.Reference.of(() => Document)

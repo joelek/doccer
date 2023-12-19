@@ -37,7 +37,7 @@ guard Style: {
 	extends?: string
 };
 
-guard NodeStyle: Style & {
+guard NodeStyle: {
 	height?: NodeLength,
 	overflow?: "hidden" | "visible",
 	segmentation?: "auto" | "none",
@@ -56,7 +56,7 @@ guard ParentNode: ChildNode & {
 	children: Node[]
 };
 
-guard TextStyle: NodeStyle & {
+guard TextStyle: {
 	color?: "transparent" | Color,
 	columns?: PositiveInteger,
 	font_size?: NonNegativeNumber,
@@ -71,14 +71,16 @@ guard TextStyle: NodeStyle & {
 	word_spacing?: NonNegativeNumber
 };
 
+guard TextNodeStyle: Style & NodeStyle & TextStyle;
+
 guard TextNode: ChildNode & {
 	type: "text",
 	content: string,
 	font: string,
-	style?: TextStyle
+	style?: TextNodeStyle
 };
 
-guard BoxStyle: NodeStyle & {
+guard BoxStyle: {
 	background_color?: "transparent" | Color,
 	border_color?: "transparent" | Color,
 	border_radius?: Length,
@@ -86,38 +88,44 @@ guard BoxStyle: NodeStyle & {
 	padding?: Length
 };
 
+guard BoxNodeStyle: Style & NodeStyle & BoxStyle;
+
 guard BoxNode: ParentNode & {
 	type: "box",
-	style?: BoxStyle
+	style?: BoxNodeStyle
 };
 
-guard VerticalStyle: NodeStyle & {
+guard VerticalStyle: {
 	align_x?: "left" | "center" | "right",
 	align_y?: "top" | "middle" | "bottom",
 	gap?: Length
 };
+
+guard VerticalNodeStyle: Style & NodeStyle & VerticalStyle;
 
 guard VerticalNode: ParentNode & {
 	type: "vertical",
 	style?: VerticalStyle
 };
 
-guard HorizontalStyle: NodeStyle & {
+guard HorizontalStyle: {
 	align_x?: "left" | "center" | "right",
 	align_y?: "top" | "middle" | "bottom",
 	gap?: Length
 };
 
+guard HorizontalNodeStyle: Style & NodeStyle & HorizontalStyle;
+
 guard HorizontalNode: ParentNode & {
 	type: "horizontal",
-	style?: HorizontalStyle
+	style?: HorizontalNodeStyle
 };
 
 guard Styles: {
-	box?: { BoxStyle },
-	horizontal?: { HorizontalStyle },
-	text?: { TextStyle },
-	vertical?: { VerticalStyle }
+	box?: { BoxNodeStyle },
+	horizontal?: { HorizontalNodeStyle },
+	text?: { TextNodeStyle },
+	vertical?: { VerticalNodeStyle }
 };
 
 guard Document: {
