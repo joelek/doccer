@@ -1,5 +1,5 @@
 import * as wtf from "@joelek/wtf";
-import { Typesetter } from "./";
+import { Typesetter } from "./typesetter";
 
 wtf.test(`Typesetter should clamp strings narrower than the target width.`, (assert) => {
 	let widths = new Map<string, number>();

@@ -4,6 +4,7 @@ import * as truetype from "../truetype";
 import * as format from "./format";
 import { BoxNode, Document, HorizontalNode, TextNode, VerticalNode } from "./format";
 import * as layout from "./layout";
+import { FontHandler, Typesetter } from "./fonts";
 
 export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 	let lines = [] as Array<string>;
@@ -29,7 +30,7 @@ export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 	return buffer;
 };
 
-export function createNodeClasses(font_handler: truetype.FontHandler, node: format.Node): layout.Node {
+export function createNodeClasses(font_handler: FontHandler, node: format.Node): layout.Node {
 	if (TextNode.is(node)) {
 		return new layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), node.style);
 	}
@@ -69,7 +70,7 @@ export const DocumentUtils = {
 			])
 		);
 		pdf_file.objects.push(resources);
-		let font_handler = new truetype.FontHandler();
+		let font_handler = new FontHandler();
 		for (let key in document.fonts) {
 			let filename = document.fonts[key];
 			if (filename == null) {
@@ -84,7 +85,7 @@ export const DocumentUtils = {
 				buffer = stdlib.data.chunk.Chunk.fromString(file, "base64");
 			}
 			let truetype_font = truetype.parseTrueTypeData(buffer.buffer);
-			let typesetter = truetype.Typesetter.createFromFont(truetype_font);
+			let typesetter = Typesetter.createFromFont(truetype_font);
 			font_handler.addTypesetter(key, typesetter);
 			{
 				let pdf_cid_system_info = new pdf.format.PDFObject(

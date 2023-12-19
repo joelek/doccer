@@ -2,6 +2,7 @@ import * as truetype from "../../truetype";
 import * as content from "../../pdf/content";
 import { TextRenderingMode } from "../../pdf/content";
 import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
+import { MeasuredLine, Typesetter } from "../fonts";
 
 export type TextStyle = {
 	color: "transparent" | Color;
@@ -20,7 +21,7 @@ export type TextStyle = {
 
 export class TextNode extends ChildNode {
 	protected content: string;
-	protected typesetter: truetype.Typesetter;
+	protected typesetter: Typesetter;
 	protected type_id: number;
 	protected style: TextStyle;
 
@@ -109,7 +110,7 @@ export class TextNode extends ChildNode {
 		return this.content;
 	}
 
-	protected getLines(target_width: number): Array<truetype.MeasuredLine> {
+	protected getLines(target_width: number): Array<MeasuredLine> {
 		let content = this.getTransformedContent();
 		let lines = this.style.white_space === "wrap"
 			? this.typesetter.wrapString(content, target_width / this.style.font_size)
@@ -208,7 +209,7 @@ export class TextNode extends ChildNode {
 		return columns;
 	}
 
-	constructor(content: string, typesetter: truetype.Typesetter, type_id: number, style?: Partial<NodeStyle & TextStyle>) {
+	constructor(content: string, typesetter: Typesetter, type_id: number, style?: Partial<NodeStyle & TextStyle>) {
 		super(style);
 		style = style ?? {};
 		let color = style.color ?? "transparent";

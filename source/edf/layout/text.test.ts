@@ -1,8 +1,8 @@
 import * as wtf from "@joelek/wtf";
-import * as truetype from "../../truetype";
 import { TextNode } from "./text";
+import { Box, GlyphData, Typesetter } from "../fonts";
 
-const TYPESETTER = new truetype.Typesetter(new Map(), 1);
+const TYPESETTER = new Typesetter(new Map(), 1);
 
 wtf.test(`TextNode should create one segment with one column when all of the lines fit within the remaining height.`, (assert) => {
 	let node = new TextNode("aaaaaa bbbbbb", TYPESETTER, 0, { columns: 1, width: 6 });
@@ -2007,7 +2007,7 @@ wtf.test(`TextNode should support letter spacing`, (assert) => {
 });
 
 wtf.test(`TextNode should support line anchor "meanline".`, (assert) => {
-	let glyph_data = new Map<string, truetype.GlyphData>();
+	let glyph_data = new Map<string, GlyphData>();
 	glyph_data.set("x", {
 		index: 10,
 		box: {
@@ -2017,7 +2017,7 @@ wtf.test(`TextNode should support line anchor "meanline".`, (assert) => {
 			y_max: 0.2
 		}
 	});
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, glyph_data, undefined);
+	let typesetter = new Typesetter(new Map(), 1, undefined, glyph_data, undefined);
 	let node = new TextNode("aaaa", typesetter, 0, { line_anchor: "meanline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
@@ -2068,7 +2068,7 @@ wtf.test(`TextNode should support line anchor "meanline".`, (assert) => {
 });
 
 wtf.test(`TextNode should support line anchor "capline".`, (assert) => {
-	let glyph_data = new Map<string, truetype.GlyphData>();
+	let glyph_data = new Map<string, GlyphData>();
 	glyph_data.set("I", {
 		index: 10,
 		box: {
@@ -2078,7 +2078,7 @@ wtf.test(`TextNode should support line anchor "capline".`, (assert) => {
 			y_max: 0.4
 		}
 	});
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, glyph_data, undefined);
+	let typesetter = new Typesetter(new Map(), 1, undefined, glyph_data, undefined);
 	let node = new TextNode("aaaa", typesetter, 0, { line_anchor: "capline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
@@ -2129,13 +2129,13 @@ wtf.test(`TextNode should support line anchor "capline".`, (assert) => {
 });
 
 wtf.test(`TextNode should support line anchor "topline".`, (assert) => {
-	let fallback_box: truetype.Box = {
+	let fallback_box: Box = {
 		x_min: 0.0,
 		y_min: 0.5,
 		x_max: 0.0,
 		y_max: 0.6
 	};
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, undefined, fallback_box);
+	let typesetter = new Typesetter(new Map(), 1, undefined, undefined, fallback_box);
 	let node = new TextNode("aaaa", typesetter, 0, { line_anchor: "topline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
@@ -2186,13 +2186,13 @@ wtf.test(`TextNode should support line anchor "topline".`, (assert) => {
 });
 
 wtf.test(`TextNode should support line anchor "bottomline".`, (assert) => {
-	let fallback_box: truetype.Box = {
+	let fallback_box: Box = {
 		x_min: 0.0,
 		y_min: 0.7,
 		x_max: 0.0,
 		y_max: 0.8
 	};
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, undefined, fallback_box);
+	let typesetter = new Typesetter(new Map(), 1, undefined, undefined, fallback_box);
 	let node = new TextNode("aaaa", typesetter, 0, { line_anchor: "bottomline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
@@ -2243,7 +2243,7 @@ wtf.test(`TextNode should support line anchor "bottomline".`, (assert) => {
 });
 
 wtf.test(`TextNode should support line anchor "baseline".`, (assert) => {
-	let typesetter = new truetype.Typesetter(new Map(), 1, undefined, undefined, undefined);
+	let typesetter = new Typesetter(new Map(), 1, undefined, undefined, undefined);
 	let node = new TextNode("aaaa", typesetter, 0, { line_anchor: "baseline", width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
