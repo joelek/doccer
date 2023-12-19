@@ -389,7 +389,7 @@ export const VerticalNode: autoguard.serialization.MessageGuard<VerticalNode> = 
 	autoguard.guards.Object.of({
 		"type": autoguard.guards.StringLiteral.of("vertical")
 	}, {
-		"style": autoguard.guards.Reference.of(() => VerticalStyle)
+		"style": autoguard.guards.Reference.of(() => VerticalNodeStyle)
 	})
 );
 
@@ -398,7 +398,7 @@ export type VerticalNode = autoguard.guards.Intersection<[
 	autoguard.guards.Object<{
 		"type": autoguard.guards.StringLiteral<"vertical">
 	}, {
-		"style": autoguard.guards.Reference<VerticalStyle>
+		"style": autoguard.guards.Reference<VerticalNodeStyle>
 	}>
 ]>;
 

@@ -105,7 +105,7 @@ guard VerticalNodeStyle: Style & NodeStyle & VerticalStyle;
 
 guard VerticalNode: ParentNode & {
 	type: "vertical",
-	style?: VerticalStyle
+	style?: VerticalNodeStyle
 };
 
 guard HorizontalStyle: {
