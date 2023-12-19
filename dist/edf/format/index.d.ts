@@ -101,16 +101,7 @@ export type TextStyle = autoguard.guards.Intersection<[
             autoguard.guards.Reference<Color>
         ]>;
         "columns": autoguard.guards.Reference<PositiveInteger>;
-        "font_family": autoguard.guards.String;
         "font_size": autoguard.guards.Reference<NonNegativeNumber>;
-        "font_style": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"normal">,
-            autoguard.guards.StringLiteral<"italic">
-        ]>;
-        "font_weight": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"normal">,
-            autoguard.guards.StringLiteral<"bold">
-        ]>;
         "gutter": autoguard.guards.Reference<Length>;
         "letter_spacing": autoguard.guards.Reference<NonNegativeNumber>;
         "line_anchor": autoguard.guards.Union<[
@@ -145,6 +136,7 @@ export type TextNode = autoguard.guards.Intersection<[
     autoguard.guards.Object<{
         "type": autoguard.guards.StringLiteral<"text">;
         "content": autoguard.guards.String;
+        "font": autoguard.guards.String;
     }, {
         "style": autoguard.guards.Reference<TextStyle>;
     }>
@@ -227,19 +219,6 @@ export type HorizontalNode = autoguard.guards.Intersection<[
         "style": autoguard.guards.Reference<HorizontalStyle>;
     }>
 ]>;
-export declare const Font: autoguard.serialization.MessageGuard<Font>;
-export type Font = autoguard.guards.Object<{
-    "family": autoguard.guards.String;
-    "style": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"normal">,
-        autoguard.guards.StringLiteral<"italic">
-    ]>;
-    "weight": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"normal">,
-        autoguard.guards.StringLiteral<"bold">
-    ]>;
-    "file": autoguard.guards.String;
-}, {}>;
 export declare const Styles: autoguard.serialization.MessageGuard<Styles>;
 export type Styles = autoguard.guards.Object<{}, {
     "box": autoguard.guards.Record<autoguard.guards.Reference<BoxStyle>>;
@@ -253,7 +232,7 @@ export type Document = autoguard.guards.Object<{
     "size": autoguard.guards.Reference<Size>;
 }, {
     "files": autoguard.guards.Record<autoguard.guards.Reference<Base64>>;
-    "fonts": autoguard.guards.Array<autoguard.guards.Reference<Font>>;
+    "fonts": autoguard.guards.Record<autoguard.guards.String>;
     "styles": autoguard.guards.Reference<Styles>;
 }>;
 export declare namespace Autoguard {
@@ -335,10 +314,7 @@ export declare namespace Autoguard {
                 k: number;
             } | undefined;
             columns?: number | undefined;
-            font_family?: string | undefined;
             font_size?: number | undefined;
-            font_style?: "normal" | "italic" | undefined;
-            font_weight?: "bold" | "normal" | undefined;
             gutter?: number | [number] | [number, "%"] | undefined;
             letter_spacing?: number | undefined;
             line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
@@ -352,6 +328,7 @@ export declare namespace Autoguard {
         TextNode: autoguard.guards.ReferenceGuard<{
             type: "text";
             content: string;
+            font: string;
             style?: {
                 extends?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
@@ -371,10 +348,7 @@ export declare namespace Autoguard {
                     k: number;
                 } | undefined;
                 columns?: number | undefined;
-                font_family?: string | undefined;
                 font_size?: number | undefined;
-                font_style?: "normal" | "italic" | undefined;
-                font_weight?: "bold" | "normal" | undefined;
                 gutter?: number | [number] | [number, "%"] | undefined;
                 letter_spacing?: number | undefined;
                 line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
@@ -512,12 +486,6 @@ export declare namespace Autoguard {
                 gap?: number | [number] | [number, "%"] | undefined;
             } | undefined;
         }>;
-        Font: autoguard.guards.ReferenceGuard<{
-            family: string;
-            style: "normal" | "italic";
-            weight: "bold" | "normal";
-            file: string;
-        }>;
         Styles: autoguard.guards.ReferenceGuard<{
             box?: autoguard.guards.Record<{
                 extends?: string | undefined;
@@ -582,10 +550,7 @@ export declare namespace Autoguard {
                     k: number;
                 } | undefined;
                 columns?: number | undefined;
-                font_family?: string | undefined;
                 font_size?: number | undefined;
-                font_style?: "normal" | "italic" | undefined;
-                font_weight?: "bold" | "normal" | undefined;
                 gutter?: number | [number] | [number, "%"] | undefined;
                 letter_spacing?: number | undefined;
                 line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
@@ -616,12 +581,7 @@ export declare namespace Autoguard {
                 h: number;
             };
             files?: autoguard.guards.Record<string> | undefined;
-            fonts?: autoguard.guards.Array<{
-                family: string;
-                style: "normal" | "italic";
-                weight: "bold" | "normal";
-                file: string;
-            }> | undefined;
+            fonts?: autoguard.guards.Record<string> | undefined;
             styles?: {
                 box?: autoguard.guards.Record<{
                     extends?: string | undefined;
@@ -686,10 +646,7 @@ export declare namespace Autoguard {
                         k: number;
                     } | undefined;
                     columns?: number | undefined;
-                    font_family?: string | undefined;
                     font_size?: number | undefined;
-                    font_style?: "normal" | "italic" | undefined;
-                    font_weight?: "bold" | "normal" | undefined;
                     gutter?: number | [number] | [number, "%"] | undefined;
                     letter_spacing?: number | undefined;
                     line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;

@@ -6,8 +6,8 @@ const content_1 = require("../content");
 const shared_1 = require("./shared");
 class TextNode extends shared_1.ChildNode {
     content;
-    type_id;
     typesetter;
+    type_id;
     style;
     createPrefixCommands(path) {
         let context = content.createContext();
@@ -187,7 +187,7 @@ class TextNode extends shared_1.ChildNode {
         }
         return columns;
     }
-    constructor(content, font_handler, style) {
+    constructor(content, typesetter, type_id, style) {
         super(style);
         style = style ?? {};
         let color = style.color ?? "transparent";
@@ -195,13 +195,10 @@ class TextNode extends shared_1.ChildNode {
         if (columns < 1 || !Number.isInteger(columns)) {
             throw new Error();
         }
-        let font_family = style.font_family ?? "sans-serif";
         let font_size = style.font_size ?? 1;
         if (font_size < 1) {
             throw new Error();
         }
-        let font_style = style.font_style ?? "normal";
-        let font_weight = style.font_weight ?? "normal";
         let gutter = style.gutter ?? 0;
         if (!shared_1.Length.isValid(gutter)) {
             throw new Error();
@@ -226,20 +223,16 @@ class TextNode extends shared_1.ChildNode {
         if (word_spacing < 0) {
             throw new Error();
         }
-        let typesetter = font_handler.getTypesetter(font_family, font_style, font_weight);
         this.content = content;
-        this.type_id = font_handler.getTypeId(typesetter);
         this.typesetter = typesetter.withOptions({
             letter_spacing: letter_spacing / font_size,
             word_spacing: word_spacing / font_size
         });
+        this.type_id = type_id;
         this.style = {
             color,
             columns,
-            font_family,
             font_size,
-            font_style,
-            font_weight,
             gutter,
             letter_spacing,
             line_anchor,

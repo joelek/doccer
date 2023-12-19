@@ -3,10 +3,7 @@ import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, NodeStyle, Path,
 export type TextStyle = {
     color: "transparent" | Color;
     columns: number;
-    font_family: string;
     font_size: number;
-    font_style: "normal" | "italic";
-    font_weight: "normal" | "bold";
     gutter: Length;
     letter_spacing: number;
     line_anchor: "meanline" | "capline" | "topline" | "bottomline" | "baseline";
@@ -19,8 +16,8 @@ export type TextStyle = {
 };
 export declare class TextNode extends ChildNode {
     protected content: string;
-    protected type_id: number;
     protected typesetter: truetype.Typesetter;
+    protected type_id: number;
     protected style: TextStyle;
     protected createPrefixCommands(path: Path): Array<string>;
     protected createSuffixCommands(path: Path): Array<string>;
@@ -31,6 +28,6 @@ export declare class TextNode extends ChildNode {
     protected getLines(target_width: number): Array<truetype.MeasuredLine>;
     protected createLineSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>, options: Partial<CreateSegmentsOptions>): Array<Atom>;
     protected createColumnSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>, options: Partial<CreateSegmentsOptions>): Array<Atom>;
-    constructor(content: string, font_handler: truetype.FontHandler, style?: Partial<NodeStyle & TextStyle>);
+    constructor(content: string, typesetter: truetype.Typesetter, type_id: number, style?: Partial<NodeStyle & TextStyle>);
     createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom>;
 }

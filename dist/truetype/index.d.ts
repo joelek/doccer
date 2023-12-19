@@ -222,17 +222,15 @@ export declare class Typesetter {
     wrapStringUsingLineBreaks(string: string): Array<MeasuredLine>;
     static createFromFont(font: TrueTypeData): Typesetter;
 }
-export type Font = {
-    family: string;
-    style: "normal" | "italic";
-    weight: "normal" | "bold";
+export type FontHandlerEntry = {
     typesetter: Typesetter;
+    type_id: number;
 };
 export declare class FontHandler {
-    protected fonts: Array<Font>;
+    protected entries: Map<string, FontHandlerEntry>;
+    protected type_id: number;
     constructor();
-    addTypesetter(family: string, style: "normal" | "italic", weight: "normal" | "bold", typesetter: Typesetter): FontHandler;
-    [Symbol.iterator](): Iterator<[number, Font]>;
-    getTypeId(typesetter: Typesetter): number;
-    getTypesetter(family: string, style: "normal" | "italic", weight: "normal" | "bold"): Typesetter;
+    addTypesetter(key: string, typesetter: Typesetter): FontHandler;
+    getTypesetter(key: string): Typesetter;
+    getTypeId(key: string): number;
 }

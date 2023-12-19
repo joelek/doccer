@@ -32,7 +32,7 @@ exports.makeToUnicode = makeToUnicode;
 ;
 function createNodeClasses(font_handler, node) {
     if (format_1.TextNode.is(node)) {
-        return new pdf.layout.TextNode(node.content, font_handler, node.style);
+        return new pdf.layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), node.style);
     }
     if (format_1.BoxNode.is(node)) {
         return new pdf.layout.BoxNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
@@ -63,19 +63,23 @@ exports.DocumentUtils = {
         ]));
         pdf_file.objects.push(resources);
         let font_handler = new truetype.FontHandler();
-        for (let font of document.fonts ?? []) {
-            let file = document.files?.[font.file];
+        for (let key in document.fonts) {
+            let filename = document.fonts[key];
+            if (filename == null) {
+                continue;
+            }
+            let file = document.files?.[filename];
             let buffer;
             if (file == null) {
                 // @ts-ignore
-                buffer = require("fs").readFileSync(font.file);
+                buffer = require("fs").readFileSync(filename);
             }
             else {
                 buffer = stdlib.data.chunk.Chunk.fromString(file, "base64");
             }
             let truetype_font = truetype.parseTrueTypeData(buffer.buffer);
             let typesetter = truetype.Typesetter.createFromFont(truetype_font);
-            font_handler.addTypesetter(font.family, font.style, font.weight, typesetter);
+            font_handler.addTypesetter(key, typesetter);
             {
                 let pdf_cid_system_info = new pdf.format.PDFObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("Ordering"), new pdf.format.PDFString("Identity")),
@@ -139,7 +143,7 @@ exports.DocumentUtils = {
                     ])),
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("ToUnicode"), pdf_to_unicode.getReference())
                 ]));
-                pdf_fonts.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("F" + font_handler.getTypeId(typesetter)), pdf_type0_font.getReference()));
+                pdf_fonts.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("F" + font_handler.getTypeId(key)), pdf_type0_font.getReference()));
                 pdf_file.objects.push(pdf_type0_font);
             }
         }

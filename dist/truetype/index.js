@@ -1172,51 +1172,38 @@ class Typesetter {
 exports.Typesetter = Typesetter;
 ;
 class FontHandler {
-    fonts;
+    entries;
+    type_id;
     constructor() {
-        this.fonts = new Array();
+        this.entries = new Map();
+        this.type_id = 0;
     }
-    addTypesetter(family, style, weight, typesetter) {
-        this.fonts.push({
-            family,
-            style,
-            weight,
-            typesetter
+    addTypesetter(key, typesetter) {
+        let entry = this.entries.get(key);
+        if (entry != null) {
+            throw new Error();
+        }
+        let type_id = this.type_id;
+        this.entries.set(key, {
+            typesetter,
+            type_id
         });
+        this.type_id += 1;
         return this;
     }
-    [Symbol.iterator]() {
-        return this.fonts.entries();
-    }
-    getTypeId(typesetter) {
-        let index = this.fonts.findIndex((font) => {
-            if (font.typesetter !== typesetter) {
-                return;
-            }
-            return font;
-        });
-        if (index < 0) {
+    getTypesetter(key) {
+        let entry = this.entries.get(key);
+        if (entry == null) {
             throw new Error();
         }
-        return index;
+        return entry.typesetter;
     }
-    getTypesetter(family, style, weight) {
-        let index = this.fonts.findIndex((font) => {
-            if (font.family !== family) {
-                return;
-            }
-            if (font.style !== style) {
-                return;
-            }
-            if (font.weight !== weight) {
-                return;
-            }
-            return font;
-        });
-        if (index < 0) {
+    getTypeId(key) {
+        let entry = this.entries.get(key);
+        if (entry == null) {
             throw new Error();
         }
-        return this.fonts[index].typesetter;
+        return entry.type_id;
     }
 }
 exports.FontHandler = FontHandler;
