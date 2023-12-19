@@ -1,5 +1,8 @@
 {
 	"bin": {},
+	"dependencies": {
+		"@joelek/ts-stdlib": "github:joelek/ts-stdlib#semver:^1.3"
+	},
 	"devDependencies": {
 		"@joelek/ts-autoguard": "github:joelek/ts-autoguard#master",
 		"@joelek/wtf": "github:joelek/wtf#semver:^1.0",
