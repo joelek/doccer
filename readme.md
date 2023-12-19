@@ -46,7 +46,6 @@ NB: This project targets TypeScript 4 in strict mode.
 * Move string encoding to stdlib.
 * Move generic tokenizer to stdlib.
 * Move codepage handling to stdlib.
-* Add stdlib dependency.
 * Document features.
 * Consider extracting truetype subproject into own project.
 * Move font size into Typesetter.
