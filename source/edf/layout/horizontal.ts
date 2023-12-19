@@ -1,4 +1,4 @@
-import * as content from "../content";
+import * as content from "../../pdf/content";
 import { Atom, ChildNode, CreateSegmentsOptions, Length, Node, NodeLength, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
 
 export type HorizontalStyle = {

@@ -1,4 +1,4 @@
-import * as content from "../content";
+import * as content from "../../pdf/content";
 import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, Node, NodeStyle, ParentAtom, ParentNode, Path, PositionedAtom, Size } from "./shared";
 
 export type BoxStyle = {

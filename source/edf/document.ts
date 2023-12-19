@@ -3,6 +3,7 @@ import * as pdf from "../pdf";
 import * as truetype from "../truetype";
 import * as format from "./format";
 import { BoxNode, Document, HorizontalNode, TextNode, VerticalNode } from "./format";
+import * as layout from "./layout";
 
 export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 	let lines = [] as Array<string>;
@@ -28,18 +29,18 @@ export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 	return buffer;
 };
 
-export function createNodeClasses(font_handler: truetype.FontHandler, node: format.Node): pdf.layout.Node {
+export function createNodeClasses(font_handler: truetype.FontHandler, node: format.Node): layout.Node {
 	if (TextNode.is(node)) {
-		return new pdf.layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), node.style);
+		return new layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), node.style);
 	}
 	if (BoxNode.is(node)) {
-		return new pdf.layout.BoxNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+		return new layout.BoxNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
 	}
 	if (VerticalNode.is(node)) {
-		return new pdf.layout.VerticalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+		return new layout.VerticalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
 	}
 	if (HorizontalNode.is(node)) {
-		return new pdf.layout.HorizontalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
+		return new layout.HorizontalNode(node.style, ...node.children.map((child) => createNodeClasses(font_handler, child)));
 	}
 	throw new Error();
 };
@@ -193,7 +194,7 @@ export const DocumentUtils = {
 		);
 		pdf_file.objects.push(pages);
 		for (let segment of segments) {
-			let commands = pdf.layout.Atom.getCommandsFromAtom(segment);
+			let commands = layout.Atom.getCommandsFromAtom(segment);
 			let context = pdf.content.createContext();
 			context.concatenateMatrix(72 / 25.4, 0, 0, 72 / 25.4, 0, segment_size.h * 72 / 25.4);
 			commands.unshift(...context.getCommands());

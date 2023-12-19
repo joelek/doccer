@@ -1,6 +1,6 @@
 import * as truetype from "../../truetype";
-import * as content from "../content";
-import { TextRenderingMode } from "../content";
+import * as content from "../../pdf/content";
+import { TextRenderingMode } from "../../pdf/content";
 import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
 
 export type TextStyle = {
