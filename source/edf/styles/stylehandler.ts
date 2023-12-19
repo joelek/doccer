@@ -11,7 +11,22 @@ export class MissingTemplateError extends Error {
 	}
 
 	toString(): string {
-		return `Expected template "${this.template}" to be a exist for type "${this.type}"!`;
+		return `Expected template "${this.template}" for type "${this.type}" to exist!`;
+	}
+};
+
+export class RecursiveTemplateError extends Error {
+	protected template: string;
+	protected type: string;
+
+	constructor(template: string, type: string) {
+		super();
+		this.template = template;
+		this.type = type;
+	}
+
+	toString(): string {
+		return `Expected template "${this.template}" for type "${this.type}" to not be used recursively!`;
 	}
 };
 
@@ -20,7 +35,7 @@ type Style<A extends keyof format.Templates> = Exclude<Required<format.Templates
 export class StyleHandler {
 	protected templates: format.Templates;
 
-	protected getStyle<A extends keyof format.Templates>(type: A, style: Style<A> | undefined): Style<A> | undefined {
+	protected getStyle<A extends keyof format.Templates>(type: A, style: Style<A> | undefined, exclude: Array<string>): Style<A> | undefined {
 		if (style == null) {
 			return;
 		}
@@ -28,13 +43,16 @@ export class StyleHandler {
 		if (template == null) {
 			return style;
 		}
+		if (exclude.includes(template)) {
+			throw new RecursiveTemplateError(template, type);
+		}
 		let templates = (this.templates[type] ?? {}) as Record<string, Style<A> | undefined>;
 		let template_style = templates[template];
 		if (template_style == null) {
 			throw new MissingTemplateError(template, type);
 		}
 		return {
-			...this.getStyle(type, template_style),
+			...this.getStyle(type, template_style, [...exclude, template]),
 			...style
 		};
 	}
@@ -44,18 +62,18 @@ export class StyleHandler {
 	}
 
 	getBoxStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
-		return this.getStyle("box", style);
+		return this.getStyle("box", style, []);
 	}
 
 	getHorizontalStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
-		return this.getStyle("horizontal", style);
+		return this.getStyle("horizontal", style, []);
 	}
 
 	getTextStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
-		return this.getStyle("text", style);
+		return this.getStyle("text", style, []);
 	}
 
 	getVerticalStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
-		return this.getStyle("vertical", style);
+		return this.getStyle("vertical", style, []);
 	}
 };
