@@ -37,7 +37,6 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add support for word-break.
 * Add support for fractional widths and heights to BoxNode.
 * Improve PDF serialization.
-* Add command-line tool.
 * Add ImageNode.
 * Add support for compound paths.
 * Improve computation of binary offsets in PDF serialization.
