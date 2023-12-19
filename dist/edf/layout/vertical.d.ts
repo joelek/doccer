@@ -1,9 +1,6 @@
-import { Atom, ChildNode, CreateSegmentsOptions, Length, NodeStyle, ParentAtom, ParentNode, Path, Size } from "./shared";
-export type VerticalStyle = {
-    align_x: "left" | "center" | "right";
-    align_y: "top" | "middle" | "bottom";
-    gap: Length;
-};
+import { Atom, ChildNode, CreateSegmentsOptions, NodeStyle, ParentAtom, ParentNode, Path, Size } from "./shared";
+import * as format from "../format";
+export type VerticalStyle = Required<format.VerticalStyle>;
 export declare class VerticalNode extends ParentNode {
     protected style: VerticalStyle;
     protected createPrefixCommands(path: Path): Array<string>;

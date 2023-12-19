@@ -61,21 +61,18 @@ export type Style = autoguard.guards.Object<{}, {
     "extends": autoguard.guards.String;
 }>;
 export declare const NodeStyle: autoguard.serialization.MessageGuard<NodeStyle>;
-export type NodeStyle = autoguard.guards.Intersection<[
-    autoguard.guards.Reference<Style>,
-    autoguard.guards.Object<{}, {
-        "height": autoguard.guards.Reference<NodeLength>;
-        "overflow": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"hidden">,
-            autoguard.guards.StringLiteral<"visible">
-        ]>;
-        "segmentation": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"auto">,
-            autoguard.guards.StringLiteral<"none">
-        ]>;
-        "width": autoguard.guards.Reference<NodeLength>;
-    }>
-]>;
+export type NodeStyle = autoguard.guards.Object<{}, {
+    "height": autoguard.guards.Reference<NodeLength>;
+    "overflow": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"hidden">,
+        autoguard.guards.StringLiteral<"visible">
+    ]>;
+    "segmentation": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"auto">,
+        autoguard.guards.StringLiteral<"none">
+    ]>;
+    "width": autoguard.guards.Reference<NodeLength>;
+}>;
 export declare const Node: autoguard.serialization.MessageGuard<Node>;
 export type Node = autoguard.guards.Object<{
     "type": autoguard.guards.String;
@@ -93,42 +90,45 @@ export type ParentNode = autoguard.guards.Intersection<[
     }, {}>
 ]>;
 export declare const TextStyle: autoguard.serialization.MessageGuard<TextStyle>;
-export type TextStyle = autoguard.guards.Intersection<[
+export type TextStyle = autoguard.guards.Object<{}, {
+    "color": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"transparent">,
+        autoguard.guards.Reference<Color>
+    ]>;
+    "columns": autoguard.guards.Reference<PositiveInteger>;
+    "font_size": autoguard.guards.Reference<NonNegativeNumber>;
+    "gutter": autoguard.guards.Reference<Length>;
+    "letter_spacing": autoguard.guards.Reference<NonNegativeNumber>;
+    "line_anchor": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"meanline">,
+        autoguard.guards.StringLiteral<"capline">,
+        autoguard.guards.StringLiteral<"topline">,
+        autoguard.guards.StringLiteral<"bottomline">,
+        autoguard.guards.StringLiteral<"baseline">
+    ]>;
+    "line_height": autoguard.guards.Reference<NonNegativeNumber>;
+    "orphans": autoguard.guards.Reference<PositiveInteger>;
+    "text_align": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"start">,
+        autoguard.guards.StringLiteral<"center">,
+        autoguard.guards.StringLiteral<"end">
+    ]>;
+    "text_transform": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"none">,
+        autoguard.guards.StringLiteral<"lowercase">,
+        autoguard.guards.StringLiteral<"uppercase">
+    ]>;
+    "white_space": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"wrap">,
+        autoguard.guards.StringLiteral<"nowrap">
+    ]>;
+    "word_spacing": autoguard.guards.Reference<NonNegativeNumber>;
+}>;
+export declare const TextNodeStyle: autoguard.serialization.MessageGuard<TextNodeStyle>;
+export type TextNodeStyle = autoguard.guards.Intersection<[
+    autoguard.guards.Reference<Style>,
     autoguard.guards.Reference<NodeStyle>,
-    autoguard.guards.Object<{}, {
-        "color": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"transparent">,
-            autoguard.guards.Reference<Color>
-        ]>;
-        "columns": autoguard.guards.Reference<PositiveInteger>;
-        "font_size": autoguard.guards.Reference<NonNegativeNumber>;
-        "gutter": autoguard.guards.Reference<Length>;
-        "letter_spacing": autoguard.guards.Reference<NonNegativeNumber>;
-        "line_anchor": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"meanline">,
-            autoguard.guards.StringLiteral<"capline">,
-            autoguard.guards.StringLiteral<"topline">,
-            autoguard.guards.StringLiteral<"bottomline">,
-            autoguard.guards.StringLiteral<"baseline">
-        ]>;
-        "line_height": autoguard.guards.Reference<NonNegativeNumber>;
-        "orphans": autoguard.guards.Reference<PositiveInteger>;
-        "text_align": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"start">,
-            autoguard.guards.StringLiteral<"center">,
-            autoguard.guards.StringLiteral<"end">
-        ]>;
-        "text_transform": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"none">,
-            autoguard.guards.StringLiteral<"lowercase">,
-            autoguard.guards.StringLiteral<"uppercase">
-        ]>;
-        "white_space": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"wrap">,
-            autoguard.guards.StringLiteral<"nowrap">
-        ]>;
-        "word_spacing": autoguard.guards.Reference<NonNegativeNumber>;
-    }>
+    autoguard.guards.Reference<TextStyle>
 ]>;
 export declare const TextNode: autoguard.serialization.MessageGuard<TextNode>;
 export type TextNode = autoguard.guards.Intersection<[
@@ -138,25 +138,28 @@ export type TextNode = autoguard.guards.Intersection<[
         "content": autoguard.guards.String;
         "font": autoguard.guards.String;
     }, {
-        "style": autoguard.guards.Reference<TextStyle>;
+        "style": autoguard.guards.Reference<TextNodeStyle>;
     }>
 ]>;
 export declare const BoxStyle: autoguard.serialization.MessageGuard<BoxStyle>;
-export type BoxStyle = autoguard.guards.Intersection<[
+export type BoxStyle = autoguard.guards.Object<{}, {
+    "background_color": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"transparent">,
+        autoguard.guards.Reference<Color>
+    ]>;
+    "border_color": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"transparent">,
+        autoguard.guards.Reference<Color>
+    ]>;
+    "border_radius": autoguard.guards.Reference<Length>;
+    "border_width": autoguard.guards.Reference<Length>;
+    "padding": autoguard.guards.Reference<Length>;
+}>;
+export declare const BoxNodeStyle: autoguard.serialization.MessageGuard<BoxNodeStyle>;
+export type BoxNodeStyle = autoguard.guards.Intersection<[
+    autoguard.guards.Reference<Style>,
     autoguard.guards.Reference<NodeStyle>,
-    autoguard.guards.Object<{}, {
-        "background_color": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"transparent">,
-            autoguard.guards.Reference<Color>
-        ]>;
-        "border_color": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"transparent">,
-            autoguard.guards.Reference<Color>
-        ]>;
-        "border_radius": autoguard.guards.Reference<Length>;
-        "border_width": autoguard.guards.Reference<Length>;
-        "padding": autoguard.guards.Reference<Length>;
-    }>
+    autoguard.guards.Reference<BoxStyle>
 ]>;
 export declare const BoxNode: autoguard.serialization.MessageGuard<BoxNode>;
 export type BoxNode = autoguard.guards.Intersection<[
@@ -164,25 +167,28 @@ export type BoxNode = autoguard.guards.Intersection<[
     autoguard.guards.Object<{
         "type": autoguard.guards.StringLiteral<"box">;
     }, {
-        "style": autoguard.guards.Reference<BoxStyle>;
+        "style": autoguard.guards.Reference<BoxNodeStyle>;
     }>
 ]>;
 export declare const VerticalStyle: autoguard.serialization.MessageGuard<VerticalStyle>;
-export type VerticalStyle = autoguard.guards.Intersection<[
+export type VerticalStyle = autoguard.guards.Object<{}, {
+    "align_x": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"left">,
+        autoguard.guards.StringLiteral<"center">,
+        autoguard.guards.StringLiteral<"right">
+    ]>;
+    "align_y": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"top">,
+        autoguard.guards.StringLiteral<"middle">,
+        autoguard.guards.StringLiteral<"bottom">
+    ]>;
+    "gap": autoguard.guards.Reference<Length>;
+}>;
+export declare const VerticalNodeStyle: autoguard.serialization.MessageGuard<VerticalNodeStyle>;
+export type VerticalNodeStyle = autoguard.guards.Intersection<[
+    autoguard.guards.Reference<Style>,
     autoguard.guards.Reference<NodeStyle>,
-    autoguard.guards.Object<{}, {
-        "align_x": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"left">,
-            autoguard.guards.StringLiteral<"center">,
-            autoguard.guards.StringLiteral<"right">
-        ]>;
-        "align_y": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"top">,
-            autoguard.guards.StringLiteral<"middle">,
-            autoguard.guards.StringLiteral<"bottom">
-        ]>;
-        "gap": autoguard.guards.Reference<Length>;
-    }>
+    autoguard.guards.Reference<VerticalStyle>
 ]>;
 export declare const VerticalNode: autoguard.serialization.MessageGuard<VerticalNode>;
 export type VerticalNode = autoguard.guards.Intersection<[
@@ -194,21 +200,24 @@ export type VerticalNode = autoguard.guards.Intersection<[
     }>
 ]>;
 export declare const HorizontalStyle: autoguard.serialization.MessageGuard<HorizontalStyle>;
-export type HorizontalStyle = autoguard.guards.Intersection<[
+export type HorizontalStyle = autoguard.guards.Object<{}, {
+    "align_x": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"left">,
+        autoguard.guards.StringLiteral<"center">,
+        autoguard.guards.StringLiteral<"right">
+    ]>;
+    "align_y": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"top">,
+        autoguard.guards.StringLiteral<"middle">,
+        autoguard.guards.StringLiteral<"bottom">
+    ]>;
+    "gap": autoguard.guards.Reference<Length>;
+}>;
+export declare const HorizontalNodeStyle: autoguard.serialization.MessageGuard<HorizontalNodeStyle>;
+export type HorizontalNodeStyle = autoguard.guards.Intersection<[
+    autoguard.guards.Reference<Style>,
     autoguard.guards.Reference<NodeStyle>,
-    autoguard.guards.Object<{}, {
-        "align_x": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"left">,
-            autoguard.guards.StringLiteral<"center">,
-            autoguard.guards.StringLiteral<"right">
-        ]>;
-        "align_y": autoguard.guards.Union<[
-            autoguard.guards.StringLiteral<"top">,
-            autoguard.guards.StringLiteral<"middle">,
-            autoguard.guards.StringLiteral<"bottom">
-        ]>;
-        "gap": autoguard.guards.Reference<Length>;
-    }>
+    autoguard.guards.Reference<HorizontalStyle>
 ]>;
 export declare const HorizontalNode: autoguard.serialization.MessageGuard<HorizontalNode>;
 export type HorizontalNode = autoguard.guards.Intersection<[
@@ -216,15 +225,15 @@ export type HorizontalNode = autoguard.guards.Intersection<[
     autoguard.guards.Object<{
         "type": autoguard.guards.StringLiteral<"horizontal">;
     }, {
-        "style": autoguard.guards.Reference<HorizontalStyle>;
+        "style": autoguard.guards.Reference<HorizontalNodeStyle>;
     }>
 ]>;
 export declare const Styles: autoguard.serialization.MessageGuard<Styles>;
 export type Styles = autoguard.guards.Object<{}, {
-    "box": autoguard.guards.Record<autoguard.guards.Reference<BoxStyle>>;
-    "horizontal": autoguard.guards.Record<autoguard.guards.Reference<HorizontalStyle>>;
-    "text": autoguard.guards.Record<autoguard.guards.Reference<TextStyle>>;
-    "vertical": autoguard.guards.Record<autoguard.guards.Reference<VerticalStyle>>;
+    "box": autoguard.guards.Record<autoguard.guards.Reference<BoxNodeStyle>>;
+    "horizontal": autoguard.guards.Record<autoguard.guards.Reference<HorizontalNodeStyle>>;
+    "text": autoguard.guards.Record<autoguard.guards.Reference<TextNodeStyle>>;
+    "vertical": autoguard.guards.Record<autoguard.guards.Reference<VerticalNodeStyle>>;
 }>;
 export declare const Document: autoguard.serialization.MessageGuard<Document>;
 export type Document = autoguard.guards.Object<{
@@ -277,7 +286,6 @@ export declare namespace Autoguard {
             extends?: string | undefined;
         }>;
         NodeStyle: autoguard.guards.ReferenceGuard<{
-            extends?: string | undefined;
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
@@ -296,6 +304,31 @@ export declare namespace Autoguard {
             }>;
         }>;
         TextStyle: autoguard.guards.ReferenceGuard<{
+            color?: {
+                i: number;
+            } | {
+                r: number;
+                g: number;
+                b: number;
+            } | {
+                c: number;
+                m: number;
+                y: number;
+                k: number;
+            } | "transparent" | undefined;
+            columns?: number | undefined;
+            font_size?: number | undefined;
+            gutter?: number | [number] | [number, "%"] | undefined;
+            letter_spacing?: number | undefined;
+            line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
+            line_height?: number | undefined;
+            orphans?: number | undefined;
+            text_align?: "end" | "start" | "center" | undefined;
+            text_transform?: "none" | "lowercase" | "uppercase" | undefined;
+            white_space?: "wrap" | "nowrap" | undefined;
+            word_spacing?: number | undefined;
+        }>;
+        TextNodeStyle: autoguard.guards.ReferenceGuard<{
             extends?: string | undefined;
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
@@ -361,6 +394,35 @@ export declare namespace Autoguard {
             } | undefined;
         }>;
         BoxStyle: autoguard.guards.ReferenceGuard<{
+            background_color?: {
+                i: number;
+            } | {
+                r: number;
+                g: number;
+                b: number;
+            } | {
+                c: number;
+                m: number;
+                y: number;
+                k: number;
+            } | "transparent" | undefined;
+            border_color?: {
+                i: number;
+            } | {
+                r: number;
+                g: number;
+                b: number;
+            } | {
+                c: number;
+                m: number;
+                y: number;
+                k: number;
+            } | "transparent" | undefined;
+            border_radius?: number | [number] | [number, "%"] | undefined;
+            border_width?: number | [number] | [number, "%"] | undefined;
+            padding?: number | [number] | [number, "%"] | undefined;
+        }>;
+        BoxNodeStyle: autoguard.guards.ReferenceGuard<{
             extends?: string | undefined;
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
@@ -435,6 +497,11 @@ export declare namespace Autoguard {
             } | undefined;
         }>;
         VerticalStyle: autoguard.guards.ReferenceGuard<{
+            align_x?: "center" | "left" | "right" | undefined;
+            align_y?: "top" | "middle" | "bottom" | undefined;
+            gap?: number | [number] | [number, "%"] | undefined;
+        }>;
+        VerticalNodeStyle: autoguard.guards.ReferenceGuard<{
             extends?: string | undefined;
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
@@ -450,17 +517,17 @@ export declare namespace Autoguard {
                 type: string;
             }>;
             style?: {
-                extends?: string | undefined;
-                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                overflow?: "hidden" | "visible" | undefined;
-                segmentation?: "auto" | "none" | undefined;
-                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
                 gap?: number | [number] | [number, "%"] | undefined;
             } | undefined;
         }>;
         HorizontalStyle: autoguard.guards.ReferenceGuard<{
+            align_x?: "center" | "left" | "right" | undefined;
+            align_y?: "top" | "middle" | "bottom" | undefined;
+            gap?: number | [number] | [number, "%"] | undefined;
+        }>;
+        HorizontalNodeStyle: autoguard.guards.ReferenceGuard<{
             extends?: string | undefined;
             height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;

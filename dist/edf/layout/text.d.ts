@@ -1,19 +1,7 @@
-import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, NodeStyle, Path, Size } from "./shared";
+import { Atom, ChildNode, CreateSegmentsOptions, NodeStyle, Path, Size } from "./shared";
 import { MeasuredLine, Typesetter } from "../fonts";
-export type TextStyle = {
-    color: "transparent" | Color;
-    columns: number;
-    font_size: number;
-    gutter: Length;
-    letter_spacing: number;
-    line_anchor: "meanline" | "capline" | "topline" | "bottomline" | "baseline";
-    line_height: number;
-    orphans: number;
-    text_align: "start" | "center" | "end";
-    text_transform: "none" | "lowercase" | "uppercase";
-    white_space: "wrap" | "nowrap";
-    word_spacing: number;
-};
+import * as format from "../format";
+export type TextStyle = Required<format.TextStyle>;
 export declare class TextNode extends ChildNode {
     protected content: string;
     protected typesetter: Typesetter;

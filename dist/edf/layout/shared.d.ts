@@ -1,19 +1,6 @@
 import * as content from "../../pdf/content";
-export type GrayscaleColor = {
-    i: number;
-};
-export type RGBColor = {
-    r: number;
-    g: number;
-    b: number;
-};
-export type CMYKColor = {
-    c: number;
-    m: number;
-    y: number;
-    k: number;
-};
-export type Color = GrayscaleColor | RGBColor | CMYKColor;
+import * as format from "../format";
+export type Color = format.Color;
 export declare const Color: {
     setFillColor(color: Color, context: content.Context): void;
     setStrokeColor(color: Color, context: content.Context): void;
@@ -64,12 +51,12 @@ export declare const Atom: {
     getCommandsFromAtoms(atoms: Array<Atom>): Array<string>;
     getContentRect(atom: ParentAtom): Rect;
 };
-export type Length = number | [number] | [number, "%"];
+export type Length = format.Length;
 export declare const Length: {
     getComputedLength(length: Length, relative_to: number | undefined): number;
     isValid(length: Length): boolean;
 };
-export type NodeLength = Length | [number, "fr"] | "intrinsic" | "extrinsic";
+export type NodeLength = format.NodeLength;
 export declare const NodeLength: {
     getComputedLength(length: NodeLength, relative_to: number | undefined, fraction_length: number | undefined): number | undefined;
     isFractional(length: NodeLength): length is [number, "fr"];
@@ -77,12 +64,7 @@ export declare const NodeLength: {
 export type CreateSegmentsOptions = {
     text_operand: "bytestring" | "string";
 };
-export type NodeStyle = {
-    height: NodeLength;
-    overflow: "hidden" | "visible";
-    segmentation: "auto" | "none";
-    width: NodeLength;
-};
+export type NodeStyle = Required<format.NodeStyle>;
 export declare abstract class Node {
     protected node_style: NodeStyle;
     protected createPrefixCommands(path: Path): Array<string>;

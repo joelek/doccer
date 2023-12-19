@@ -1,11 +1,6 @@
-import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, NodeStyle, ParentNode, Path, Size } from "./shared";
-export type BoxStyle = {
-    background_color: "transparent" | Color;
-    border_color: "transparent" | Color;
-    border_radius: Length;
-    border_width: Length;
-    padding: Length;
-};
+import { Atom, ChildNode, CreateSegmentsOptions, NodeStyle, ParentNode, Path, Size } from "./shared";
+import * as format from "../format";
+export type BoxStyle = Required<format.BoxStyle>;
 export declare class BoxNode extends ParentNode {
     protected style: BoxStyle;
     protected createPrefixCommands(path: Path): Array<string>;
