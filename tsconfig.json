@@ -11,6 +11,9 @@
 	"include": [],
 	"references": [
 		{
+			"path": "./source/cli/"
+		},
+		{
 			"path": "./source/edf/"
 		},
 		{

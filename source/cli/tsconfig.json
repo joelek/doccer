@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"lib": [
+			"esnext"
+		]
+	},
+	"extends": "../../tsconfig.json",
+	"include": [
+		"./",
+		"../app.json"
+	],
+	"references": [
+		{
+			"path": "../lib/"
+		}
+	]
+}

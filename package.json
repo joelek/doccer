@@ -1,5 +1,7 @@
 {
-	"bin": {},
+	"bin": {
+		"doccer": "./dist/cli/index.js"
+	},
 	"dependencies": {
 		"@joelek/ts-stdlib": "github:joelek/ts-stdlib#semver:^1.4"
 	},
