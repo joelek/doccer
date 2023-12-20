@@ -53,17 +53,22 @@ export class StyleHandler {
 		if (style == null) {
 			return;
 		}
-		let template = style.template;
-		if (template == null) {
-			return style;
-		}
+		let template = style.template ?? "default";
 		if (exclude.includes(template)) {
-			throw new RecursiveTemplateError(template, type);
+			if (template === "default") {
+				return style;
+			} else {
+				throw new RecursiveTemplateError(template, type);
+			}
 		}
 		let templates = (this.templates[type] ?? {}) as Record<string, Style<A> | undefined>;
 		let template_style = templates[template];
 		if (template_style == null) {
-			throw new MissingTemplateError(template, type);
+			if (template === "default") {
+				return style;
+			} else {
+				throw new MissingTemplateError(template, type);
+			}
 		}
 		return {
 			...this.getStyle(type, template_style, [...exclude, template]),
