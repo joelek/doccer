@@ -35,7 +35,7 @@ exports.PDFTokenizer = {
             "STREAM": /stream(?:\r\n|\r|\n)(?:[\x00-\xFF](?!(?:\r\n|\r|\n)endstream))*(?:[\x00-\xFF]?(?:\r\n|\r|\n)endstream)/,
             "INTEGER": /[+-]?[0-9]+/,
             "REAL": /[+-]?(?:[0-9]+[.][0-9]+|[.][0-9]+|[0-9]+[.])/,
-            "DATE": /D[:][0-9]{4}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}(Z|([+-][0-9]{2}(['][0-9]{2}[']?)?))?)?)?)?)?)?/,
+            "DATE": /[\(]D[:][0-9]{4}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}([0-9]{2}(Z|([+-][0-9]{2}(['][0-9]{2}[']?)?))?)?)?)?)?)?[)]/,
             "NAME": /[/](?:[\x21-\x24\x26-\x27\x2A-\x2E\x30-\x3B\x3D\x3F-\x5A\x5C\x5E-\x7A\x7C\x7E]|[#][0-9A-Fa-f]{2})+/,
             "EOL": /\r\n|\r|\n/,
             "CRLF": /\r\n/,
@@ -194,13 +194,13 @@ class PDFDate extends PDFType {
             minute.toString().padStart(2, "0"),
             second.toString().padStart(2, "0"),
         ].join("");
-        lines.push(`D:${date}Z`);
+        lines.push(`(D:${date}Z)`);
         return lines;
     }
     static parseFrom(parser) {
         return parser.parse(["WS", "COMMENT"], (read, peek, skip) => {
             let string = read("DATE").value;
-            string = string.slice(2);
+            string = string.slice(3, -1);
             let year = string.slice(0, 4);
             let month = string.slice(4, 6) || "01";
             let day = string.slice(6, 8) || "01";

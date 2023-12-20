@@ -19,62 +19,62 @@ wtf.test(`PDFName should parse unicode names.`, (assert) => {
     assert.equals(name.value, "räksmörgås");
 });
 wtf.test(`PDFDate should parse dates containing year.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:2000");
+    let parser = TOKENIZER.tokenize("(D:2000)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-01-01T00:00:00.000Z");
 });
 wtf.test(`PDFDate should parse dates containing year and month.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:200005");
+    let parser = TOKENIZER.tokenize("(D:200005)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-01T00:00:00.000Z");
 });
 wtf.test(`PDFDate should parse dates containing year, month and day.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:20000509");
+    let parser = TOKENIZER.tokenize("(D:20000509)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-09T00:00:00.000Z");
 });
 wtf.test(`PDFDate should parse dates containing year, month, day and hour.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:2000050902");
+    let parser = TOKENIZER.tokenize("(D:2000050902)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-09T02:00:00.000Z");
 });
 wtf.test(`PDFDate should parse dates containing year, month, day, hour and minute.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:200005090203");
+    let parser = TOKENIZER.tokenize("(D:200005090203)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-09T02:03:00.000Z");
 });
 wtf.test(`PDFDate should parse dates containing year, month, day, hour, minute and second.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:20000509020304");
+    let parser = TOKENIZER.tokenize("(D:20000509020304)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-09T02:03:04.000Z");
 });
 wtf.test(`PDFDate should parse dates with a "Z" suffix.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:20000509020304Z");
+    let parser = TOKENIZER.tokenize("(D:20000509020304Z)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-09T02:03:04.000Z");
 });
 wtf.test(`PDFDate should parse dates with a positive time zone offset containing hour.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:20000509020304+01");
+    let parser = TOKENIZER.tokenize("(D:20000509020304+01)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-09T01:03:04.000Z");
 });
 wtf.test(`PDFDate should parse dates with a positive time zone offset containing hour and minute.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:20000509020304+01'02");
+    let parser = TOKENIZER.tokenize("(D:20000509020304+01'02)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-09T01:01:04.000Z");
 });
 wtf.test(`PDFDate should parse dates with a negative time zone offset containing hour.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:20000509020304-01");
+    let parser = TOKENIZER.tokenize("(D:20000509020304-01)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-09T03:03:04.000Z");
 });
 wtf.test(`PDFDate should parse dates with a negative time zone offset containing hour and minute.`, (assert) => {
-    let parser = TOKENIZER.tokenize("D:20000509020304-01'02");
+    let parser = TOKENIZER.tokenize("(D:20000509020304-01'02)");
     let date = pdf_1.PDFDate.parseFrom(parser);
     assert.equals(date.value.toISOString(), "2000-05-09T03:05:04.000Z");
 });
 wtf.test(`PDFDate should not parse invalid dates.`, async (assert) => {
-    let parser = TOKENIZER.tokenize("D:00000000");
+    let parser = TOKENIZER.tokenize("(D:00000000)");
     await assert.throws(() => {
         pdf_1.PDFDate.parseFrom(parser);
     });

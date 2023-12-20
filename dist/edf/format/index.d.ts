@@ -233,6 +233,11 @@ export type HorizontalNode = autoguard.guards.Intersection<[
 ]>;
 export declare const Colors: autoguard.serialization.MessageGuard<Colors>;
 export type Colors = autoguard.guards.Record<autoguard.guards.Reference<Color>>;
+export declare const Metadata: autoguard.serialization.MessageGuard<Metadata>;
+export type Metadata = autoguard.guards.Object<{}, {
+    "title": autoguard.guards.String;
+    "author": autoguard.guards.String;
+}>;
 export declare const Templates: autoguard.serialization.MessageGuard<Templates>;
 export type Templates = autoguard.guards.Object<{}, {
     "box": autoguard.guards.Record<autoguard.guards.Reference<BoxNodeStyle>>;
@@ -248,6 +253,7 @@ export type Document = autoguard.guards.Object<{
     "colors": autoguard.guards.Reference<Colors>;
     "files": autoguard.guards.Record<autoguard.guards.Reference<PaddedBase64URL>>;
     "fonts": autoguard.guards.Record<autoguard.guards.String>;
+    "metadata": autoguard.guards.Reference<Metadata>;
     "templates": autoguard.guards.Reference<Templates>;
 }>;
 export declare namespace Autoguard {
@@ -565,6 +571,10 @@ export declare namespace Autoguard {
             } | undefined;
         }>;
         Colors: autoguard.guards.ReferenceGuard<Colors>;
+        Metadata: autoguard.guards.ReferenceGuard<{
+            title?: string | undefined;
+            author?: string | undefined;
+        }>;
         Templates: autoguard.guards.ReferenceGuard<{
             box?: autoguard.guards.Record<{
                 template?: string | undefined;
@@ -662,6 +672,10 @@ export declare namespace Autoguard {
             colors?: Colors | undefined;
             files?: autoguard.guards.Record<string> | undefined;
             fonts?: autoguard.guards.Record<string> | undefined;
+            metadata?: {
+                title?: string | undefined;
+                author?: string | undefined;
+            } | undefined;
             templates?: {
                 box?: autoguard.guards.Record<{
                     template?: string | undefined;

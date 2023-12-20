@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentUtils = exports.createNodeClasses = exports.makeToUnicode = void 0;
 const stdlib = require("@joelek/ts-stdlib");
+const app = require("../app.json");
 const pdf = require("../pdf");
 const truetype = require("../truetype");
+const fonts_1 = require("./fonts");
 const format_1 = require("./format");
 const layout = require("./layout");
-const fonts_1 = require("./fonts");
 const styles_1 = require("./styles");
 function makeToUnicode(font) {
     let lines = [];
@@ -53,6 +54,17 @@ exports.createNodeClasses = createNodeClasses;
 exports.DocumentUtils = {
     convertToPDF(document) {
         let pdf_file = new pdf.format.PDFFile(new pdf.format.PDFVersion(1, 4), [], new pdf.format.PDFRecord([]), []);
+        let information_record = new pdf.format.PDFRecord([]);
+        if (document.metadata?.title != null) {
+            information_record.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Title"), new pdf.format.PDFString(document.metadata?.title)));
+        }
+        if (document.metadata?.author != null) {
+            information_record.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Author"), new pdf.format.PDFString(document.metadata?.author)));
+        }
+        information_record.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Producer"), new pdf.format.PDFString(`${app.name} ${app.version}`)));
+        information_record.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("CreationDate"), new pdf.format.PDFDate(new Date())));
+        let information = new pdf.format.PDFObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), information_record);
+        pdf_file.objects.push(information);
         let pdf_fonts = new pdf.format.PDFRecord([]);
         let resources = new pdf.format.PDFObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
             new pdf.format.PDFRecordMember(new pdf.format.PDFName("ProcSet"), new pdf.format.PDFArray([
@@ -195,7 +207,7 @@ exports.DocumentUtils = {
         for (let object of pdf_file.objects) {
             object.id.value = ++id;
         }
-        pdf_file.trailer.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Size"), new pdf.format.PDFInteger(id)), new pdf.format.PDFRecordMember(new pdf.format.PDFName("Root"), catalog.getReference()));
+        pdf_file.trailer.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Size"), new pdf.format.PDFInteger(id)), new pdf.format.PDFRecordMember(new pdf.format.PDFName("Root"), catalog.getReference()), new pdf.format.PDFRecordMember(new pdf.format.PDFName("Info"), information.getReference()));
         return pdf_file;
     },
     embedResources(document) {
