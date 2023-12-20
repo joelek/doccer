@@ -34,7 +34,9 @@ export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 
 export function createNodeClasses(font_handler: FontHandler, style_handler: StyleHandler, node: format.Node): layout.Node {
 	if (TextNode.is(node)) {
-		return new layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), style_handler.getTextStyle(node.style));
+		let style = style_handler.getTextStyle(node.style);
+		let font = style?.font ?? "default";
+		return new layout.TextNode(node.content, font_handler.getTypesetter(font), font_handler.getTypeId(font), style);
 	}
 	if (BoxNode.is(node)) {
 		return new layout.BoxNode(style_handler.getBoxStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));

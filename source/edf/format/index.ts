@@ -189,6 +189,7 @@ export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autogu
 		autoguard.guards.Reference.of(() => Color)
 	),
 	"columns": autoguard.guards.Reference.of(() => PositiveInteger),
+	"font": autoguard.guards.String,
 	"font_size": autoguard.guards.Reference.of(() => NonNegativeNumber),
 	"gutter": autoguard.guards.Reference.of(() => Length),
 	"letter_spacing": autoguard.guards.Reference.of(() => NonNegativeNumber),
@@ -225,6 +226,7 @@ export type TextStyle = autoguard.guards.Object<{}, {
 		autoguard.guards.Reference<Color>
 	]>,
 	"columns": autoguard.guards.Reference<PositiveInteger>,
+	"font": autoguard.guards.String,
 	"font_size": autoguard.guards.Reference<NonNegativeNumber>,
 	"gutter": autoguard.guards.Reference<Length>,
 	"letter_spacing": autoguard.guards.Reference<NonNegativeNumber>,
@@ -270,8 +272,7 @@ export const TextNode: autoguard.serialization.MessageGuard<TextNode> = autoguar
 	autoguard.guards.Reference.of(() => ChildNode),
 	autoguard.guards.Object.of({
 		"type": autoguard.guards.StringLiteral.of("text"),
-		"content": autoguard.guards.String,
-		"font": autoguard.guards.String
+		"content": autoguard.guards.String
 	}, {
 		"style": autoguard.guards.Reference.of(() => TextNodeStyle)
 	})
@@ -281,8 +282,7 @@ export type TextNode = autoguard.guards.Intersection<[
 	autoguard.guards.Reference<ChildNode>,
 	autoguard.guards.Object<{
 		"type": autoguard.guards.StringLiteral<"text">,
-		"content": autoguard.guards.String,
-		"font": autoguard.guards.String
+		"content": autoguard.guards.String
 	}, {
 		"style": autoguard.guards.Reference<TextNodeStyle>
 	}>

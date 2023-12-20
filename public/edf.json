@@ -1,6 +1,6 @@
 {
 	"fonts": {
-		"DMSans-Regular": "./public/DMSans-Regular.ttf"
+		"default": "./public/DMSans-Regular.ttf"
 	},
 	"size": {
 		"w": 210,
@@ -36,7 +36,6 @@
 		"children": [
 			{
 				"type": "text",
-				"font": "DMSans-Regular",
 				"style": {
 					"gutter": 20,
 					"columns": 3

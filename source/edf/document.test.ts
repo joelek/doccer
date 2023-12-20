@@ -6,7 +6,7 @@ import { BoxNode, Document, Node, TextNode } from "./format";
 wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
 	let document: Document = {
 		fonts: {
-			"DMSans-Regular": "./public/DMSans-Regular.ttf"
+			default: "./public/DMSans-Regular.ttf"
 		},
 		size: {
 			w: 210,
@@ -42,7 +42,6 @@ wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
 			children: [
 				{
 					type: "text",
-					font: "DMSans-Regular",
 					style: {
 						gutter: 20,
 						columns: 3

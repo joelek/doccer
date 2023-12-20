@@ -204,6 +204,7 @@ export class TextNode extends ChildNode {
 		if (columns < 1 || !Number.isInteger(columns)) {
 			throw new Error();
 		}
+		let font = style.font ?? "default";
 		let font_size = style.font_size ?? 1;
 		if (font_size < 1) {
 			throw new Error();
@@ -241,6 +242,7 @@ export class TextNode extends ChildNode {
 		this.style = {
 			color,
 			columns,
+			font,
 			font_size,
 			gutter,
 			letter_spacing,

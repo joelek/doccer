@@ -59,6 +59,7 @@ guard ParentNode: ChildNode & {
 guard TextStyle: {
 	color?: string | "transparent" | Color,
 	columns?: PositiveInteger,
+	font?: string,
 	font_size?: NonNegativeNumber,
 	gutter?: Length,
 	letter_spacing?: NonNegativeNumber,
@@ -76,7 +77,6 @@ guard TextNodeStyle: Style & NodeStyle & TextStyle;
 guard TextNode: ChildNode & {
 	type: "text",
 	content: string,
-	font: string,
 	style?: TextNodeStyle
 };
 
