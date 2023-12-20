@@ -47,6 +47,7 @@ exports.ParentNode = autoguard.guards.Intersection.of(autoguard.guards.Reference
 exports.TextStyle = autoguard.guards.Object.of({}, {
     "color": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.StringLiteral.of("transparent"), autoguard.guards.Reference.of(() => exports.Color)),
     "columns": autoguard.guards.Reference.of(() => exports.PositiveInteger),
+    "font": autoguard.guards.String,
     "font_size": autoguard.guards.Reference.of(() => exports.NonNegativeNumber),
     "gutter": autoguard.guards.Reference.of(() => exports.Length),
     "letter_spacing": autoguard.guards.Reference.of(() => exports.NonNegativeNumber),
@@ -61,8 +62,7 @@ exports.TextStyle = autoguard.guards.Object.of({}, {
 exports.TextNodeStyle = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => exports.Style), autoguard.guards.Reference.of(() => exports.NodeStyle), autoguard.guards.Reference.of(() => exports.TextStyle));
 exports.TextNode = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => exports.ChildNode), autoguard.guards.Object.of({
     "type": autoguard.guards.StringLiteral.of("text"),
-    "content": autoguard.guards.String,
-    "font": autoguard.guards.String
+    "content": autoguard.guards.String
 }, {
     "style": autoguard.guards.Reference.of(() => exports.TextNodeStyle)
 }));

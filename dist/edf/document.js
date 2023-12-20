@@ -36,7 +36,9 @@ exports.makeToUnicode = makeToUnicode;
 ;
 function createNodeClasses(font_handler, style_handler, node) {
     if (format_1.TextNode.is(node)) {
-        return new layout.TextNode(node.content, font_handler.getTypesetter(node.font), font_handler.getTypeId(node.font), style_handler.getTextStyle(node.style));
+        let style = style_handler.getTextStyle(node.style);
+        let font = style?.font ?? "default";
+        return new layout.TextNode(node.content, font_handler.getTypesetter(font), font_handler.getTypeId(font), style);
     }
     if (format_1.BoxNode.is(node)) {
         return new layout.BoxNode(style_handler.getBoxStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));

@@ -97,6 +97,7 @@ export type TextStyle = autoguard.guards.Object<{}, {
         autoguard.guards.Reference<Color>
     ]>;
     "columns": autoguard.guards.Reference<PositiveInteger>;
+    "font": autoguard.guards.String;
     "font_size": autoguard.guards.Reference<NonNegativeNumber>;
     "gutter": autoguard.guards.Reference<Length>;
     "letter_spacing": autoguard.guards.Reference<NonNegativeNumber>;
@@ -137,7 +138,6 @@ export type TextNode = autoguard.guards.Intersection<[
     autoguard.guards.Object<{
         "type": autoguard.guards.StringLiteral<"text">;
         "content": autoguard.guards.String;
-        "font": autoguard.guards.String;
     }, {
         "style": autoguard.guards.Reference<TextNodeStyle>;
     }>
@@ -329,6 +329,7 @@ export declare namespace Autoguard {
                 k: number;
             } | undefined;
             columns?: number | undefined;
+            font?: string | undefined;
             font_size?: number | undefined;
             gutter?: number | [number] | [number, "%"] | undefined;
             letter_spacing?: number | undefined;
@@ -359,6 +360,7 @@ export declare namespace Autoguard {
                 k: number;
             } | undefined;
             columns?: number | undefined;
+            font?: string | undefined;
             font_size?: number | undefined;
             gutter?: number | [number] | [number, "%"] | undefined;
             letter_spacing?: number | undefined;
@@ -373,7 +375,6 @@ export declare namespace Autoguard {
         TextNode: autoguard.guards.ReferenceGuard<{
             type: "text";
             content: string;
-            font: string;
             style?: {
                 template?: string | undefined;
                 height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
@@ -393,6 +394,7 @@ export declare namespace Autoguard {
                     k: number;
                 } | undefined;
                 columns?: number | undefined;
+                font?: string | undefined;
                 font_size?: number | undefined;
                 gutter?: number | [number] | [number, "%"] | undefined;
                 letter_spacing?: number | undefined;
@@ -639,6 +641,7 @@ export declare namespace Autoguard {
                     k: number;
                 } | undefined;
                 columns?: number | undefined;
+                font?: string | undefined;
                 font_size?: number | undefined;
                 gutter?: number | [number] | [number, "%"] | undefined;
                 letter_spacing?: number | undefined;
@@ -740,6 +743,7 @@ export declare namespace Autoguard {
                         k: number;
                     } | undefined;
                     columns?: number | undefined;
+                    font?: string | undefined;
                     font_size?: number | undefined;
                     gutter?: number | [number] | [number, "%"] | undefined;
                     letter_spacing?: number | undefined;
