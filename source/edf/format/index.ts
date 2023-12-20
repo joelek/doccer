@@ -470,6 +470,16 @@ export const Colors: autoguard.serialization.MessageGuard<Colors> = autoguard.gu
 
 export type Colors = autoguard.guards.Record<autoguard.guards.Reference<Color>>;
 
+export const Metadata: autoguard.serialization.MessageGuard<Metadata> = autoguard.guards.Object.of({}, {
+	"title": autoguard.guards.String,
+	"author": autoguard.guards.String
+});
+
+export type Metadata = autoguard.guards.Object<{}, {
+	"title": autoguard.guards.String,
+	"author": autoguard.guards.String
+}>;
+
 export const Templates: autoguard.serialization.MessageGuard<Templates> = autoguard.guards.Object.of({}, {
 	"box": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => BoxNodeStyle)),
 	"horizontal": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => HorizontalNodeStyle)),
@@ -491,6 +501,7 @@ export const Document: autoguard.serialization.MessageGuard<Document> = autoguar
 	"colors": autoguard.guards.Reference.of(() => Colors),
 	"files": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => PaddedBase64URL)),
 	"fonts": autoguard.guards.Record.of(autoguard.guards.String),
+	"metadata": autoguard.guards.Reference.of(() => Metadata),
 	"templates": autoguard.guards.Reference.of(() => Templates)
 });
 
@@ -501,6 +512,7 @@ export type Document = autoguard.guards.Object<{
 	"colors": autoguard.guards.Reference<Colors>,
 	"files": autoguard.guards.Record<autoguard.guards.Reference<PaddedBase64URL>>,
 	"fonts": autoguard.guards.Record<autoguard.guards.String>,
+	"metadata": autoguard.guards.Reference<Metadata>,
 	"templates": autoguard.guards.Reference<Templates>
 }>;
 
@@ -535,6 +547,7 @@ export namespace Autoguard {
 		"HorizontalNodeStyle": autoguard.guards.Reference.of(() => HorizontalNodeStyle),
 		"HorizontalNode": autoguard.guards.Reference.of(() => HorizontalNode),
 		"Colors": autoguard.guards.Reference.of(() => Colors),
+		"Metadata": autoguard.guards.Reference.of(() => Metadata),
 		"Templates": autoguard.guards.Reference.of(() => Templates),
 		"Document": autoguard.guards.Reference.of(() => Document)
 	};

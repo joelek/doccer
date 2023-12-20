@@ -1,10 +1,11 @@
 import * as stdlib from "@joelek/ts-stdlib";
+import * as app from "../app.json";
 import * as pdf from "../pdf";
 import * as truetype from "../truetype";
+import { FontHandler, Typesetter } from "./fonts";
 import * as format from "./format";
 import { BoxNode, Document, HorizontalNode, TextNode, VerticalNode } from "./format";
 import * as layout from "./layout";
-import { FontHandler, Typesetter } from "./fonts";
 import { StyleHandler } from "./styles";
 
 export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
@@ -55,6 +56,21 @@ export const DocumentUtils = {
 			new pdf.format.PDFRecord([]),
 			[]
 		);
+		let information_record = new pdf.format.PDFRecord([]);
+		if (document.metadata?.title != null) {
+			information_record.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Title"), new pdf.format.PDFString(document.metadata?.title)));
+		}
+		if (document.metadata?.author != null) {
+			information_record.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Author"), new pdf.format.PDFString(document.metadata?.author)));
+		}
+		information_record.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Producer"), new pdf.format.PDFString(`${app.name} ${app.version}`)));
+		information_record.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("CreationDate"), new pdf.format.PDFDate(new Date())));
+		let information = new pdf.format.PDFObject(
+			new pdf.format.PDFInteger(1),
+			new pdf.format.PDFInteger(0),
+			information_record
+		);
+		pdf_file.objects.push(information);
 		let pdf_fonts = new pdf.format.PDFRecord([]);
 		let resources = new pdf.format.PDFObject(
 			new pdf.format.PDFInteger(1),
@@ -245,7 +261,8 @@ export const DocumentUtils = {
 		}
 		pdf_file.trailer.members.push(
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Size"), new pdf.format.PDFInteger(id)),
-			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Root"), catalog.getReference())
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Root"), catalog.getReference()),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Info"), information.getReference())
 		);
 		return pdf_file;
 	},

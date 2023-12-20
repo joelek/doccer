@@ -125,6 +125,11 @@ guard Colors: {
 	Color
 };
 
+guard Metadata: {
+	title?: string,
+	author?: string
+};
+
 guard Templates: {
 	box?: { BoxNodeStyle },
 	horizontal?: { HorizontalNodeStyle },
@@ -137,6 +142,7 @@ guard Document: {
 	content: Node,
 	files?: { PaddedBase64URL },
 	fonts?: { string },
+	metadata?: Metadata,
 	size: Size,
 	templates?: Templates
 };
