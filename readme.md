@@ -34,8 +34,7 @@ NB: This project targets TypeScript 4 in strict mode.
 
 ## Roadmap
 
-* Add support for word-break.
-* Add support for fractional widths and heights to BoxNode.
+* Add support for word-break to TextNode.
 * Improve PDF serialization.
 * Add ImageNode.
 * Add support for compound paths.
