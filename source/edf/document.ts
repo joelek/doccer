@@ -4,7 +4,7 @@ import * as pdf from "../pdf";
 import * as truetype from "../truetype";
 import { FontHandler, Typesetter } from "./fonts";
 import * as format from "./format";
-import { BoxNode, Document, HorizontalNode, TextNode, VerticalNode } from "./format";
+import { BoxNode, Document, TextNode } from "./format";
 import * as layout from "./layout";
 import { StyleHandler } from "./styles";
 
@@ -40,12 +40,6 @@ export function createNodeClasses(font_handler: FontHandler, style_handler: Styl
 	}
 	if (BoxNode.is(node)) {
 		return new layout.BoxNode(style_handler.getBoxStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
-	}
-	if (VerticalNode.is(node)) {
-		return new layout.VerticalNode(style_handler.getVerticalStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
-	}
-	if (HorizontalNode.is(node)) {
-		return new layout.HorizontalNode(style_handler.getHorizontalStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
 	}
 	throw new Error();
 };

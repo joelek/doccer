@@ -107,25 +107,11 @@ export class StyleHandler {
 		};
 	}
 
-	getHorizontalStyle(style?: format.HorizontalNodeStyle): format.HorizontalNodeStyle | undefined {
-		style = this.getStyle("horizontal", style, []);
-		return {
-			...style
-		};
-	}
-
 	getTextStyle(style?: format.TextNodeStyle): format.TextNodeStyle | undefined {
 		style = this.getStyle("text", style, []);
 		return {
 			...style,
 			color: this.getColor(style?.color)
-		};
-	}
-
-	getVerticalStyle(style?: format.VerticalNodeStyle): format.VerticalNodeStyle | undefined {
-		style = this.getStyle("vertical", style, []);
-		return {
-			...style
 		};
 	}
 };

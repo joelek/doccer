@@ -81,10 +81,14 @@ guard TextNode: ChildNode & {
 };
 
 guard BoxStyle: {
+	align_x?: "left" | "center" | "right",
+	align_y?: "top" | "middle" | "bottom",
 	background_color?: string | "transparent" | Color,
 	border_color?: string | "transparent" | Color,
 	border_radius?: Length,
 	border_width?: Length,
+	gap?: Length,
+	layout?: "vertical" | "horizontal",
 	padding?: Length
 };
 
@@ -93,32 +97,6 @@ guard BoxNodeStyle: Style & NodeStyle & BoxStyle;
 guard BoxNode: ParentNode & {
 	type: "box",
 	style?: BoxNodeStyle
-};
-
-guard VerticalStyle: {
-	align_x?: "left" | "center" | "right",
-	align_y?: "top" | "middle" | "bottom",
-	gap?: Length
-};
-
-guard VerticalNodeStyle: Style & NodeStyle & VerticalStyle;
-
-guard VerticalNode: ParentNode & {
-	type: "vertical",
-	style?: VerticalNodeStyle
-};
-
-guard HorizontalStyle: {
-	align_x?: "left" | "center" | "right",
-	align_y?: "top" | "middle" | "bottom",
-	gap?: Length
-};
-
-guard HorizontalNodeStyle: Style & NodeStyle & HorizontalStyle;
-
-guard HorizontalNode: ParentNode & {
-	type: "horizontal",
-	style?: HorizontalNodeStyle
 };
 
 guard Colors: {
@@ -132,9 +110,7 @@ guard Metadata: {
 
 guard Templates: {
 	box?: { BoxNodeStyle },
-	horizontal?: { HorizontalNodeStyle },
-	text?: { TextNodeStyle },
-	vertical?: { VerticalNodeStyle }
+	text?: { TextNodeStyle }
 };
 
 guard Document: {
