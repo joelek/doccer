@@ -43,12 +43,6 @@ function createNodeClasses(font_handler, style_handler, node) {
     if (format_1.BoxNode.is(node)) {
         return new layout.BoxNode(style_handler.getBoxStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
     }
-    if (format_1.VerticalNode.is(node)) {
-        return new layout.VerticalNode(style_handler.getVerticalStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
-    }
-    if (format_1.HorizontalNode.is(node)) {
-        return new layout.HorizontalNode(style_handler.getHorizontalStyle(node.style), ...node.children.map((child) => createNodeClasses(font_handler, style_handler, child)));
-    }
     throw new Error();
 }
 exports.createNodeClasses = createNodeClasses;

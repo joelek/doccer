@@ -100,23 +100,11 @@ class StyleHandler {
             border_color: this.getColor(style?.border_color)
         };
     }
-    getHorizontalStyle(style) {
-        style = this.getStyle("horizontal", style, []);
-        return {
-            ...style
-        };
-    }
     getTextStyle(style) {
         style = this.getStyle("text", style, []);
         return {
             ...style,
             color: this.getColor(style?.color)
-        };
-    }
-    getVerticalStyle(style) {
-        style = this.getStyle("vertical", style, []);
-        return {
-            ...style
         };
     }
 }

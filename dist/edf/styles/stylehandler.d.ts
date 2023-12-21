@@ -24,8 +24,6 @@ export declare class StyleHandler {
     protected getColor(color?: string | "transparent" | format.Color): "transparent" | format.Color | undefined;
     constructor(templates: format.Templates | undefined, colors: format.Colors | undefined);
     getBoxStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined;
-    getHorizontalStyle(style?: format.HorizontalNodeStyle): format.HorizontalNodeStyle | undefined;
     getTextStyle(style?: format.TextNodeStyle): format.TextNodeStyle | undefined;
-    getVerticalStyle(style?: format.VerticalNodeStyle): format.VerticalNodeStyle | undefined;
 }
 export {};

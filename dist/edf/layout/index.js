@@ -15,7 +15,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./box"), exports);
-__exportStar(require("./horizontal"), exports);
 __exportStar(require("./shared"), exports);
 __exportStar(require("./text"), exports);
-__exportStar(require("./vertical"), exports);

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const wtf = require("@joelek/wtf");
 const shared_1 = require("./shared");
-const horizontal_1 = require("./horizontal");
+const box_1 = require("./box");
 class MockNode extends shared_1.ChildNode {
     constructor(style) {
         super(style);
@@ -56,8 +56,8 @@ class MockRemainingHeightNode extends shared_1.ChildNode {
     }
 }
 ;
-wtf.test(`HorizontalNode should support children with fractional widths.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ width: 10, gap: [1] }, new MockNode({ width: [1, "fr"] }), new MockNode({ width: [2] }), new MockNode({ width: [2, "fr"] }));
+wtf.test(`BoxNode with layout "horizontal" should support children with fractional widths.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", width: 10, gap: [1] }, new MockNode({ width: [1, "fr"] }), new MockNode({ width: [2] }), new MockNode({ width: [2, "fr"] }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -138,8 +138,8 @@ wtf.test(`HorizontalNode should support children with fractional widths.`, (asse
         }
     ]);
 });
-wtf.test(`HorizontalNode should support children with fractional heights.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ height: 10, gap: [1] }, new MockNode({ height: [1, "fr"] }), new MockNode({ height: [2] }), new MockNode({ height: [2, "fr"] }));
+wtf.test(`BoxNode with layout "horizontal" should support children with fractional heights.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", height: 10, gap: [1] }, new MockNode({ height: [1, "fr"] }), new MockNode({ height: [2] }), new MockNode({ height: [2, "fr"] }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -220,8 +220,8 @@ wtf.test(`HorizontalNode should support children with fractional heights.`, (ass
         }
     ]);
 });
-wtf.test(`HorizontalNode should create one segment when there are no children.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({});
+wtf.test(`BoxNode with layout "horizontal" should create one segment when there are no children.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal" });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -235,8 +235,8 @@ wtf.test(`HorizontalNode should create one segment when there are no children.`,
         }
     ]);
 });
-wtf.test(`HorizontalNode should provide each child with the size left in the current segment.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({}, new MockRemainingHeightNode());
+wtf.test(`BoxNode with layout "horizontal" should provide each child with the size left in the current segment.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal" }, new MockRemainingHeightNode());
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
     assert.equals(atoms, [
         {
@@ -273,8 +273,8 @@ wtf.test(`HorizontalNode should provide each child with the size left in the cur
         }
     ]);
 });
-wtf.test(`HorizontalNode should support height.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ height: 10 });
+wtf.test(`BoxNode with layout "horizontal" should support height.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", height: 10 });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -288,8 +288,8 @@ wtf.test(`HorizontalNode should support height.`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support height "50%".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ height: [50, "%"] });
+wtf.test(`BoxNode with layout "horizontal" should support height "50%".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", height: [50, "%"] });
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -303,8 +303,8 @@ wtf.test(`HorizontalNode should support height "50%".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support height "extrinsic".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ height: "extrinsic" });
+wtf.test(`BoxNode with layout "horizontal" should support height "extrinsic".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", height: "extrinsic" });
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -318,8 +318,8 @@ wtf.test(`HorizontalNode should support height "extrinsic".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support height "intrinsic".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ height: "intrinsic" }, new MockSegmentedNode({ w: 0, h: 10 }));
+wtf.test(`BoxNode with layout "horizontal" should support height "intrinsic".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", height: "intrinsic" }, new MockSegmentedNode({ w: 0, h: 10 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -356,8 +356,8 @@ wtf.test(`HorizontalNode should support height "intrinsic".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support overflow "hidden".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ overflow: "hidden" });
+wtf.test(`BoxNode with layout "horizontal" should support overflow "hidden".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", overflow: "hidden" });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -379,8 +379,8 @@ wtf.test(`HorizontalNode should support overflow "hidden".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support overflow "visible".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ overflow: "visible" });
+wtf.test(`BoxNode with layout "horizontal" should support overflow "visible".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", overflow: "visible" });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -394,8 +394,8 @@ wtf.test(`HorizontalNode should support overflow "visible".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support segmentation "auto".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ segmentation: "auto" }, new MockSegmentedNode({ w: 1, h: 2 }), new MockSegmentedNode({ w: 3, h: 2 }, { w: 5, h: 2 }));
+wtf.test(`BoxNode with layout "horizontal" should support segmentation "auto".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", segmentation: "auto" }, new MockSegmentedNode({ w: 1, h: 2 }), new MockSegmentedNode({ w: 3, h: 2 }, { w: 5, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
     assert.equals(atoms, [
         {
@@ -497,8 +497,8 @@ wtf.test(`HorizontalNode should support segmentation "auto".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support segmentation "none".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ segmentation: "none" }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }, { w: 0, h: 2 }));
+wtf.test(`BoxNode with layout "horizontal" should support segmentation "none".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", segmentation: "none" }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }, { w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2 });
     assert.equals(atoms, [
         {
@@ -567,8 +567,8 @@ wtf.test(`HorizontalNode should support segmentation "none".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support width.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ width: 10 });
+wtf.test(`BoxNode with layout "horizontal" should support width.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", width: 10 });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -582,8 +582,8 @@ wtf.test(`HorizontalNode should support width.`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support width "50%".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ width: [50, "%"] });
+wtf.test(`BoxNode with layout "horizontal" should support width "50%".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", width: [50, "%"] });
     let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -597,8 +597,8 @@ wtf.test(`HorizontalNode should support width "50%".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support width "extrinsic".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ width: "extrinsic" });
+wtf.test(`BoxNode with layout "horizontal" should support width "extrinsic".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", width: "extrinsic" });
     let atoms = node.createSegments({ w: 10, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -612,8 +612,8 @@ wtf.test(`HorizontalNode should support width "extrinsic".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support width "intrinsic".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ width: "intrinsic" }, new MockSegmentedNode({ w: 10, h: 0 }));
+wtf.test(`BoxNode with layout "horizontal" should support width "intrinsic".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", width: "intrinsic" }, new MockSegmentedNode({ w: 10, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -650,8 +650,8 @@ wtf.test(`HorizontalNode should support width "intrinsic".`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align x "left" when there is no horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_x: "left", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
+wtf.test(`BoxNode with layout "horizontal" should support align x "left" when there is no horizontal overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_x: "left", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -710,8 +710,8 @@ wtf.test(`HorizontalNode should support align x "left" when there is no horizont
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align x "left" when there is horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_x: "left", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 10, h: 0 }));
+wtf.test(`BoxNode with layout "horizontal" should support align x "left" when there is horizontal overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_x: "left", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 10, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -770,8 +770,8 @@ wtf.test(`HorizontalNode should support align x "left" when there is horizontal 
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align x "center" when there is no horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_x: "center", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
+wtf.test(`BoxNode with layout "horizontal" should support align x "center" when there is no horizontal overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_x: "center", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -830,8 +830,8 @@ wtf.test(`HorizontalNode should support align x "center" when there is no horizo
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align x "center" when there is horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_x: "center", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 10, h: 0 }));
+wtf.test(`BoxNode with layout "horizontal" should support align x "center" when there is horizontal overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_x: "center", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 10, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -890,8 +890,8 @@ wtf.test(`HorizontalNode should support align x "center" when there is horizonta
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align x "right" when there is no horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_x: "right", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
+wtf.test(`BoxNode with layout "horizontal" should support align x "right" when there is no horizontal overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_x: "right", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -950,8 +950,8 @@ wtf.test(`HorizontalNode should support align x "right" when there is no horizon
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align x "right" when there is horizontal overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_x: "right", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 10, h: 0 }));
+wtf.test(`BoxNode with layout "horizontal" should support align x "right" when there is horizontal overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_x: "right", width: 8 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 10, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1010,8 +1010,8 @@ wtf.test(`HorizontalNode should support align x "right" when there is horizontal
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align y "top" when there is no vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_y: "top", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
+wtf.test(`BoxNode with layout "horizontal" should support align y "top" when there is no vertical overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_y: "top", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1070,8 +1070,8 @@ wtf.test(`HorizontalNode should support align y "top" when there is no vertical 
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align y "top" when there is vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_y: "top", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 10 }));
+wtf.test(`BoxNode with layout "horizontal" should support align y "top" when there is vertical overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_y: "top", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 10 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1130,8 +1130,8 @@ wtf.test(`HorizontalNode should support align y "top" when there is vertical ove
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align y "middle" when there is no vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_y: "middle", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
+wtf.test(`BoxNode with layout "horizontal" should support align y "middle" when there is no vertical overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_y: "middle", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1190,8 +1190,8 @@ wtf.test(`HorizontalNode should support align y "middle" when there is no vertic
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align y "middle" when there is vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_y: "middle", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 10 }));
+wtf.test(`BoxNode with layout "horizontal" should support align y "middle" when there is vertical overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_y: "middle", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 10 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1250,8 +1250,8 @@ wtf.test(`HorizontalNode should support align y "middle" when there is vertical 
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align y "bottom" when there is no vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_y: "bottom", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
+wtf.test(`BoxNode with layout "horizontal" should support align y "bottom" when there is no vertical overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_y: "bottom", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1310,8 +1310,8 @@ wtf.test(`HorizontalNode should support align y "bottom" when there is no vertic
         }
     ]);
 });
-wtf.test(`HorizontalNode should support align y "bottom" when there is vertical overflow.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ align_y: "bottom", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 10 }));
+wtf.test(`BoxNode with layout "horizontal" should support align y "bottom" when there is vertical overflow.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", align_y: "bottom", height: 8 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 10 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1370,8 +1370,8 @@ wtf.test(`HorizontalNode should support align y "bottom" when there is vertical 
         }
     ]);
 });
-wtf.test(`HorizontalNode should support gap.`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ gap: [1] }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
+wtf.test(`BoxNode with layout "horizontal" should support gap.`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", gap: [1] }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1430,8 +1430,8 @@ wtf.test(`HorizontalNode should support gap.`, (assert) => {
         }
     ]);
 });
-wtf.test(`HorizontalNode should support gap "20%".`, (assert) => {
-    let node = new horizontal_1.HorizontalNode({ gap: [20, "%"], width: 50 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
+wtf.test(`BoxNode with layout "horizontal" should support gap "20%".`, (assert) => {
+    let node = new box_1.BoxNode({ layout: "horizontal", gap: [20, "%"], width: 50 }, new MockSegmentedNode({ w: 2, h: 0 }), new MockSegmentedNode({ w: 2, h: 0 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {

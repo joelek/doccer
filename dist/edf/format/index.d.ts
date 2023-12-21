@@ -144,6 +144,16 @@ export type TextNode = autoguard.guards.Intersection<[
 ]>;
 export declare const BoxStyle: autoguard.serialization.MessageGuard<BoxStyle>;
 export type BoxStyle = autoguard.guards.Object<{}, {
+    "align_x": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"left">,
+        autoguard.guards.StringLiteral<"center">,
+        autoguard.guards.StringLiteral<"right">
+    ]>;
+    "align_y": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"top">,
+        autoguard.guards.StringLiteral<"middle">,
+        autoguard.guards.StringLiteral<"bottom">
+    ]>;
     "background_color": autoguard.guards.Union<[
         autoguard.guards.String,
         autoguard.guards.StringLiteral<"transparent">,
@@ -156,6 +166,11 @@ export type BoxStyle = autoguard.guards.Object<{}, {
     ]>;
     "border_radius": autoguard.guards.Reference<Length>;
     "border_width": autoguard.guards.Reference<Length>;
+    "gap": autoguard.guards.Reference<Length>;
+    "layout": autoguard.guards.Union<[
+        autoguard.guards.StringLiteral<"vertical">,
+        autoguard.guards.StringLiteral<"horizontal">
+    ]>;
     "padding": autoguard.guards.Reference<Length>;
 }>;
 export declare const BoxNodeStyle: autoguard.serialization.MessageGuard<BoxNodeStyle>;
@@ -173,64 +188,6 @@ export type BoxNode = autoguard.guards.Intersection<[
         "style": autoguard.guards.Reference<BoxNodeStyle>;
     }>
 ]>;
-export declare const VerticalStyle: autoguard.serialization.MessageGuard<VerticalStyle>;
-export type VerticalStyle = autoguard.guards.Object<{}, {
-    "align_x": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"left">,
-        autoguard.guards.StringLiteral<"center">,
-        autoguard.guards.StringLiteral<"right">
-    ]>;
-    "align_y": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"top">,
-        autoguard.guards.StringLiteral<"middle">,
-        autoguard.guards.StringLiteral<"bottom">
-    ]>;
-    "gap": autoguard.guards.Reference<Length>;
-}>;
-export declare const VerticalNodeStyle: autoguard.serialization.MessageGuard<VerticalNodeStyle>;
-export type VerticalNodeStyle = autoguard.guards.Intersection<[
-    autoguard.guards.Reference<Style>,
-    autoguard.guards.Reference<NodeStyle>,
-    autoguard.guards.Reference<VerticalStyle>
-]>;
-export declare const VerticalNode: autoguard.serialization.MessageGuard<VerticalNode>;
-export type VerticalNode = autoguard.guards.Intersection<[
-    autoguard.guards.Reference<ParentNode>,
-    autoguard.guards.Object<{
-        "type": autoguard.guards.StringLiteral<"vertical">;
-    }, {
-        "style": autoguard.guards.Reference<VerticalNodeStyle>;
-    }>
-]>;
-export declare const HorizontalStyle: autoguard.serialization.MessageGuard<HorizontalStyle>;
-export type HorizontalStyle = autoguard.guards.Object<{}, {
-    "align_x": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"left">,
-        autoguard.guards.StringLiteral<"center">,
-        autoguard.guards.StringLiteral<"right">
-    ]>;
-    "align_y": autoguard.guards.Union<[
-        autoguard.guards.StringLiteral<"top">,
-        autoguard.guards.StringLiteral<"middle">,
-        autoguard.guards.StringLiteral<"bottom">
-    ]>;
-    "gap": autoguard.guards.Reference<Length>;
-}>;
-export declare const HorizontalNodeStyle: autoguard.serialization.MessageGuard<HorizontalNodeStyle>;
-export type HorizontalNodeStyle = autoguard.guards.Intersection<[
-    autoguard.guards.Reference<Style>,
-    autoguard.guards.Reference<NodeStyle>,
-    autoguard.guards.Reference<HorizontalStyle>
-]>;
-export declare const HorizontalNode: autoguard.serialization.MessageGuard<HorizontalNode>;
-export type HorizontalNode = autoguard.guards.Intersection<[
-    autoguard.guards.Reference<ParentNode>,
-    autoguard.guards.Object<{
-        "type": autoguard.guards.StringLiteral<"horizontal">;
-    }, {
-        "style": autoguard.guards.Reference<HorizontalNodeStyle>;
-    }>
-]>;
 export declare const Colors: autoguard.serialization.MessageGuard<Colors>;
 export type Colors = autoguard.guards.Record<autoguard.guards.Reference<Color>>;
 export declare const Metadata: autoguard.serialization.MessageGuard<Metadata>;
@@ -241,9 +198,7 @@ export type Metadata = autoguard.guards.Object<{}, {
 export declare const Templates: autoguard.serialization.MessageGuard<Templates>;
 export type Templates = autoguard.guards.Object<{}, {
     "box": autoguard.guards.Record<autoguard.guards.Reference<BoxNodeStyle>>;
-    "horizontal": autoguard.guards.Record<autoguard.guards.Reference<HorizontalNodeStyle>>;
     "text": autoguard.guards.Record<autoguard.guards.Reference<TextNodeStyle>>;
-    "vertical": autoguard.guards.Record<autoguard.guards.Reference<VerticalNodeStyle>>;
 }>;
 export declare const Document: autoguard.serialization.MessageGuard<Document>;
 export type Document = autoguard.guards.Object<{
@@ -408,6 +363,8 @@ export declare namespace Autoguard {
             } | undefined;
         }>;
         BoxStyle: autoguard.guards.ReferenceGuard<{
+            align_x?: "center" | "left" | "right" | undefined;
+            align_y?: "top" | "middle" | "bottom" | undefined;
             background_color?: string | {
                 i: number;
             } | {
@@ -434,6 +391,8 @@ export declare namespace Autoguard {
             } | undefined;
             border_radius?: number | [number] | [number, "%"] | undefined;
             border_width?: number | [number] | [number, "%"] | undefined;
+            gap?: number | [number] | [number, "%"] | undefined;
+            layout?: "vertical" | "horizontal" | undefined;
             padding?: number | [number] | [number, "%"] | undefined;
         }>;
         BoxNodeStyle: autoguard.guards.ReferenceGuard<{
@@ -442,6 +401,8 @@ export declare namespace Autoguard {
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
             width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+            align_x?: "center" | "left" | "right" | undefined;
+            align_y?: "top" | "middle" | "bottom" | undefined;
             background_color?: string | {
                 i: number;
             } | {
@@ -468,6 +429,8 @@ export declare namespace Autoguard {
             } | undefined;
             border_radius?: number | [number] | [number, "%"] | undefined;
             border_width?: number | [number] | [number, "%"] | undefined;
+            gap?: number | [number] | [number, "%"] | undefined;
+            layout?: "vertical" | "horizontal" | undefined;
             padding?: number | [number] | [number, "%"] | undefined;
         }>;
         BoxNode: autoguard.guards.ReferenceGuard<{
@@ -481,6 +444,8 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                align_x?: "center" | "left" | "right" | undefined;
+                align_y?: "top" | "middle" | "bottom" | undefined;
                 background_color?: string | {
                     i: number;
                 } | {
@@ -507,69 +472,9 @@ export declare namespace Autoguard {
                 } | undefined;
                 border_radius?: number | [number] | [number, "%"] | undefined;
                 border_width?: number | [number] | [number, "%"] | undefined;
+                gap?: number | [number] | [number, "%"] | undefined;
+                layout?: "vertical" | "horizontal" | undefined;
                 padding?: number | [number] | [number, "%"] | undefined;
-            } | undefined;
-        }>;
-        VerticalStyle: autoguard.guards.ReferenceGuard<{
-            align_x?: "center" | "left" | "right" | undefined;
-            align_y?: "top" | "middle" | "bottom" | undefined;
-            gap?: number | [number] | [number, "%"] | undefined;
-        }>;
-        VerticalNodeStyle: autoguard.guards.ReferenceGuard<{
-            template?: string | undefined;
-            height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            overflow?: "hidden" | "visible" | undefined;
-            segmentation?: "auto" | "none" | undefined;
-            width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            align_x?: "center" | "left" | "right" | undefined;
-            align_y?: "top" | "middle" | "bottom" | undefined;
-            gap?: number | [number] | [number, "%"] | undefined;
-        }>;
-        VerticalNode: autoguard.guards.ReferenceGuard<{
-            type: "vertical";
-            children: autoguard.guards.Array<{
-                type: string;
-            }>;
-            style?: {
-                template?: string | undefined;
-                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                overflow?: "hidden" | "visible" | undefined;
-                segmentation?: "auto" | "none" | undefined;
-                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                align_x?: "center" | "left" | "right" | undefined;
-                align_y?: "top" | "middle" | "bottom" | undefined;
-                gap?: number | [number] | [number, "%"] | undefined;
-            } | undefined;
-        }>;
-        HorizontalStyle: autoguard.guards.ReferenceGuard<{
-            align_x?: "center" | "left" | "right" | undefined;
-            align_y?: "top" | "middle" | "bottom" | undefined;
-            gap?: number | [number] | [number, "%"] | undefined;
-        }>;
-        HorizontalNodeStyle: autoguard.guards.ReferenceGuard<{
-            template?: string | undefined;
-            height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            overflow?: "hidden" | "visible" | undefined;
-            segmentation?: "auto" | "none" | undefined;
-            width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-            align_x?: "center" | "left" | "right" | undefined;
-            align_y?: "top" | "middle" | "bottom" | undefined;
-            gap?: number | [number] | [number, "%"] | undefined;
-        }>;
-        HorizontalNode: autoguard.guards.ReferenceGuard<{
-            type: "horizontal";
-            children: autoguard.guards.Array<{
-                type: string;
-            }>;
-            style?: {
-                template?: string | undefined;
-                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                overflow?: "hidden" | "visible" | undefined;
-                segmentation?: "auto" | "none" | undefined;
-                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                align_x?: "center" | "left" | "right" | undefined;
-                align_y?: "top" | "middle" | "bottom" | undefined;
-                gap?: number | [number] | [number, "%"] | undefined;
             } | undefined;
         }>;
         Colors: autoguard.guards.ReferenceGuard<Colors>;
@@ -584,6 +489,8 @@ export declare namespace Autoguard {
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
                 width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                align_x?: "center" | "left" | "right" | undefined;
+                align_y?: "top" | "middle" | "bottom" | undefined;
                 background_color?: string | {
                     i: number;
                 } | {
@@ -610,17 +517,9 @@ export declare namespace Autoguard {
                 } | undefined;
                 border_radius?: number | [number] | [number, "%"] | undefined;
                 border_width?: number | [number] | [number, "%"] | undefined;
-                padding?: number | [number] | [number, "%"] | undefined;
-            }> | undefined;
-            horizontal?: autoguard.guards.Record<{
-                template?: string | undefined;
-                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                overflow?: "hidden" | "visible" | undefined;
-                segmentation?: "auto" | "none" | undefined;
-                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                align_x?: "center" | "left" | "right" | undefined;
-                align_y?: "top" | "middle" | "bottom" | undefined;
                 gap?: number | [number] | [number, "%"] | undefined;
+                layout?: "vertical" | "horizontal" | undefined;
+                padding?: number | [number] | [number, "%"] | undefined;
             }> | undefined;
             text?: autoguard.guards.Record<{
                 template?: string | undefined;
@@ -653,16 +552,6 @@ export declare namespace Autoguard {
                 white_space?: "wrap" | "nowrap" | undefined;
                 word_spacing?: number | undefined;
             }> | undefined;
-            vertical?: autoguard.guards.Record<{
-                template?: string | undefined;
-                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                overflow?: "hidden" | "visible" | undefined;
-                segmentation?: "auto" | "none" | undefined;
-                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                align_x?: "center" | "left" | "right" | undefined;
-                align_y?: "top" | "middle" | "bottom" | undefined;
-                gap?: number | [number] | [number, "%"] | undefined;
-            }> | undefined;
         }>;
         Document: autoguard.guards.ReferenceGuard<{
             content: {
@@ -686,6 +575,8 @@ export declare namespace Autoguard {
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
                     width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                    align_x?: "center" | "left" | "right" | undefined;
+                    align_y?: "top" | "middle" | "bottom" | undefined;
                     background_color?: string | {
                         i: number;
                     } | {
@@ -712,17 +603,9 @@ export declare namespace Autoguard {
                     } | undefined;
                     border_radius?: number | [number] | [number, "%"] | undefined;
                     border_width?: number | [number] | [number, "%"] | undefined;
-                    padding?: number | [number] | [number, "%"] | undefined;
-                }> | undefined;
-                horizontal?: autoguard.guards.Record<{
-                    template?: string | undefined;
-                    height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    overflow?: "hidden" | "visible" | undefined;
-                    segmentation?: "auto" | "none" | undefined;
-                    width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    align_x?: "center" | "left" | "right" | undefined;
-                    align_y?: "top" | "middle" | "bottom" | undefined;
                     gap?: number | [number] | [number, "%"] | undefined;
+                    layout?: "vertical" | "horizontal" | undefined;
+                    padding?: number | [number] | [number, "%"] | undefined;
                 }> | undefined;
                 text?: autoguard.guards.Record<{
                     template?: string | undefined;
@@ -754,16 +637,6 @@ export declare namespace Autoguard {
                     text_transform?: "none" | "lowercase" | "uppercase" | undefined;
                     white_space?: "wrap" | "nowrap" | undefined;
                     word_spacing?: number | undefined;
-                }> | undefined;
-                vertical?: autoguard.guards.Record<{
-                    template?: string | undefined;
-                    height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    overflow?: "hidden" | "visible" | undefined;
-                    segmentation?: "auto" | "none" | undefined;
-                    width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
-                    align_x?: "center" | "left" | "right" | undefined;
-                    align_y?: "top" | "middle" | "bottom" | undefined;
-                    gap?: number | [number] | [number, "%"] | undefined;
                 }> | undefined;
             } | undefined;
         }>;
