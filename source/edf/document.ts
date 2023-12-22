@@ -279,7 +279,7 @@ export const DocumentUtils = {
 				buffer = stdlib.data.chunk.Chunk.fromString(file, "base64url");
 			}
 			let padded_base64url = stdlib.data.chunk.Chunk.toString(buffer, "base64").replaceAll("+", "-").replaceAll("/", "_");
-			files[key] = padded_base64url;
+			files[filename] = padded_base64url;
 		}
 		return {
 			...document,
