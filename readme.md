@@ -28,19 +28,19 @@ Tool suite for headless document generation using the JSON-based Electronic Docu
 
 ## Background
 
-Electronic documents can be created and designed using a plethora of authoring software. Most software make use of proprietary file formats for storing the electronic documents and/or for interchange within a specific software suite. The file formats are not often well documented and their specifications might not even be available or only available at a cost, at least when it comes to commercial software.
+Electronic documents can be created and designed using a plethora of authoring software. Most software makes use of proprietary file formats for storing the electronic documents and/or for interchange within a specific software suite. The file formats are not often well-documented and their specifications might not even be available or only available at a cost, at least when it comes to commercial software.
 
 Most authoring software provide functionality for the user to export the electronic document into a format that is likely to be well-know, well-specified and well-supported by other software. That format is often the Portable Document Format (PDF), created by Adobe Systems.
 
-The PDF-format has become the de facto standard for document interchange. Documents stored using the format are almost guaranteed to be readable by their recipients. The format dates back to 1993 and was thoroughly standardized in 2008 in a 756-page document that may be retrieved at https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf.
+The PDF-format has become the de facto standard for document interchange. Documents stored using the format are almost guaranteed to be readable by their recipients. The format dates back to 1993 and was thoroughly standardized in 2008 in a 756-page document that may be retrieved from https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf.
 
-As the specifiation concerns a format having existed for more than thirty years, it does contain its fair share of legacy features. There are features that can be considered more or less obsolete, that are in direct conflict with other features and features that are of limited modern use. There are even features that are specified as optional but are to be treated as required if the documents are to be rendered properly.
+As the specifiation concerns a format now having existed for more than thirty years, it does contain its fair share of legacy features. There are features that can be considered more or less obsolete, features that are in direct conflict with other features and features that are of limited modern use. There are even features that are specified as optional but are to be treated as required if documents are to be rendered properly.
 
 ### Text handling
 
 The PDF-format has included support for Unicode text since 1996 when support for the `UTF-16BE` encoding was shipped together with version 1.2. Support for the modern `UTF-8` encoding was added in 2017 with the shipping of version 2.0. The support for Unicode text encodings notably excludes support for the actual text content of the document, regardless of which encoding is used. This limitation is due to how the PDF-format, in contrast to what one might assume, describes a low-level, fully type-set document and not a general high-level one.
 
-Since PDF-documents are fully type-set, the actual text content of the document must be stored in a way such that it produces a deterministic font glyph selection. It is possible and common to use the format for documents containing Unicode text content. However, the text must either use one of the pre-defined encodings (`StandardEncoding`, `MacRomanEncoding`, `WinAnsiEncoding`, `PDFDocEncoding` or `MacExpertEncoding`) or explicitly specify the actual glyphs to use. Using a pre-defined encoding is not ideal as the text content will be restricted to the characters defined by the encoding. Explicitly specifying the glyphs to use is also not ideal as glyph mappings are different between fonts. This complicates the common process of text extraction from PDF-documents by requring the glyph selection be reversed. In addition to this, glyph selections are are stored using hexadecimally encoded `UTF-16BE`, expanding the storage requirement of the text content by up to a factor of four compared to storing the text content using `UTF-8`.
+Since PDF-documents are fully type-set, the actual text content of the document must be stored in a way such that it produces a deterministic font glyph selection. It is possible and common to use the format for documents containing Unicode text content. However, the text must either use one of the pre-defined encodings (`StandardEncoding`, `MacRomanEncoding`, `WinAnsiEncoding`, `PDFDocEncoding` or `MacExpertEncoding`) or explicitly specify the actual glyphs to use. Using a pre-defined encoding is not ideal as the text content will be restricted to the characters defined by the encoding. Explicitly specifying the glyphs to use is also not ideal as glyph mappings are different between fonts. This complicates the common process of text extraction from PDF-documents by requring the glyph selection be reversed. In addition to this, glyph selections are stored using hexadecimally encoded `UTF-16BE`, expanding the storage requirement of the text content by up to a factor of four compared to storing the text content using `UTF-8`.
 
 ### Layout
 
@@ -50,13 +50,13 @@ The low-level PDF-format describes no system for handling layout, page flow or o
 
 In PDF-files, fonts may be defined using seven different main font metadata structures (`Type0`, `Type1`, `MMType1`, `Type3`, `TrueType`, `CIDFontType0` and `CIDFontType2`). There are also several additional support metadata structures of which some are required and some are optional, depending on the main font metadata structure used.
 
-Fonts may be embedded into PDF-files as document resources or stored externally as files or system resources. The specification also defines a set of fourteen default fonts that are expected to be available as system resources and that need not be embedded in order for the document to render properly. There is however no guarantee for any external font actually being available during rendering. Using subsitute fonts is possible but may break the layout and introduce visual artifacts as the format lacks high-level layout and reflow logic. It is therefore recommended that fonts are embedded into PDF-files as document resources, at least partially so that the documents may render properly.
+Fonts may be embedded into PDF-files as document resources or stored externally as files or system resources. The specification also defines a set of fourteen default fonts that are expected to be available as system resources and that need not be embedded in order for the document to render properly. There is however no guarantee for any external font actually being available during rendering. Using substitute fonts is possible but may break the layout and introduce visual artifacts as the format lacks high-level layout and reflow logic. It is therefore recommended that fonts are embedded into PDF-files as document resources, at least partially so that the documents may render properly.
 
 ### File structure
 
-PDF-files are defined as binary files containing a collection of objects that may refer to each other using references. The objects themselves are defined using a recursive language that may be parsed using standard tokenization methods. The language requires some tokens be sparated by whitespace in order for them to be fully distinguished from one another while permitting some tokens be joined together without the use of whitespace. The choice of tokens for the language makes parsing and serialization unnecessary complex and error-prone.
+PDF-files are defined as binary files containing a collection of objects that may refer to each other using references. The objects themselves are defined using a recursive language that may be parsed using standard tokenization methods. The language requires some tokens be sparated by whitespace in order for them to be fully distinguished from one another while permitting some tokens be joined together without the use of whitespace. The choice of tokens and syntax for the language makes parsing and serialization unnecessary complex and error-prone.
 
-PDF-files may also contain streams that in turn contain arbitrary binary data such as embedded resources or the type-setting data for the pages of the document. As the streams allow for arbitrary data, PDF-files cannot be manipulated as common text files without the risk of destroying the file. This even though large portions of a PDF-file may consist of human-readable text.
+PDF-files may also contain streams that in turn contain arbitrary binary data such as embedded resources or the type-setting data for the pages of the document. As the streams may contain arbitrary binary data, PDF-files cannot be manipulated as if they were regular text files without risking the files becoming corrupt. This even though large portions of a PDF-file may consist of human-readable text.
 
 ## Features
 
@@ -66,15 +66,15 @@ The need for a new document format with a more consistent, modern and useful fea
 
 ### The Electronic Document Format (EDF)
 
-The Electronic Document Format (EDF) was designed as a modern alternative to the PDF-format with emphasis on addressing the issue of poor editability. It serializes into a JSON-document and uses UTF-8 encoding in interchange, giving it great interoperability as most systems can read JSON-documents encoded using UTF-8 with ease.
+The Electronic Document Format (EDF) was designed as a modern alternative to the PDF-format with emphasis on addressing the issue of poor editability. It is expressed as a JSON-document and serializes using UTF-8 encoding in interchange, giving it great interoperability as most systems can read JSON-documents encoded using UTF-8 with ease.
 
-The rendering of the document is defined deterministically. For every EDF-document, there exists exactly one visual representation, given that all resources are available to the rendering software.
+The rendering of the document is defined deterministically. For every EDF-document, there exists exactly one visual representation, provided that all resources are available to the rendering software.
 
 [TODO]
 
-### Tooling
+### Tool suite
 
-This tool can be installed locally or globally. Use the `npx doccer` command for local installations and the `doccer` command for global installations.
+The tool suite can be installed locally or globally. Use the `npx doccer` command for local installations and the `doccer` command for global installations.
 
 #### Convert an EDF-document into a PDF-document
 
