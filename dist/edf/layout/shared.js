@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ParentNode = exports.ChildNode = exports.Node = exports.NodeLength = exports.Length = exports.Atom = exports.Rect = exports.Size = exports.Path = exports.Color = void 0;
+exports.ParentNode = exports.ChildNode = exports.Node = exports.NodeLength = exports.Length = exports.AbsoluteLength = exports.Atom = exports.Rect = exports.Size = exports.Path = exports.Color = void 0;
 const content = require("../../pdf/content");
 exports.Color = {
     setFillColor(color, context) {
@@ -195,29 +195,66 @@ exports.Atom = {
         }
     }
 };
+const DPI72_POINTS_PER_PT = 1 / 1;
+const DPI72_POINTS_PER_IN = 72 / 1;
+const DPI72_POINTS_PER_PC = 72 / 12;
+const DPI72_POINTS_PER_MM = 72 / 25.4;
+const DPI72_POINTS_PER_CM = 72 / 2.54;
+exports.AbsoluteLength = {
+    getComputedLength(length, default_unit) {
+        if (typeof length === "number") {
+            length = [length];
+        }
+        let value = length[0];
+        let unit = length[1] ?? default_unit;
+        if (unit == null) {
+            return value;
+        }
+        if (unit === "pt") {
+            return value * DPI72_POINTS_PER_PT;
+        }
+        if (unit === "in") {
+            return value * DPI72_POINTS_PER_IN;
+        }
+        if (unit === "pc") {
+            return value * DPI72_POINTS_PER_PC;
+        }
+        if (unit === "mm") {
+            return value * DPI72_POINTS_PER_MM;
+        }
+        if (unit === "cm") {
+            return value * DPI72_POINTS_PER_CM;
+        }
+        throw new Error(`Unexpected absolute unit!`);
+    },
+    isValid(length, min_value = 0) {
+        if (typeof length === "number") {
+            return length >= min_value;
+        }
+        else {
+            return length[0] >= min_value;
+        }
+    }
+};
 exports.Length = {
     getComputedLength(length, relative_to) {
         if (typeof length === "number") {
-            return length;
+            length = [length];
         }
-        else {
-            if (length[1] === "%") {
-                if (relative_to == null) {
-                    throw new Error(`Unexpected relative length within intrinsic length!`);
-                }
-                return length[0] * 0.01 * relative_to;
+        if (length[1] === "%") {
+            if (relative_to == null) {
+                throw new Error(`Unexpected relative length within intrinsic length!`);
             }
-            else {
-                return length[0];
-            }
+            return length[0] * 0.01 * relative_to;
         }
+        return exports.AbsoluteLength.getComputedLength(length, undefined);
     },
-    isValid(length) {
+    isValid(length, min_value = 0) {
         if (typeof length === "number") {
-            return length >= 0;
+            return length >= min_value;
         }
         else {
-            return length[0] >= 0;
+            return length[0] >= min_value;
         }
     }
 };

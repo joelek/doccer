@@ -30,24 +30,44 @@ export type Color = autoguard.guards.Union<[
     autoguard.guards.Reference<RGBColor>,
     autoguard.guards.Reference<CMYKColor>
 ]>;
-export declare const AbsoluteUnit: autoguard.serialization.MessageGuard<AbsoluteUnit>;
-export type AbsoluteUnit = autoguard.guards.Union<[
-    autoguard.guards.StringLiteral<"mm">,
-    autoguard.guards.StringLiteral<"pt">,
-    autoguard.guards.StringLiteral<"in">,
-    autoguard.guards.StringLiteral<"cm">,
-    autoguard.guards.StringLiteral<"pc">
-]>;
-export declare const Length: autoguard.serialization.MessageGuard<Length>;
-export type Length = autoguard.guards.Union<[
+export declare const UnitlessLength: autoguard.serialization.MessageGuard<UnitlessLength>;
+export type UnitlessLength = autoguard.guards.Union<[
     autoguard.guards.Reference<NonNegativeNumber>,
     autoguard.guards.Tuple<[
         autoguard.guards.Reference<NonNegativeNumber>
-    ]>,
+    ]>
+]>;
+export declare const AbsoluteUnit: autoguard.serialization.MessageGuard<AbsoluteUnit>;
+export type AbsoluteUnit = autoguard.guards.Union<[
+    autoguard.guards.StringLiteral<"pt">,
+    autoguard.guards.StringLiteral<"in">,
+    autoguard.guards.StringLiteral<"pc">,
+    autoguard.guards.StringLiteral<"mm">,
+    autoguard.guards.StringLiteral<"cm">
+]>;
+export declare const AbsoluteLength: autoguard.serialization.MessageGuard<AbsoluteLength>;
+export type AbsoluteLength = autoguard.guards.Union<[
+    autoguard.guards.Reference<UnitlessLength>,
     autoguard.guards.Tuple<[
         autoguard.guards.Reference<NonNegativeNumber>,
-        autoguard.guards.StringLiteral<"%">
+        autoguard.guards.Reference<AbsoluteUnit>
     ]>
+]>;
+export declare const RelativeUnit: autoguard.serialization.MessageGuard<RelativeUnit>;
+export type RelativeUnit = autoguard.guards.StringLiteral<"%">;
+export declare const RelativeLength: autoguard.serialization.MessageGuard<RelativeLength>;
+export type RelativeLength = autoguard.guards.Union<[
+    autoguard.guards.Reference<UnitlessLength>,
+    autoguard.guards.Tuple<[
+        autoguard.guards.Reference<NonNegativeNumber>,
+        autoguard.guards.Reference<RelativeUnit>
+    ]>
+]>;
+export declare const Length: autoguard.serialization.MessageGuard<Length>;
+export type Length = autoguard.guards.Union<[
+    autoguard.guards.Reference<UnitlessLength>,
+    autoguard.guards.Reference<AbsoluteLength>,
+    autoguard.guards.Reference<RelativeLength>
 ]>;
 export declare const NodeLength: autoguard.serialization.MessageGuard<NodeLength>;
 export type NodeLength = autoguard.guards.Union<[
@@ -61,8 +81,8 @@ export type NodeLength = autoguard.guards.Union<[
 ]>;
 export declare const Size: autoguard.serialization.MessageGuard<Size>;
 export type Size = autoguard.guards.Object<{
-    "w": autoguard.guards.Reference<NonNegativeNumber>;
-    "h": autoguard.guards.Reference<NonNegativeNumber>;
+    "w": autoguard.guards.Reference<AbsoluteLength>;
+    "h": autoguard.guards.Reference<AbsoluteLength>;
 }, {}>;
 export declare const Style: autoguard.serialization.MessageGuard<Style>;
 export type Style = autoguard.guards.Object<{}, {
@@ -106,9 +126,9 @@ export type TextStyle = autoguard.guards.Object<{}, {
     ]>;
     "columns": autoguard.guards.Reference<PositiveInteger>;
     "font": autoguard.guards.String;
-    "font_size": autoguard.guards.Reference<NonNegativeNumber>;
+    "font_size": autoguard.guards.Reference<AbsoluteLength>;
     "gutter": autoguard.guards.Reference<Length>;
-    "letter_spacing": autoguard.guards.Reference<NonNegativeNumber>;
+    "letter_spacing": autoguard.guards.Reference<AbsoluteLength>;
     "line_anchor": autoguard.guards.Union<[
         autoguard.guards.StringLiteral<"meanline">,
         autoguard.guards.StringLiteral<"capline">,
@@ -116,7 +136,7 @@ export type TextStyle = autoguard.guards.Object<{}, {
         autoguard.guards.StringLiteral<"bottomline">,
         autoguard.guards.StringLiteral<"baseline">
     ]>;
-    "line_height": autoguard.guards.Reference<NonNegativeNumber>;
+    "line_height": autoguard.guards.Reference<AbsoluteLength>;
     "orphans": autoguard.guards.Reference<PositiveInteger>;
     "text_align": autoguard.guards.Union<[
         autoguard.guards.StringLiteral<"start">,
@@ -132,7 +152,7 @@ export type TextStyle = autoguard.guards.Object<{}, {
         autoguard.guards.StringLiteral<"wrap">,
         autoguard.guards.StringLiteral<"nowrap">
     ]>;
-    "word_spacing": autoguard.guards.Reference<NonNegativeNumber>;
+    "word_spacing": autoguard.guards.Reference<AbsoluteLength>;
 }>;
 export declare const TextNodeStyle: autoguard.serialization.MessageGuard<TextNodeStyle>;
 export type TextNodeStyle = autoguard.guards.Intersection<[
@@ -219,6 +239,7 @@ export type Document = autoguard.guards.Object<{
     "fonts": autoguard.guards.Record<autoguard.guards.String>;
     "metadata": autoguard.guards.Reference<Metadata>;
     "templates": autoguard.guards.Reference<Templates>;
+    "unit": autoguard.guards.Reference<AbsoluteUnit>;
 }>;
 export declare namespace Autoguard {
     const Guards: {
@@ -252,21 +273,25 @@ export declare namespace Autoguard {
             y: number;
             k: number;
         }>;
-        AbsoluteUnit: autoguard.guards.ReferenceGuard<"cm" | "mm" | "pt" | "in" | "pc">;
-        Length: autoguard.guards.ReferenceGuard<number | [number] | [number, "%"]>;
-        NodeLength: autoguard.guards.ReferenceGuard<number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic">;
+        UnitlessLength: autoguard.guards.ReferenceGuard<number | [number]>;
+        AbsoluteUnit: autoguard.guards.ReferenceGuard<"cm" | "pt" | "in" | "pc" | "mm">;
+        AbsoluteLength: autoguard.guards.ReferenceGuard<number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"]>;
+        RelativeUnit: autoguard.guards.ReferenceGuard<"%">;
+        RelativeLength: autoguard.guards.ReferenceGuard<number | [number] | [number, "%"]>;
+        Length: autoguard.guards.ReferenceGuard<number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"]>;
+        NodeLength: autoguard.guards.ReferenceGuard<number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic">;
         Size: autoguard.guards.ReferenceGuard<{
-            w: number;
-            h: number;
+            w: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"];
+            h: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"];
         }>;
         Style: autoguard.guards.ReferenceGuard<{
             template?: string | undefined;
         }>;
         NodeStyle: autoguard.guards.ReferenceGuard<{
-            height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+            height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
-            width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+            width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
         }>;
         Node: autoguard.guards.ReferenceGuard<{
             type: string;
@@ -295,23 +320,23 @@ export declare namespace Autoguard {
             } | undefined;
             columns?: number | undefined;
             font?: string | undefined;
-            font_size?: number | undefined;
-            gutter?: number | [number] | [number, "%"] | undefined;
-            letter_spacing?: number | undefined;
+            font_size?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
+            gutter?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+            letter_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
             line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
-            line_height?: number | undefined;
+            line_height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
             orphans?: number | undefined;
             text_align?: "end" | "start" | "center" | undefined;
             text_transform?: "none" | "lowercase" | "uppercase" | undefined;
             white_space?: "wrap" | "nowrap" | undefined;
-            word_spacing?: number | undefined;
+            word_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
         }>;
         TextNodeStyle: autoguard.guards.ReferenceGuard<{
             template?: string | undefined;
-            height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+            height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
-            width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+            width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             color?: string | {
                 i: number;
             } | {
@@ -326,26 +351,26 @@ export declare namespace Autoguard {
             } | undefined;
             columns?: number | undefined;
             font?: string | undefined;
-            font_size?: number | undefined;
-            gutter?: number | [number] | [number, "%"] | undefined;
-            letter_spacing?: number | undefined;
+            font_size?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
+            gutter?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+            letter_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
             line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
-            line_height?: number | undefined;
+            line_height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
             orphans?: number | undefined;
             text_align?: "end" | "start" | "center" | undefined;
             text_transform?: "none" | "lowercase" | "uppercase" | undefined;
             white_space?: "wrap" | "nowrap" | undefined;
-            word_spacing?: number | undefined;
+            word_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
         }>;
         TextNode: autoguard.guards.ReferenceGuard<{
             type: "text";
             content: string;
             style?: {
                 template?: string | undefined;
-                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
-                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 color?: string | {
                     i: number;
                 } | {
@@ -360,16 +385,16 @@ export declare namespace Autoguard {
                 } | undefined;
                 columns?: number | undefined;
                 font?: string | undefined;
-                font_size?: number | undefined;
-                gutter?: number | [number] | [number, "%"] | undefined;
-                letter_spacing?: number | undefined;
+                font_size?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
+                gutter?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+                letter_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
                 line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
-                line_height?: number | undefined;
+                line_height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
                 orphans?: number | undefined;
                 text_align?: "end" | "start" | "center" | undefined;
                 text_transform?: "none" | "lowercase" | "uppercase" | undefined;
                 white_space?: "wrap" | "nowrap" | undefined;
-                word_spacing?: number | undefined;
+                word_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
             } | undefined;
         }>;
         BoxStyle: autoguard.guards.ReferenceGuard<{
@@ -399,18 +424,18 @@ export declare namespace Autoguard {
                 y: number;
                 k: number;
             } | undefined;
-            border_radius?: number | [number] | [number, "%"] | undefined;
-            border_width?: number | [number] | [number, "%"] | undefined;
-            gap?: number | [number] | [number, "%"] | undefined;
+            border_radius?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+            border_width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+            gap?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
             layout?: "vertical" | "horizontal" | undefined;
-            padding?: number | [number] | [number, "%"] | undefined;
+            padding?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
         }>;
         BoxNodeStyle: autoguard.guards.ReferenceGuard<{
             template?: string | undefined;
-            height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+            height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
-            width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+            width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             align_x?: "center" | "left" | "right" | undefined;
             align_y?: "top" | "middle" | "bottom" | undefined;
             background_color?: string | {
@@ -437,11 +462,11 @@ export declare namespace Autoguard {
                 y: number;
                 k: number;
             } | undefined;
-            border_radius?: number | [number] | [number, "%"] | undefined;
-            border_width?: number | [number] | [number, "%"] | undefined;
-            gap?: number | [number] | [number, "%"] | undefined;
+            border_radius?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+            border_width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+            gap?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
             layout?: "vertical" | "horizontal" | undefined;
-            padding?: number | [number] | [number, "%"] | undefined;
+            padding?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
         }>;
         BoxNode: autoguard.guards.ReferenceGuard<{
             type: "box";
@@ -450,10 +475,10 @@ export declare namespace Autoguard {
             }>;
             style?: {
                 template?: string | undefined;
-                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
-                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
                 background_color?: string | {
@@ -480,11 +505,11 @@ export declare namespace Autoguard {
                     y: number;
                     k: number;
                 } | undefined;
-                border_radius?: number | [number] | [number, "%"] | undefined;
-                border_width?: number | [number] | [number, "%"] | undefined;
-                gap?: number | [number] | [number, "%"] | undefined;
+                border_radius?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+                border_width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+                gap?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
                 layout?: "vertical" | "horizontal" | undefined;
-                padding?: number | [number] | [number, "%"] | undefined;
+                padding?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
             } | undefined;
         }>;
         Colors: autoguard.guards.ReferenceGuard<Colors>;
@@ -495,10 +520,10 @@ export declare namespace Autoguard {
         Templates: autoguard.guards.ReferenceGuard<{
             box?: autoguard.guards.Record<{
                 template?: string | undefined;
-                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
-                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
                 background_color?: string | {
@@ -525,18 +550,18 @@ export declare namespace Autoguard {
                     y: number;
                     k: number;
                 } | undefined;
-                border_radius?: number | [number] | [number, "%"] | undefined;
-                border_width?: number | [number] | [number, "%"] | undefined;
-                gap?: number | [number] | [number, "%"] | undefined;
+                border_radius?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+                border_width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+                gap?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
                 layout?: "vertical" | "horizontal" | undefined;
-                padding?: number | [number] | [number, "%"] | undefined;
+                padding?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
             }> | undefined;
             text?: autoguard.guards.Record<{
                 template?: string | undefined;
-                height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
-                width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 color?: string | {
                     i: number;
                 } | {
@@ -551,16 +576,16 @@ export declare namespace Autoguard {
                 } | undefined;
                 columns?: number | undefined;
                 font?: string | undefined;
-                font_size?: number | undefined;
-                gutter?: number | [number] | [number, "%"] | undefined;
-                letter_spacing?: number | undefined;
+                font_size?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
+                gutter?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+                letter_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
                 line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
-                line_height?: number | undefined;
+                line_height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
                 orphans?: number | undefined;
                 text_align?: "end" | "start" | "center" | undefined;
                 text_transform?: "none" | "lowercase" | "uppercase" | undefined;
                 white_space?: "wrap" | "nowrap" | undefined;
-                word_spacing?: number | undefined;
+                word_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
             }> | undefined;
         }>;
         Document: autoguard.guards.ReferenceGuard<{
@@ -568,8 +593,8 @@ export declare namespace Autoguard {
                 type: string;
             };
             size: {
-                w: number;
-                h: number;
+                w: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"];
+                h: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"];
             };
             colors?: Colors | undefined;
             files?: autoguard.guards.Record<string> | undefined;
@@ -582,10 +607,10 @@ export declare namespace Autoguard {
             templates?: {
                 box?: autoguard.guards.Record<{
                     template?: string | undefined;
-                    height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                    height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
-                    width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                    width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     align_x?: "center" | "left" | "right" | undefined;
                     align_y?: "top" | "middle" | "bottom" | undefined;
                     background_color?: string | {
@@ -612,18 +637,18 @@ export declare namespace Autoguard {
                         y: number;
                         k: number;
                     } | undefined;
-                    border_radius?: number | [number] | [number, "%"] | undefined;
-                    border_width?: number | [number] | [number, "%"] | undefined;
-                    gap?: number | [number] | [number, "%"] | undefined;
+                    border_radius?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+                    border_width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+                    gap?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
                     layout?: "vertical" | "horizontal" | undefined;
-                    padding?: number | [number] | [number, "%"] | undefined;
+                    padding?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
                 }> | undefined;
                 text?: autoguard.guards.Record<{
                     template?: string | undefined;
-                    height?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                    height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
-                    width?: number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                    width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     color?: string | {
                         i: number;
                     } | {
@@ -638,18 +663,19 @@ export declare namespace Autoguard {
                     } | undefined;
                     columns?: number | undefined;
                     font?: string | undefined;
-                    font_size?: number | undefined;
-                    gutter?: number | [number] | [number, "%"] | undefined;
-                    letter_spacing?: number | undefined;
+                    font_size?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
+                    gutter?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+                    letter_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
                     line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline" | undefined;
-                    line_height?: number | undefined;
+                    line_height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
                     orphans?: number | undefined;
                     text_align?: "end" | "start" | "center" | undefined;
                     text_transform?: "none" | "lowercase" | "uppercase" | undefined;
                     white_space?: "wrap" | "nowrap" | undefined;
-                    word_spacing?: number | undefined;
+                    word_spacing?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | undefined;
                 }> | undefined;
             } | undefined;
+            unit?: "cm" | "pt" | "in" | "pc" | "mm" | undefined;
         }>;
     };
     type Guards = {

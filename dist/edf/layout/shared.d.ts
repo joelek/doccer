@@ -51,10 +51,15 @@ export declare const Atom: {
     getCommandsFromAtoms(atoms: Array<Atom>): Array<string>;
     getContentRect(atom: ParentAtom): Rect;
 };
+export type AbsoluteLength = format.AbsoluteLength;
+export declare const AbsoluteLength: {
+    getComputedLength(length: AbsoluteLength, default_unit: format.AbsoluteUnit | undefined): number;
+    isValid(length: AbsoluteLength, min_value?: number): boolean;
+};
 export type Length = format.Length;
 export declare const Length: {
     getComputedLength(length: Length, relative_to: number | undefined): number;
-    isValid(length: Length): boolean;
+    isValid(length: Length, min_value?: number): boolean;
 };
 export type NodeLength = format.NodeLength;
 export declare const NodeLength: {
