@@ -37,7 +37,10 @@ exports.makeToUnicode = makeToUnicode;
 function createNodeClasses(font_handler, style_handler, node) {
     if (format_1.TextNode.is(node)) {
         let style = style_handler.getTextStyle(node.style);
-        let font = style?.font ?? "default";
+        let font = style?.font ?? font_handler.getDefaultFont();
+        if (font == null) {
+            throw new Error();
+        }
         return new layout.TextNode(node.content, font_handler.getTypesetter(font), font_handler.getTypeId(font), style);
     }
     if (format_1.BoxNode.is(node)) {
@@ -73,7 +76,7 @@ exports.DocumentUtils = {
             new pdf.format.PDFRecordMember(new pdf.format.PDFName("Font"), pdf_fonts)
         ]));
         pdf_file.objects.push(resources);
-        let font_handler = new fonts_1.FontHandler();
+        let font_handler = new fonts_1.FontHandler(document.font);
         for (let key in document.fonts) {
             let filename = document.fonts[key];
             if (filename == null) {
@@ -223,7 +226,7 @@ exports.DocumentUtils = {
                 buffer = stdlib.data.chunk.Chunk.fromString(file, "base64url");
             }
             let padded_base64url = stdlib.data.chunk.Chunk.toString(buffer, "base64").replaceAll("+", "-").replaceAll("/", "_");
-            files[key] = padded_base64url;
+            files[filename] = padded_base64url;
         }
         return {
             ...document,

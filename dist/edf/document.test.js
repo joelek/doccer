@@ -5,8 +5,9 @@ const pdf = require("../pdf");
 const document_1 = require("./document");
 wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
     let document = {
+        font: "DMSans-Regular",
         fonts: {
-            default: "./public/DMSans-Regular.ttf"
+            "DMSans-Regular": "./public/DMSans-Regular.ttf"
         },
         size: {
             w: 210,

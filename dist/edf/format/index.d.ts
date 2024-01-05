@@ -30,6 +30,14 @@ export type Color = autoguard.guards.Union<[
     autoguard.guards.Reference<RGBColor>,
     autoguard.guards.Reference<CMYKColor>
 ]>;
+export declare const AbsoluteUnit: autoguard.serialization.MessageGuard<AbsoluteUnit>;
+export type AbsoluteUnit = autoguard.guards.Union<[
+    autoguard.guards.StringLiteral<"mm">,
+    autoguard.guards.StringLiteral<"pt">,
+    autoguard.guards.StringLiteral<"in">,
+    autoguard.guards.StringLiteral<"cm">,
+    autoguard.guards.StringLiteral<"pc">
+]>;
 export declare const Length: autoguard.serialization.MessageGuard<Length>;
 export type Length = autoguard.guards.Union<[
     autoguard.guards.Reference<NonNegativeNumber>,
@@ -207,6 +215,7 @@ export type Document = autoguard.guards.Object<{
 }, {
     "colors": autoguard.guards.Reference<Colors>;
     "files": autoguard.guards.Record<autoguard.guards.Reference<PaddedBase64URL>>;
+    "font": autoguard.guards.String;
     "fonts": autoguard.guards.Record<autoguard.guards.String>;
     "metadata": autoguard.guards.Reference<Metadata>;
     "templates": autoguard.guards.Reference<Templates>;
@@ -243,6 +252,7 @@ export declare namespace Autoguard {
             y: number;
             k: number;
         }>;
+        AbsoluteUnit: autoguard.guards.ReferenceGuard<"cm" | "mm" | "pt" | "in" | "pc">;
         Length: autoguard.guards.ReferenceGuard<number | [number] | [number, "%"]>;
         NodeLength: autoguard.guards.ReferenceGuard<number | [number] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic">;
         Size: autoguard.guards.ReferenceGuard<{
@@ -563,6 +573,7 @@ export declare namespace Autoguard {
             };
             colors?: Colors | undefined;
             files?: autoguard.guards.Record<string> | undefined;
+            font?: string | undefined;
             fonts?: autoguard.guards.Record<string> | undefined;
             metadata?: {
                 title?: string | undefined;

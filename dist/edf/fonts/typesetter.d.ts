@@ -61,8 +61,10 @@ export type FontHandlerEntry = {
 export declare class FontHandler {
     protected entries: Map<string, FontHandlerEntry>;
     protected type_id: number;
-    constructor();
+    protected default_font: string | undefined;
+    constructor(default_font: string | undefined);
     addTypesetter(key: string, typesetter: Typesetter): FontHandler;
+    getDefaultFont(): string | undefined;
     getTypesetter(key: string): Typesetter;
     getTypeId(key: string): number;
 }

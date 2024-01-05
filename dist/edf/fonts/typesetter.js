@@ -329,9 +329,11 @@ exports.Typesetter = Typesetter;
 class FontHandler {
     entries;
     type_id;
-    constructor() {
+    default_font;
+    constructor(default_font) {
         this.entries = new Map();
         this.type_id = 0;
+        this.default_font = default_font;
     }
     addTypesetter(key, typesetter) {
         let entry = this.entries.get(key);
@@ -345,6 +347,9 @@ class FontHandler {
         });
         this.type_id += 1;
         return this;
+    }
+    getDefaultFont() {
+        return this.default_font;
     }
     getTypesetter(key) {
         let entry = this.entries.get(key);
