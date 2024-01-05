@@ -4,6 +4,7 @@ Tool suite for headless document generation using the JSON-based Electronic Docu
 
 ```json
 {
+	"unit": "mm",
 	"size": {
 		"w": 210,
 		"h": 297
@@ -74,7 +75,7 @@ The rendering of the document is defined deterministically. For every EDF-docume
 
 There are numerous places in the document where lengths may be specified. Lengths are always specified using non-negative numbers and may optionally specify a unit.
 
-The format supports the absolute units points (`pt`), inches (`in`), picas (`pc`), millimeters (`mm`) and centimeters (`cm`). There are exactly 72 points, 1 inch, 12 picas, 25.4 millimeters and 2.54 centimeters per inch. Points are used by default whenever the unit is omitted unless another default absolute unit is specified using the `unit` property of the document.
+The format supports the absolute units points `pt`, inches `in`, picas `pc`, millimeters `mm` and centimeters `cm`. There are exactly 72 points, 1 inch, 12 picas, 25.4 millimeters and 2.54 centimeters per inch. Points are used by default whenever the unit is omitted unless another default unit is specified using the `unit` property of the document. The default unit must be an absolute unit.
 
 ```json
 {
@@ -84,29 +85,29 @@ The format supports the absolute units points (`pt`), inches (`in`), picas (`pc`
 
 > Millimeters is specified as the default unit in the above example.
 
-The format also supports the relative unit percent (`%`) in layout contexts and the relative unit fractions (`fr`) in certain layout contexts. The two units are defined in relation to the space available on the media in the corresponding dimension. For fractions, the space available is divided into equally sized fractions based on the total number of fractions in the dimension to distribute the space amongst. Relative lengths can not be used inside intrinsically sized contexts. The reason for this is explained in the section about `Content flow`.
+A length shall be specified as a two-element array when specified with a unit. The array shall contain a non-negative number and a unit expressed as a string `[5, "mm"]`. A length may also be specified as either a single-element array containing a non-negative number `[5]` or simply a non-negative number when the unit is omitted `5`.
 
-A length shall be specified as a two-element array containing a non-negative number and a string unit when specified with a unit (`[5, "mm"]`). A length may be specified as either a single-element array containing a non-negative number (`[5]`) or simply a non-negative number when omitting the unit (`5`).
+There are two additional units that are only supported in certain contexts. The relative unit percent `%` and the relative unit fractions `fr`. The two units are defined as relative to the space available on the media along the applicable dimension. For fractions, the space available is divided into equally sized fractions based on the total number of fractions declared along the dimension. Relative lengths can not be used inside intrinsically-sized layout contexts. There is additional information about the relative units in the sections about the `layout tree` and `content flow`.
 
 #### Media size
 
-The recommended media size for the document must be specified using the `size` property of the document. The `size` property requires that the two subproperties `w` and `h` are present. The two subproperties must be specified as absolute lengths representing the width and height of the recommended media size.
+The recommended media size for the document must be specified using the `size` property of the document. The `size` property requires that the two subproperties `w` and `h` are present. The two subproperties must be specified as absolute lengths representing the width and height of the recommended media size for the document.
 
 The recommended media size is used as hint to the renderer and should be used as the default media size. The renderer is allowed to use a different media size if media with the same size as specified in the document is unavailable but media with a similar size is. The actual media width may be wider than the recommended width but must not be narrower than 90% of the recommended width. The actual media height may be taller than the recommended height but must not be shorter than 50% of the recommended height. This feature allows for documents to automatically be adapted to compatible media.
 
 ```json
 {
+	"unit": "mm",
 	"size": {
 		"w": 210,
 		"h": 297
-	},
-	"unit": "mm"
+	}
 }
 ```
 
 > A recommended media size of 210 by 297 millimeters (A4) is specified in the above example.
 
-#### Color spaces
+#### Color modes
 
 Color may be used at multiple places in the document and may be specified using either of the three supported color modes. The color mode used to specify colors may be different for different parts of the document. This feature allows for colors to be precisely specified.
 
@@ -189,7 +190,7 @@ Document metadata may be specified using the `metadata` property of the document
 
 Documents may embed arbitrary binary data using the `files` property of the document. The property should specify the embedded files as a record of binary data encoded as strings using [base64url](https://datatracker.ietf.org/doc/html/rfc4648) encoding. The padding characters should be present such that the number of characters for each encoded file is an even multiple of four.
 
-The keys used in the `files` record may be used throughout the the doument to reference the embedded files. The keys may be chosen freely but should for maximum compatibility contain paths relative to the document written using unix syntax. When relative paths are used as keys, the document may use embeded and external files interchangeably.
+The keys used in the `files` record may be used throughout the the document to reference the embedded files. The keys may be chosen freely but should for maximum compatibility contain paths relative to the document, written using unix syntax. When relative paths are used as keys, the document may use embeded and external files interchangeably.
 
 The embedded files are used as substitutes for real files whenever referenced in the document. Only when the document contains a reference that cannot be found in the `files` record should the renderer attempt to load data from an external file.
 
@@ -205,11 +206,11 @@ The embedded files are used as substitutes for real files whenever referenced in
 
 #### Font handling
 
-Font references may be specified in a way similar to how color swatches are specified. The `fonts` property of the document should when present specify the fonts using a record of strings where each string corresponds to a font file using either the TrueType format or the OpenType format. The key of every font reference in the record must use the PostScript name of the font in question. The actual files may be embedded or external and should for maximum compatibility be specified using paths relative to the document, written using unix syntax.
+Font references may be specified in a way similar to how color swatches are specified. The `fonts` property of the document should when present specify the fonts of the document using a record of strings where each string corresponds to a font file. The font file should use either the TrueType format or the OpenType format. The key of every font reference in the record must use the PostScript name of the font in question. The actual files may be embedded or external and should for maximum compatibility be specified using paths relative to the document, written using unix syntax.
 
 The default font used for text rendering may be specified using the `font` property of the document. The property should when present specify the PostScript name of the default font.
 
-The renderer is allowed to use the PostScript name to locate the actual font file only if the font is missing in the `fonts` record. The corresponding file, embedded or external, should always be used when the font is present in the record. The renderer should abort the rendering and display an error if it cannot locate the font file of a font being used in the document. The renderer should issue a warning about missing fonts but not abort the rendering when using the PostScript name to locate a font. No fonts may be assumed to exist.
+The renderer is allowed to use the PostScript name of the fonts to locate the actual font file only if the font is missing in the `fonts` record. The corresponding file, embedded or external, should always be used when the font is present in the record. The renderer should abort the rendering and display an error if it cannot locate the font file of a font being used in the document. The renderer should issue a warning about missing fonts but not abort the rendering when using the PostScript name to locate a font. No fonts may be assumed to exist.
 
 ```json
 {
