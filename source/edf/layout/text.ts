@@ -1,6 +1,6 @@
 import * as content from "../../pdf/content";
 import { TextRenderingMode } from "../../pdf/content";
-import { Atom, ChildNode, Color, CreateSegmentsOptions, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
+import { AbsoluteLength, Atom, ChildNode, Color, CreateSegmentsOptions, Length, Node, NodeStyle, ParentAtom, Path, PositionedAtom, Size } from "./shared";
 import { MeasuredLine, Typesetter } from "../fonts";
 import * as format from "../format";
 
@@ -13,15 +13,19 @@ export class TextNode extends ChildNode {
 	protected style: TextStyle;
 
 	protected createPrefixCommands(path: Path): Array<string> {
+		let font_size = AbsoluteLength.getComputedLength(this.style.font_size, undefined);
+		let line_height = AbsoluteLength.getComputedLength(this.style.line_height, undefined);
+		let letter_spacing = AbsoluteLength.getComputedLength(this.style.letter_spacing, undefined);
+		let word_spacing = AbsoluteLength.getComputedLength(this.style.word_spacing, undefined);
 		let context = content.createContext();
 		context.beginTextObject();
-		context.setTextFontAndSize(`F${this.type_id}`, this.style.font_size);
-		context.setTextLeading(this.style.line_height);
-		if (this.style.letter_spacing > 0) {
-			context.setCharacterSpacing(this.style.letter_spacing);
+		context.setTextFontAndSize(`F${this.type_id}`, font_size);
+		context.setTextLeading(line_height);
+		if (letter_spacing > 0) {
+			context.setCharacterSpacing(letter_spacing);
 		}
-		if (this.style.word_spacing > 0) {
-			context.setWordSpacing(this.style.word_spacing);
+		if (word_spacing > 0) {
+			context.setWordSpacing(word_spacing);
 		}
 		if (typeof this.style.color !== "string") {
 			Color.setFillColor(this.style.color, context);
@@ -66,20 +70,21 @@ export class TextNode extends ChildNode {
 	}
 
 	protected getLineOffsetY(): number {
+		let font_size = AbsoluteLength.getComputedLength(this.style.font_size, undefined);
 		if (this.style.line_anchor === "meanline") {
-			return (0 - this.typesetter.getXHeight()) * this.style.font_size;
+			return (0 - this.typesetter.getXHeight()) * font_size;
 		}
 		if (this.style.line_anchor === "capline") {
-			return (0 - this.typesetter.getCapHeight()) * this.style.font_size;
+			return (0 - this.typesetter.getCapHeight()) * font_size;
 		}
 		if (this.style.line_anchor === "topline") {
-			return (0 - this.typesetter.getAscent()) * this.style.font_size;
+			return (0 - this.typesetter.getAscent()) * font_size;
 		}
 		if (this.style.line_anchor === "bottomline") {
-			return (0 - 1 + this.typesetter.getDescent()) * this.style.font_size;
+			return (0 - 1 + this.typesetter.getDescent()) * font_size;
 		}
 		if (this.style.line_anchor === "baseline") {
-			return (0 - 1) * this.style.font_size;
+			return (0 - 1) * font_size;
 		}
 		return 0;
 	}
@@ -98,13 +103,14 @@ export class TextNode extends ChildNode {
 	}
 
 	protected getLines(target_width: number): Array<MeasuredLine> {
+		let font_size = AbsoluteLength.getComputedLength(this.style.font_size, undefined);
 		let content = this.getTransformedContent();
 		let lines = this.style.white_space === "wrap"
-			? this.typesetter.wrapString(content, target_width / this.style.font_size)
-			: this.typesetter.clampString(content, target_width / this.style.font_size);
+			? this.typesetter.wrapString(content, target_width / font_size)
+			: this.typesetter.clampString(content, target_width / font_size);
 		lines = lines.map((line) => {
 			let line_string = line.line_string;
-			let line_width = line.line_width * this.style.font_size;
+			let line_width = line.line_width * font_size;
 			return {
 				line_string,
 				line_width
@@ -114,12 +120,13 @@ export class TextNode extends ChildNode {
 	}
 
 	protected createLineSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>, options: Partial<CreateSegmentsOptions>): Array<Atom> {
+		let font_size = AbsoluteLength.getComputedLength(this.style.font_size, undefined);
 		segment_left = this.getSegmentLeft(segment_left);
 		let column_width = this.getColumnWidth(target_size);
 		let lines = [] as Array<Atom>;
 		for (let line of this.getLines(column_width)) {
 			let w = line.line_width;
-			let h = this.style.font_size;
+			let h = font_size;
 			let size: Size = {
 				w,
 				h
@@ -139,6 +146,8 @@ export class TextNode extends ChildNode {
 	}
 
 	protected createColumnSegments(segment_size: Size, segment_left: Size, target_size: Partial<Size>, options: Partial<CreateSegmentsOptions>): Array<Atom> {
+		let font_size = AbsoluteLength.getComputedLength(this.style.font_size, undefined);
+		let line_height = AbsoluteLength.getComputedLength(this.style.line_height, undefined);
 		segment_left = this.getSegmentLeft(segment_left);
 		let columns = [] as Array<ParentAtom>;
 		let current_column: ParentAtom = {
@@ -182,7 +191,7 @@ export class TextNode extends ChildNode {
 			current_column.atoms.push(positioned_line);
 			current_column.size.w = Math.max(current_column.size.w, positioned_line.position.x + positioned_line.size.w);
 			current_column.size.h = Math.max(current_column.size.h, positioned_line.position.y + positioned_line.size.h);
-			gap = this.style.line_height - this.style.font_size;
+			gap = line_height - font_size;
 			line_index += 1;
 		}
 		columns.push(current_column);
@@ -206,7 +215,7 @@ export class TextNode extends ChildNode {
 		}
 		let font = style.font ?? "default";
 		let font_size = style.font_size ?? 1;
-		if (font_size < 1) {
+		if (!Length.isValid(font_size, 1)) {
 			throw new Error();
 		}
 		let gutter = style.gutter ?? 0;
@@ -214,7 +223,7 @@ export class TextNode extends ChildNode {
 			throw new Error();
 		}
 		let letter_spacing = style.letter_spacing ?? 0;
-		if (letter_spacing < 0) {
+		if (!Length.isValid(letter_spacing)) {
 			throw new Error();
 		}
 		let line_anchor = style.line_anchor ?? "capline";
@@ -230,13 +239,13 @@ export class TextNode extends ChildNode {
 		let text_transform = style.text_transform ?? "none";
 		let white_space = style.white_space ?? "wrap";
 		let word_spacing = style.word_spacing ?? 0;
-		if (word_spacing < 0) {
+		if (!Length.isValid(word_spacing)) {
 			throw new Error();
 		}
 		this.content = content;
 		this.typesetter = typesetter.withOptions({
-			letter_spacing: letter_spacing / font_size,
-			word_spacing: word_spacing / font_size
+			letter_spacing: AbsoluteLength.getComputedLength(letter_spacing, undefined) / AbsoluteLength.getComputedLength(font_size, undefined),
+			word_spacing: AbsoluteLength.getComputedLength(word_spacing, undefined) / AbsoluteLength.getComputedLength(font_size, undefined)
 		});
 		this.type_id = type_id;
 		this.style = {

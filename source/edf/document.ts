@@ -196,8 +196,11 @@ export const DocumentUtils = {
 				pdf_file.objects.push(pdf_type0_font);
 			}
 		}
-		let style_handler = new StyleHandler(document.templates, document.colors);
-		let segment_size = document.size;
+		let style_handler = new StyleHandler(document.templates, document.colors, document.unit);
+		let segment_size = {
+			w: layout.AbsoluteLength.getComputedLength(document.size.w, document.unit),
+			h: layout.AbsoluteLength.getComputedLength(document.size.h, document.unit)
+		};
 		let node = createNodeClasses(font_handler, style_handler, document.content);
 		let segments = node.createSegments(segment_size, segment_size, undefined, { text_operand: "bytestring" });
 		let kids = new pdf.format.PDFArray([]);
@@ -214,7 +217,7 @@ export const DocumentUtils = {
 		for (let segment of segments) {
 			let commands = layout.Atom.getCommandsFromAtom(segment);
 			let context = pdf.content.createContext();
-			context.concatenateMatrix(72 / 25.4, 0, 0, 72 / 25.4, 0, segment_size.h * 72 / 25.4);
+			context.concatenateMatrix(1, 0, 0, 1, 0, segment_size.h);
 			commands.unshift(...context.getCommands());
 			let pdf_content_stream_buffer = stdlib.data.chunk.Chunk.fromString(commands.join("\n"), "binary");
 			let pdf_content_stream = new pdf.format.PDFStreamObject(
@@ -236,8 +239,8 @@ export const DocumentUtils = {
 					new pdf.format.PDFRecordMember(new pdf.format.PDFName("MediaBox"), new pdf.format.PDFArray([
 						new pdf.format.PDFReal(0),
 						new pdf.format.PDFReal(0),
-						new pdf.format.PDFReal(segment_size.w / 25.4 * 72),
-						new pdf.format.PDFReal(segment_size.h / 25.4 * 72)
+						new pdf.format.PDFReal(segment_size.w),
+						new pdf.format.PDFReal(segment_size.h)
 					])),
 					new pdf.format.PDFRecordMember(new pdf.format.PDFName("Contents"), pdf_content_stream.getReference()),
 				])

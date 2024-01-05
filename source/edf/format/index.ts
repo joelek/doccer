@@ -64,42 +64,82 @@ export type Color = autoguard.guards.Union<[
 	autoguard.guards.Reference<CMYKColor>
 ]>;
 
-export const AbsoluteUnit: autoguard.serialization.MessageGuard<AbsoluteUnit> = autoguard.guards.Union.of(
-	autoguard.guards.StringLiteral.of("mm"),
-	autoguard.guards.StringLiteral.of("pt"),
-	autoguard.guards.StringLiteral.of("in"),
-	autoguard.guards.StringLiteral.of("cm"),
-	autoguard.guards.StringLiteral.of("pc")
-);
-
-export type AbsoluteUnit = autoguard.guards.Union<[
-	autoguard.guards.StringLiteral<"mm">,
-	autoguard.guards.StringLiteral<"pt">,
-	autoguard.guards.StringLiteral<"in">,
-	autoguard.guards.StringLiteral<"cm">,
-	autoguard.guards.StringLiteral<"pc">
-]>;
-
-export const Length: autoguard.serialization.MessageGuard<Length> = autoguard.guards.Union.of(
+export const UnitlessLength: autoguard.serialization.MessageGuard<UnitlessLength> = autoguard.guards.Union.of(
 	autoguard.guards.Reference.of(() => NonNegativeNumber),
 	autoguard.guards.Tuple.of(
 		autoguard.guards.Reference.of(() => NonNegativeNumber)
-	),
-	autoguard.guards.Tuple.of(
-		autoguard.guards.Reference.of(() => NonNegativeNumber),
-		autoguard.guards.StringLiteral.of("%")
 	)
 );
 
-export type Length = autoguard.guards.Union<[
+export type UnitlessLength = autoguard.guards.Union<[
 	autoguard.guards.Reference<NonNegativeNumber>,
 	autoguard.guards.Tuple<[
 		autoguard.guards.Reference<NonNegativeNumber>
-	]>,
+	]>
+]>;
+
+export const AbsoluteUnit: autoguard.serialization.MessageGuard<AbsoluteUnit> = autoguard.guards.Union.of(
+	autoguard.guards.StringLiteral.of("pt"),
+	autoguard.guards.StringLiteral.of("in"),
+	autoguard.guards.StringLiteral.of("pc"),
+	autoguard.guards.StringLiteral.of("mm"),
+	autoguard.guards.StringLiteral.of("cm")
+);
+
+export type AbsoluteUnit = autoguard.guards.Union<[
+	autoguard.guards.StringLiteral<"pt">,
+	autoguard.guards.StringLiteral<"in">,
+	autoguard.guards.StringLiteral<"pc">,
+	autoguard.guards.StringLiteral<"mm">,
+	autoguard.guards.StringLiteral<"cm">
+]>;
+
+export const AbsoluteLength: autoguard.serialization.MessageGuard<AbsoluteLength> = autoguard.guards.Union.of(
+	autoguard.guards.Reference.of(() => UnitlessLength),
+	autoguard.guards.Tuple.of(
+		autoguard.guards.Reference.of(() => NonNegativeNumber),
+		autoguard.guards.Reference.of(() => AbsoluteUnit)
+	)
+);
+
+export type AbsoluteLength = autoguard.guards.Union<[
+	autoguard.guards.Reference<UnitlessLength>,
 	autoguard.guards.Tuple<[
 		autoguard.guards.Reference<NonNegativeNumber>,
-		autoguard.guards.StringLiteral<"%">
+		autoguard.guards.Reference<AbsoluteUnit>
 	]>
+]>;
+
+export const RelativeUnit: autoguard.serialization.MessageGuard<RelativeUnit> = autoguard.guards.StringLiteral.of("%");
+
+export type RelativeUnit = autoguard.guards.StringLiteral<"%">;
+
+export const RelativeLength: autoguard.serialization.MessageGuard<RelativeLength> = autoguard.guards.Union.of(
+	autoguard.guards.Reference.of(() => UnitlessLength),
+	autoguard.guards.Tuple.of(
+		autoguard.guards.Reference.of(() => NonNegativeNumber),
+		autoguard.guards.Reference.of(() => RelativeUnit)
+	)
+);
+
+export type RelativeLength = autoguard.guards.Union<[
+	autoguard.guards.Reference<UnitlessLength>,
+	autoguard.guards.Tuple<[
+		autoguard.guards.Reference<NonNegativeNumber>,
+		autoguard.guards.Reference<RelativeUnit>
+	]>
+]>;
+
+export const Length: autoguard.serialization.MessageGuard<Length> = autoguard.guards.Union.of(
+	autoguard.guards.Reference.of(() => UnitlessLength),
+	autoguard.guards.Reference.of(() => AbsoluteLength),
+	autoguard.guards.Reference.of(() => RelativeLength)
+);
+
+export type Length = autoguard.guards.Union<[
+	autoguard.guards.Reference<UnitlessLength>,
+	autoguard.guards.Reference<AbsoluteLength>,
+	autoguard.guards.Reference<RelativeLength>
 ]>;
 
 export const NodeLength: autoguard.serialization.MessageGuard<NodeLength> = autoguard.guards.Union.of(
@@ -123,13 +163,13 @@ export type NodeLength = autoguard.guards.Union<[
 ]>;
 
 export const Size: autoguard.serialization.MessageGuard<Size> = autoguard.guards.Object.of({
-	"w": autoguard.guards.Reference.of(() => NonNegativeNumber),
-	"h": autoguard.guards.Reference.of(() => NonNegativeNumber)
+	"w": autoguard.guards.Reference.of(() => AbsoluteLength),
+	"h": autoguard.guards.Reference.of(() => AbsoluteLength)
 }, {});
 
 export type Size = autoguard.guards.Object<{
-	"w": autoguard.guards.Reference<NonNegativeNumber>,
-	"h": autoguard.guards.Reference<NonNegativeNumber>
+	"w": autoguard.guards.Reference<AbsoluteLength>,
+	"h": autoguard.guards.Reference<AbsoluteLength>
 }, {}>;
 
 export const Style: autoguard.serialization.MessageGuard<Style> = autoguard.guards.Object.of({}, {
@@ -206,9 +246,9 @@ export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autogu
 	),
 	"columns": autoguard.guards.Reference.of(() => PositiveInteger),
 	"font": autoguard.guards.String,
-	"font_size": autoguard.guards.Reference.of(() => NonNegativeNumber),
+	"font_size": autoguard.guards.Reference.of(() => AbsoluteLength),
 	"gutter": autoguard.guards.Reference.of(() => Length),
-	"letter_spacing": autoguard.guards.Reference.of(() => NonNegativeNumber),
+	"letter_spacing": autoguard.guards.Reference.of(() => AbsoluteLength),
 	"line_anchor": autoguard.guards.Union.of(
 		autoguard.guards.StringLiteral.of("meanline"),
 		autoguard.guards.StringLiteral.of("capline"),
@@ -216,7 +256,7 @@ export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autogu
 		autoguard.guards.StringLiteral.of("bottomline"),
 		autoguard.guards.StringLiteral.of("baseline")
 	),
-	"line_height": autoguard.guards.Reference.of(() => NonNegativeNumber),
+	"line_height": autoguard.guards.Reference.of(() => AbsoluteLength),
 	"orphans": autoguard.guards.Reference.of(() => PositiveInteger),
 	"text_align": autoguard.guards.Union.of(
 		autoguard.guards.StringLiteral.of("start"),
@@ -232,7 +272,7 @@ export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autogu
 		autoguard.guards.StringLiteral.of("wrap"),
 		autoguard.guards.StringLiteral.of("nowrap")
 	),
-	"word_spacing": autoguard.guards.Reference.of(() => NonNegativeNumber)
+	"word_spacing": autoguard.guards.Reference.of(() => AbsoluteLength)
 });
 
 export type TextStyle = autoguard.guards.Object<{}, {
@@ -243,9 +283,9 @@ export type TextStyle = autoguard.guards.Object<{}, {
 	]>,
 	"columns": autoguard.guards.Reference<PositiveInteger>,
 	"font": autoguard.guards.String,
-	"font_size": autoguard.guards.Reference<NonNegativeNumber>,
+	"font_size": autoguard.guards.Reference<AbsoluteLength>,
 	"gutter": autoguard.guards.Reference<Length>,
-	"letter_spacing": autoguard.guards.Reference<NonNegativeNumber>,
+	"letter_spacing": autoguard.guards.Reference<AbsoluteLength>,
 	"line_anchor": autoguard.guards.Union<[
 		autoguard.guards.StringLiteral<"meanline">,
 		autoguard.guards.StringLiteral<"capline">,
@@ -253,7 +293,7 @@ export type TextStyle = autoguard.guards.Object<{}, {
 		autoguard.guards.StringLiteral<"bottomline">,
 		autoguard.guards.StringLiteral<"baseline">
 	]>,
-	"line_height": autoguard.guards.Reference<NonNegativeNumber>,
+	"line_height": autoguard.guards.Reference<AbsoluteLength>,
 	"orphans": autoguard.guards.Reference<PositiveInteger>,
 	"text_align": autoguard.guards.Union<[
 		autoguard.guards.StringLiteral<"start">,
@@ -269,7 +309,7 @@ export type TextStyle = autoguard.guards.Object<{}, {
 		autoguard.guards.StringLiteral<"wrap">,
 		autoguard.guards.StringLiteral<"nowrap">
 	]>,
-	"word_spacing": autoguard.guards.Reference<NonNegativeNumber>
+	"word_spacing": autoguard.guards.Reference<AbsoluteLength>
 }>;
 
 export const TextNodeStyle: autoguard.serialization.MessageGuard<TextNodeStyle> = autoguard.guards.Intersection.of(
@@ -429,7 +469,8 @@ export const Document: autoguard.serialization.MessageGuard<Document> = autoguar
 	"font": autoguard.guards.String,
 	"fonts": autoguard.guards.Record.of(autoguard.guards.String),
 	"metadata": autoguard.guards.Reference.of(() => Metadata),
-	"templates": autoguard.guards.Reference.of(() => Templates)
+	"templates": autoguard.guards.Reference.of(() => Templates),
+	"unit": autoguard.guards.Reference.of(() => AbsoluteUnit)
 });
 
 export type Document = autoguard.guards.Object<{
@@ -441,7 +482,8 @@ export type Document = autoguard.guards.Object<{
 	"font": autoguard.guards.String,
 	"fonts": autoguard.guards.Record<autoguard.guards.String>,
 	"metadata": autoguard.guards.Reference<Metadata>,
-	"templates": autoguard.guards.Reference<Templates>
+	"templates": autoguard.guards.Reference<Templates>,
+	"unit": autoguard.guards.Reference<AbsoluteUnit>
 }>;
 
 export namespace Autoguard {
@@ -454,7 +496,11 @@ export namespace Autoguard {
 		"RGBColor": autoguard.guards.Reference.of(() => RGBColor),
 		"CMYKColor": autoguard.guards.Reference.of(() => CMYKColor),
 		"Color": autoguard.guards.Reference.of(() => Color),
+		"UnitlessLength": autoguard.guards.Reference.of(() => UnitlessLength),
 		"AbsoluteUnit": autoguard.guards.Reference.of(() => AbsoluteUnit),
+		"AbsoluteLength": autoguard.guards.Reference.of(() => AbsoluteLength),
+		"RelativeUnit": autoguard.guards.Reference.of(() => RelativeUnit),
+		"RelativeLength": autoguard.guards.Reference.of(() => RelativeLength),
 		"Length": autoguard.guards.Reference.of(() => Length),
 		"NodeLength": autoguard.guards.Reference.of(() => NodeLength),
 		"Size": autoguard.guards.Reference.of(() => Size),

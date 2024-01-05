@@ -13,6 +13,7 @@ wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
 			w: 210,
 			h: 297
 		},
+		unit: "mm",
 		metadata: {
 			title: "Title",
 			author: "Author"

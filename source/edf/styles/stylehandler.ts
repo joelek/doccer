@@ -1,4 +1,5 @@
 import * as format from "../format";
+import { AbsoluteLength } from "../layout";
 
 export class MissingTemplateError extends Error {
 	protected template: string;
@@ -48,6 +49,7 @@ type Style<A extends keyof format.Templates> = Exclude<Required<format.Templates
 export class StyleHandler {
 	protected templates: format.Templates;
 	protected colors: format.Colors;
+	protected default_unit: format.AbsoluteUnit | undefined;
 
 	protected getStyle<A extends keyof format.Templates>(type: A, style: Style<A> | undefined, exclude: Array<string>): Style<A> | undefined {
 		if (style == null) {
@@ -76,7 +78,7 @@ export class StyleHandler {
 		};
 	}
 
-	protected getColor(color?: string | "transparent" | format.Color): "transparent" | format.Color | undefined {
+	protected getColor(color: string | "transparent" | format.Color | undefined): "transparent" | format.Color | undefined {
 		if (color == null) {
 			return;
 		}
@@ -93,25 +95,50 @@ export class StyleHandler {
 		return color;
 	}
 
-	constructor(templates: format.Templates | undefined, colors: format.Colors | undefined) {
+	protected getLength(length: format.Length | undefined): format.Length | undefined {
+		if (format.AbsoluteLength.is(length)) {
+			return this.getAbsoluteLength(length);
+		} else {
+			return length;
+		}
+	}
+
+	protected getAbsoluteLength(length: format.AbsoluteLength | undefined): format.AbsoluteLength | undefined {
+		if (length != null) {
+			return AbsoluteLength.getComputedLength(length, this.default_unit);
+		} else {
+			return length;
+		}
+	}
+
+	constructor(templates: format.Templates | undefined, colors: format.Colors | undefined, default_unit: format.AbsoluteUnit | undefined) {
 		this.templates = templates ?? {};
 		this.colors = colors ?? {};
+		this.default_unit = default_unit;
 	}
 
 	getBoxStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
-		style = this.getStyle("box", style, []);
+		style = this.getStyle("box", style, []) ?? {};
 		return {
 			...style,
-			background_color: this.getColor(style?.background_color),
-			border_color: this.getColor(style?.border_color)
+			background_color: this.getColor(style.background_color),
+			border_color: this.getColor(style.border_color),
+			border_radius: this.getLength(style.border_radius),
+			border_width: this.getLength(style.border_width),
+			gap: this.getLength(style.gap),
+			padding: this.getLength(style.padding)
 		};
 	}
 
 	getTextStyle(style?: format.TextNodeStyle): format.TextNodeStyle | undefined {
-		style = this.getStyle("text", style, []);
+		style = this.getStyle("text", style, []) ?? {};
 		return {
 			...style,
-			color: this.getColor(style?.color)
+			color: this.getColor(style.color),
+			font_size: this.getAbsoluteLength(style.font_size),
+			letter_spacing: this.getAbsoluteLength(style.letter_spacing),
+			line_height: this.getAbsoluteLength(style.line_height),
+			word_spacing: this.getAbsoluteLength(style.word_spacing)
 		};
 	}
 };

@@ -25,14 +25,17 @@ guard CMYKColor: {
 
 guard Color: GrayscaleColor | RGBColor | CMYKColor;
 
-guard AbsoluteUnit: "mm" | "pt" | "in" | "cm" | "pc";
-
-guard Length: NonNegativeNumber | [NonNegativeNumber] | [NonNegativeNumber, "%"];
+guard UnitlessLength:  NonNegativeNumber | [NonNegativeNumber];
+guard AbsoluteUnit: "pt" | "in" | "pc" | "mm" | "cm";
+guard AbsoluteLength: UnitlessLength | [NonNegativeNumber, AbsoluteUnit];
+guard RelativeUnit: "%";
+guard RelativeLength: UnitlessLength | [NonNegativeNumber, RelativeUnit];
+guard Length: UnitlessLength | AbsoluteLength | RelativeLength;
 guard NodeLength: Length | [NonNegativeNumber, "fr"] | "intrinsic" | "extrinsic";
 
 guard Size: {
-	w: NonNegativeNumber,
-	h: NonNegativeNumber
+	w: AbsoluteLength,
+	h: AbsoluteLength
 };
 
 guard Style: {
@@ -62,16 +65,16 @@ guard TextStyle: {
 	color?: string | "transparent" | Color,
 	columns?: PositiveInteger,
 	font?: string,
-	font_size?: NonNegativeNumber,
+	font_size?: AbsoluteLength,
 	gutter?: Length,
-	letter_spacing?: NonNegativeNumber,
+	letter_spacing?: AbsoluteLength,
 	line_anchor?: "meanline" | "capline" | "topline" | "bottomline" | "baseline",
-	line_height?: NonNegativeNumber,
+	line_height?: AbsoluteLength,
 	orphans?: PositiveInteger,
 	text_align?: "start" | "center" | "end",
 	text_transform?: "none" | "lowercase" | "uppercase",
 	white_space?: "wrap" | "nowrap",
-	word_spacing?: NonNegativeNumber
+	word_spacing?: AbsoluteLength
 };
 
 guard TextNodeStyle: Style & NodeStyle & TextStyle;
@@ -123,5 +126,6 @@ guard Document: {
 	fonts?: { string },
 	metadata?: Metadata,
 	size: Size,
-	templates?: Templates
+	templates?: Templates,
+	unit?: AbsoluteUnit
 };
