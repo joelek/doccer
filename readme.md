@@ -70,6 +70,16 @@ The Electronic Document Format (EDF) was designed as a modern alternative to the
 
 The rendering of the document is defined deterministically. For every EDF-document, there exists exactly one visual representation, provided that all resources are available to the rendering software.
 
+#### Lengths
+
+There are numerous places in the document where lengths may be specified. Lengths are always specified using non-negative numbers and may optionally specify a unit.
+
+The format supports the absolute units millimeters (`mm`), points (`pt`), inches (`in`), centimeters (`cm`) and picas (`pc`). There are exactly 25.4 millimeters, 72 points, 1 inch, 2.54 centimeters and 12 picas per inch. Millimeters are used by default whenever the unit is omitted.
+
+The format also supports the relative unit percent (`%`) in layout contexts and the relative unit fractions (`fr`) in certain layout contexts. The two units are defined in relation to the space available on the media in the corresponding dimension. For fractions, the space available is divided into equally sized fractions based on the total number of fractions in the dimension to distribute the space amongst. Relative lengths can not be used inside intrinsically sized contexts. The reason for this is explained in the section about `Content flow`.
+
+A length shall be specified as a two-element array containing a non-negative number and a string unit when specified with a unit (`[5, "mm"]`). A length may be specified as either a single-element array containing a non-negative number (`[5]`) or simply a non-negative number when omitting the unit (`5`).
+
 #### Media size
 
 The recommended media size for the document must be specified using the `size` property of the document. The `size` property has type `Size` which requires that the two subproperties `w` and `h` are present. The two subproperties must be specified as non-negative numbers representing the width and height of the recommended media size in millimeters.
@@ -186,9 +196,11 @@ The embedded files are used as substitutes for real files whenever referenced in
 
 #### Font handling
 
-Font references may be specified in the same fashion as for color swatches using the `fonts` property of the document. The property should specify the fonts using a record of strings where each string corresponds to a font file using either the TrueType format or the OpenType format. The key of every font reference in the record must use the PostScript name of the font in question. The actual files may be embedded or external and should for maximum compatibility be specified using paths relative to the document written using unix syntax.
+Font references may be specified in a way similar to how color swatches are specified. The `fonts` property of the document should when present specify the fonts using a record of strings where each string corresponds to a font file using either the TrueType format or the OpenType format. The key of every font reference in the record must use the PostScript name of the font in question. The actual files may be embedded or external and should for maximum compatibility be specified using paths relative to the document, written using unix syntax.
 
-The default font used for text rendering may be specified using the `font` property of the document. The property should when present specify the PostScript name of the desired default font.
+The default font used for text rendering may be specified using the `font` property of the document. The property should when present specify the PostScript name of the default font.
+
+The renderer is allowed to use the PostScript name to locate the actual font file only if the font is missing in the `fonts` record. The corresponding file, embedded or external, should always be used when the font is present in the record. The renderer should abort the rendering and display an error if it cannot locate the font file of a font being used in the document. The renderer should issue a warning about missing fonts but not abort the rendering when using the PostScript name to locate a font. No fonts may be assumed to exist.
 
 ```json
 {
@@ -200,14 +212,6 @@ The default font used for text rendering may be specified using the `font` prope
 ```
 
 > The path of the font "DMSans-Regular" is specified and set as the default font in the above example.
-
-#### Length units
-
-[TODO]
-
-#### Style templates
-
-[TODO]
 
 #### The layout tree
 
@@ -222,6 +226,10 @@ The default font used for text rendering may be specified using the `font` prope
 [TODO]
 
 #### Text nodes
+
+[TODO]
+
+#### Style templates
 
 [TODO]
 
