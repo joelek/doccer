@@ -72,17 +72,90 @@ The rendering of the document is defined deterministically. For every EDF-docume
 
 #### Media size
 
-[TODO]
+The recommended media size for the document must be specified using the `size` property of the document. The `size` property has type `Size` which requires that the two subproperties `w` and `h` are present. The two properties must be specified as non-negative numbers representing the width and height of the recommended media size in millimeters.
+
+The recommended media size is used as hint to the renderer and should be used as the default media size. The renderer is allowed to use a different media size if media with the same size as specified in the document is unavailable but media with a similar size is. The actual media size used by the renderer must not differ in width by more than 10% but may be of any height. This feature allows for documents to automatically be adapted to similarily-sized media.
+
+```json
+{
+	"size": {
+		"w": 210,
+		"h": 297
+	}
+}
+```
+
+> A recommended media size of 210 by 297 millimeters (A4) is specified in the above example.
+
+#### Color spaces
+
+Color may be used at multiple places in the document and may be specified using either of the three supported color modes. The color mode used to specify colors may be different for different parts of the document. This feature allows for colors to be precisely specified.
+
+Colors may be specified using the RGB color mode for which colors are specified using the `r`, `g` and `b` components. Each component should be specified as a number in the interval between zero and one.
+
+```json
+{
+	"r": 1.0,
+	"g": 1.0,
+	"b": 0.0
+}
+```
+
+> A yellow color is specified using the RGB color mode in the above example.
+
+Colors may be specified using the CMYK color mode for which colors are specified using the `c`, `m`, `y` and `k` components. Each component should be specified as a number in the interval between zero and one.
+
+```json
+{
+	"c": 0.0,
+	"m": 0.0,
+	"y": 1.0,
+	"k": 0.0
+}
+```
+
+> A yellow color is specified using the CMYK color mode in the above example.
+
+Colors may be specified using the Grayscale color mode for which colors are specified using the `i` component. Each component should be specified as a number in the interval between zero and one.
+
+```json
+{
+	"i": 0.5
+}
+```
+
+> A gray color is specified using the Grayscale color mode in the above example.
+
+#### Color swatches
+
+A palette of colors swatches may be specified using the `colors` property of the document. The `colors` property should specify the palette as a record of colors for which each color should be specified using one of the color modes available.
+
+The keys used in the palette specification may be used throughout the document as references to the respective colors. This feature makes it simple to ensure that colors are being used consistently in document. It also makes editing colors simple and straight forward.
+
+```json
+{
+	"colors": {
+		"black": {
+			"r": 0,
+			"g": 0,
+			"b": 0
+		},
+		"white": {
+			"r": 1,
+			"g": 1,
+			"b": 1
+		}
+	}
+}
+```
+
+> A palette containing the two colors `black` and `white` is specified in the above example.
 
 #### Font handling
 
 [TODO]
 
 #### Embedded files
-
-[TODO]
-
-#### Color swatches
 
 [TODO]
 
@@ -99,6 +172,10 @@ The rendering of the document is defined deterministically. For every EDF-docume
 [TODO]
 
 #### The layout tree
+
+[TODO]
+
+#### Content flow
 
 [TODO]
 
