@@ -145,3 +145,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Parse PDF increments.
 * Serialize PDF increments.
 * Consider adding variables to EDF format.
+* Implement support for multiple text segments in TextNode.
