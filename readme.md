@@ -72,9 +72,9 @@ The rendering of the document is defined deterministically. For every EDF-docume
 
 #### Media size
 
-The recommended media size for the document must be specified using the `size` property of the document. The `size` property has type `Size` which requires that the two subproperties `w` and `h` are present. The two properties must be specified as non-negative numbers representing the width and height of the recommended media size in millimeters.
+The recommended media size for the document must be specified using the `size` property of the document. The `size` property has type `Size` which requires that the two subproperties `w` and `h` are present. The two subproperties must be specified as non-negative numbers representing the width and height of the recommended media size in millimeters.
 
-The recommended media size is used as hint to the renderer and should be used as the default media size. The renderer is allowed to use a different media size if media with the same size as specified in the document is unavailable but media with a similar size is. The actual media size used by the renderer must not differ in width by more than 10% but may be of any height. This feature allows for documents to automatically be adapted to similarily-sized media.
+The recommended media size is used as hint to the renderer and should be used as the default media size. The renderer is allowed to use a different media size if media with the same size as specified in the document is unavailable but media with a similar size is. The actual media width may be wider than the recommended width but must not be narrower than 90% of the recommended width. The actual media height may be taller than the recommended height but must not be shorter than 50% of the recommended height. This feature allows for documents to automatically be adapted to compatible media.
 
 ```json
 {
@@ -128,7 +128,7 @@ Colors may be specified using the Grayscale color mode for which colors are spec
 
 #### Color swatches
 
-A palette of colors swatches may be specified using the `colors` property of the document. The `colors` property should specify the palette as a record of colors for which each color should be specified using one of the color modes available.
+A palette of colors swatches may be specified using the `colors` property of the document. The property should specify the palette as a record of colors for which each color should be specified using one of the color modes available.
 
 The keys used in the palette specification may be used throughout the document as references to the respective colors. This feature makes it simple to ensure that colors are being used consistently in document. It also makes editing colors simple and straight forward.
 
@@ -151,17 +151,55 @@ The keys used in the palette specification may be used throughout the document a
 
 > A palette containing the two colors `black` and `white` is specified in the above example.
 
-#### Font handling
-
-[TODO]
-
-#### Embedded files
-
-[TODO]
-
 #### Document metadata
 
-[TODO]
+Document metadata may be specified using the `metadata` property of the document. The property may specify the title of the document and/or its author using the two subproperties `title` and `author`, respectively. Both subproperties must be specified as strings when present.
+
+```json
+{
+	"metadata": {
+		"title": "Title",
+		"author": "Author"
+	}
+}
+```
+
+> The title of the document and its author is specified in the above example.
+
+#### File handling
+
+Documents may embed arbitrary binary data using the `files` property of the document. The property should specify the embedded files as a record of binary data encoded as strings using [base64url](https://datatracker.ietf.org/doc/html/rfc4648) encoding. The padding characters should be present such that the number of characters for each encoded file is an even multiple of four.
+
+The keys used in the `files` record may be used throughout the the doument to reference the embedded files. The keys may be chosen freely but should for maximum compatibility contain paths relative to the document written using unix syntax. When relative paths are used as keys, the document may use embeded and external files interchangeably.
+
+The embedded files are used as substitutes for real files whenever referenced in the document. Only when the document contains a reference that cannot be found in the `files` record should the renderer attempt to load data from an external file.
+
+```json
+{
+	"files": {
+		"./fonts/DMSans-Regular.ttf": "..."
+	}
+}
+```
+
+> The file "./fonts/DMSans-Regular.ttf" is embeded in the above example.
+
+#### Font handling
+
+Font references may be specified in the same fashion as for color swatches using the `fonts` property of the document. The property should specify the fonts using a record of strings where each string corresponds to a font file using either the TrueType format or the OpenType format. The key of every font reference in the record must use the PostScript name of the font in question. The actual files may be embedded or external and should for maximum compatibility be specified using paths relative to the document written using unix syntax.
+
+The default font used for text rendering may be specified using the `font` property of the document. The property should when present specify the PostScript name of the desired default font.
+
+```json
+{
+	"font": "DMSans-Regular",
+	"fonts": {
+		"DMSans-Regular": "./fonts/DMSans-Regular.ttf"
+	}
+}
+```
+
+> The path of the font "DMSans-Regular" is specified and set as the default font in the above example.
 
 #### Length units
 
