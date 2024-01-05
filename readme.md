@@ -66,9 +66,47 @@ The need for a new document format with a more consistent, modern and useful fea
 
 ### The Electronic Document Format (EDF)
 
-The Electronic Document Format (EDF) was designed as a modern alternative to the PDF-format with emphasis on addressing the issue of poor editability. It is expressed as a JSON-document and serializes using UTF-8 encoding in interchange, giving it great interoperability as most systems can read JSON-documents encoded using UTF-8 with ease.
+The Electronic Document Format (EDF) was designed as a modern alternative to the PDF-format with emphasis on addressing the issue of poor editability. It is expressed as a JSON-document and is serialized using UTF-8 encoding in interchange, giving it great interoperability as most systems can read JSON-documents encoded using UTF-8 with ease.
 
 The rendering of the document is defined deterministically. For every EDF-document, there exists exactly one visual representation, provided that all resources are available to the rendering software.
+
+#### Media size
+
+[TODO]
+
+#### Font handling
+
+[TODO]
+
+#### Embedded files
+
+[TODO]
+
+#### Color swatches
+
+[TODO]
+
+#### Document metadata
+
+[TODO]
+
+#### Length units
+
+[TODO]
+
+#### Style templates
+
+[TODO]
+
+#### The layout tree
+
+[TODO]
+
+#### Box nodes
+
+[TODO]
+
+#### Text nodes
 
 [TODO]
 
