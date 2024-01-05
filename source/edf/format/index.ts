@@ -64,6 +64,22 @@ export type Color = autoguard.guards.Union<[
 	autoguard.guards.Reference<CMYKColor>
 ]>;
 
+export const AbsoluteUnit: autoguard.serialization.MessageGuard<AbsoluteUnit> = autoguard.guards.Union.of(
+	autoguard.guards.StringLiteral.of("mm"),
+	autoguard.guards.StringLiteral.of("pt"),
+	autoguard.guards.StringLiteral.of("in"),
+	autoguard.guards.StringLiteral.of("cm"),
+	autoguard.guards.StringLiteral.of("pc")
+);
+
+export type AbsoluteUnit = autoguard.guards.Union<[
+	autoguard.guards.StringLiteral<"mm">,
+	autoguard.guards.StringLiteral<"pt">,
+	autoguard.guards.StringLiteral<"in">,
+	autoguard.guards.StringLiteral<"cm">,
+	autoguard.guards.StringLiteral<"pc">
+]>;
+
 export const Length: autoguard.serialization.MessageGuard<Length> = autoguard.guards.Union.of(
 	autoguard.guards.Reference.of(() => NonNegativeNumber),
 	autoguard.guards.Tuple.of(
@@ -436,6 +452,7 @@ export namespace Autoguard {
 		"RGBColor": autoguard.guards.Reference.of(() => RGBColor),
 		"CMYKColor": autoguard.guards.Reference.of(() => CMYKColor),
 		"Color": autoguard.guards.Reference.of(() => Color),
+		"AbsoluteUnit": autoguard.guards.Reference.of(() => AbsoluteUnit),
 		"Length": autoguard.guards.Reference.of(() => Length),
 		"NodeLength": autoguard.guards.Reference.of(() => NodeLength),
 		"Size": autoguard.guards.Reference.of(() => Size),
