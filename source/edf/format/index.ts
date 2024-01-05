@@ -426,6 +426,7 @@ export const Document: autoguard.serialization.MessageGuard<Document> = autoguar
 }, {
 	"colors": autoguard.guards.Reference.of(() => Colors),
 	"files": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => PaddedBase64URL)),
+	"font": autoguard.guards.String,
 	"fonts": autoguard.guards.Record.of(autoguard.guards.String),
 	"metadata": autoguard.guards.Reference.of(() => Metadata),
 	"templates": autoguard.guards.Reference.of(() => Templates)
@@ -437,6 +438,7 @@ export type Document = autoguard.guards.Object<{
 }, {
 	"colors": autoguard.guards.Reference<Colors>,
 	"files": autoguard.guards.Record<autoguard.guards.Reference<PaddedBase64URL>>,
+	"font": autoguard.guards.String,
 	"fonts": autoguard.guards.Record<autoguard.guards.String>,
 	"metadata": autoguard.guards.Reference<Metadata>,
 	"templates": autoguard.guards.Reference<Templates>

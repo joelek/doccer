@@ -1,6 +1,7 @@
 {
+	"font": "DMSans-Regular",
 	"fonts": {
-		"default": "./public/DMSans-Regular.ttf"
+		"DMSans-Regular": "./public/DMSans-Regular.ttf"
 	},
 	"size": {
 		"w": 210,

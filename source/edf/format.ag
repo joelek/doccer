@@ -119,6 +119,7 @@ guard Document: {
 	colors?: Colors,
 	content: Node,
 	files?: { PaddedBase64URL },
+	font?: string,
 	fonts?: { string },
 	metadata?: Metadata,
 	size: Size,

@@ -35,7 +35,10 @@ export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 export function createNodeClasses(font_handler: FontHandler, style_handler: StyleHandler, node: format.Node): layout.Node {
 	if (TextNode.is(node)) {
 		let style = style_handler.getTextStyle(node.style);
-		let font = style?.font ?? "default";
+		let font = style?.font ?? font_handler.getDefaultFont();
+		if (font == null) {
+			throw new Error();
+		}
 		return new layout.TextNode(node.content, font_handler.getTypesetter(font), font_handler.getTypeId(font), style);
 	}
 	if (BoxNode.is(node)) {
@@ -83,7 +86,7 @@ export const DocumentUtils = {
 			])
 		);
 		pdf_file.objects.push(resources);
-		let font_handler = new FontHandler();
+		let font_handler = new FontHandler(document.font);
 		for (let key in document.fonts) {
 			let filename = document.fonts[key];
 			if (filename == null) {

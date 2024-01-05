@@ -371,10 +371,12 @@ export type FontHandlerEntry = {
 export class FontHandler {
 	protected entries: Map<string, FontHandlerEntry>;
 	protected type_id: number;
+	protected default_font: string | undefined;
 
-	constructor() {
+	constructor(default_font: string | undefined) {
 		this.entries = new Map();
 		this.type_id = 0;
+		this.default_font = default_font;
 	}
 
 	addTypesetter(key: string, typesetter: Typesetter): FontHandler {
@@ -389,6 +391,10 @@ export class FontHandler {
 		});
 		this.type_id += 1;
 		return this;
+	}
+
+	getDefaultFont(): string | undefined {
+		return this.default_font
 	}
 
 	getTypesetter(key: string): Typesetter {
