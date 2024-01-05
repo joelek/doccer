@@ -70,11 +70,19 @@ The Electronic Document Format (EDF) was designed as a modern alternative to the
 
 The rendering of the document is defined deterministically. For every EDF-document, there exists exactly one visual representation, provided that all resources are available to the rendering software.
 
-#### Lengths
+#### Lengths and units
 
 There are numerous places in the document where lengths may be specified. Lengths are always specified using non-negative numbers and may optionally specify a unit.
 
-The format supports the absolute units millimeters (`mm`), points (`pt`), inches (`in`), centimeters (`cm`) and picas (`pc`). There are exactly 25.4 millimeters, 72 points, 1 inch, 2.54 centimeters and 12 picas per inch. Millimeters are used by default whenever the unit is omitted.
+The format supports the absolute units points (`pt`), inches (`in`), picas (`pc`), millimeters (`mm`) and centimeters (`cm`). There are exactly 72 points, 1 inch, 12 picas, 25.4 millimeters and 2.54 centimeters per inch. Points are used by default whenever the unit is omitted unless another default absolute unit is specified using the `unit` property of the document.
+
+```json
+{
+	"unit": "mm"
+}
+```
+
+> Millimeters is specified as the default unit in the above example.
 
 The format also supports the relative unit percent (`%`) in layout contexts and the relative unit fractions (`fr`) in certain layout contexts. The two units are defined in relation to the space available on the media in the corresponding dimension. For fractions, the space available is divided into equally sized fractions based on the total number of fractions in the dimension to distribute the space amongst. Relative lengths can not be used inside intrinsically sized contexts. The reason for this is explained in the section about `Content flow`.
 
@@ -82,7 +90,7 @@ A length shall be specified as a two-element array containing a non-negative num
 
 #### Media size
 
-The recommended media size for the document must be specified using the `size` property of the document. The `size` property has type `Size` which requires that the two subproperties `w` and `h` are present. The two subproperties must be specified as non-negative numbers representing the width and height of the recommended media size in millimeters.
+The recommended media size for the document must be specified using the `size` property of the document. The `size` property requires that the two subproperties `w` and `h` are present. The two subproperties must be specified as absolute lengths representing the width and height of the recommended media size.
 
 The recommended media size is used as hint to the renderer and should be used as the default media size. The renderer is allowed to use a different media size if media with the same size as specified in the document is unavailable but media with a similar size is. The actual media width may be wider than the recommended width but must not be narrower than 90% of the recommended width. The actual media height may be taller than the recommended height but must not be shorter than 50% of the recommended height. This feature allows for documents to automatically be adapted to compatible media.
 
@@ -91,7 +99,8 @@ The recommended media size is used as hint to the renderer and should be used as
 	"size": {
 		"w": 210,
 		"h": 297
-	}
+	},
+	"unit": "mm"
 }
 ```
 
