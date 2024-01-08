@@ -23,6 +23,7 @@ export declare class StyleHandler {
     protected default_unit: format.AbsoluteUnit | undefined;
     protected getStyle<A extends keyof format.Templates>(type: A, style: Style<A> | undefined, exclude: Array<string>): Style<A> | undefined;
     protected getColor(color: string | "transparent" | format.Color | undefined): "transparent" | format.Color | undefined;
+    protected getNodeLength(length: format.NodeLength | undefined): format.NodeLength | undefined;
     protected getLength(length: format.Length | undefined): format.Length | undefined;
     protected getAbsoluteLength(length: format.AbsoluteLength | undefined): format.AbsoluteLength | undefined;
     constructor(templates: format.Templates | undefined, colors: format.Colors | undefined, default_unit: format.AbsoluteUnit | undefined);
