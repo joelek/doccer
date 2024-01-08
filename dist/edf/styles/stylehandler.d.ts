@@ -26,7 +26,8 @@ export declare class StyleHandler {
     protected getLength(length: format.Length | undefined): format.Length | undefined;
     protected getAbsoluteLength(length: format.AbsoluteLength | undefined): format.AbsoluteLength | undefined;
     constructor(templates: format.Templates | undefined, colors: format.Colors | undefined, default_unit: format.AbsoluteUnit | undefined);
-    getBoxStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined;
-    getTextStyle(style?: format.TextNodeStyle): format.TextNodeStyle | undefined;
+    getBoxStyle(style: format.BoxNodeStyle | undefined): format.BoxNodeStyle | undefined;
+    getTextStyle(style: format.TextNodeStyle | undefined): format.TextNodeStyle | undefined;
+    getUnrecognizedStyle(style: format.UnrecognizedNodeStyle | undefined, type: string): format.UnrecognizedNodeStyle | undefined;
 }
 export {};

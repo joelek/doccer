@@ -135,6 +135,12 @@ class StyleHandler {
             word_spacing: this.getAbsoluteLength(style.word_spacing)
         };
     }
+    getUnrecognizedStyle(style, type) {
+        style = this.getStyle(type, style, []) ?? {};
+        return {
+            ...style
+        };
+    }
 }
 exports.StyleHandler = StyleHandler;
 ;

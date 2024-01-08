@@ -216,6 +216,23 @@ export type BoxNode = autoguard.guards.Intersection<[
         "style": autoguard.guards.Reference<BoxNodeStyle>;
     }>
 ]>;
+export declare const UnrecognizedStyle: autoguard.serialization.MessageGuard<UnrecognizedStyle>;
+export type UnrecognizedStyle = autoguard.guards.Object<{}, {}>;
+export declare const UnrecognizedNodeStyle: autoguard.serialization.MessageGuard<UnrecognizedNodeStyle>;
+export type UnrecognizedNodeStyle = autoguard.guards.Intersection<[
+    autoguard.guards.Reference<Style>,
+    autoguard.guards.Reference<NodeStyle>,
+    autoguard.guards.Reference<UnrecognizedStyle>
+]>;
+export declare const UnrecognizedNode: autoguard.serialization.MessageGuard<UnrecognizedNode>;
+export type UnrecognizedNode = autoguard.guards.Intersection<[
+    autoguard.guards.Reference<ParentNode>,
+    autoguard.guards.Object<{
+        "type": autoguard.guards.String;
+    }, {
+        "style": autoguard.guards.Reference<UnrecognizedNodeStyle>;
+    }>
+]>;
 export declare const Colors: autoguard.serialization.MessageGuard<Colors>;
 export type Colors = autoguard.guards.Record<autoguard.guards.Reference<Color>>;
 export declare const Metadata: autoguard.serialization.MessageGuard<Metadata>;
@@ -510,6 +527,27 @@ export declare namespace Autoguard {
                 gap?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
                 layout?: "vertical" | "horizontal" | undefined;
                 padding?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | undefined;
+            } | undefined;
+        }>;
+        UnrecognizedStyle: autoguard.guards.ReferenceGuard<{}>;
+        UnrecognizedNodeStyle: autoguard.guards.ReferenceGuard<{
+            template?: string | undefined;
+            height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+            overflow?: "hidden" | "visible" | undefined;
+            segmentation?: "auto" | "none" | undefined;
+            width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+        }>;
+        UnrecognizedNode: autoguard.guards.ReferenceGuard<{
+            type: string;
+            children?: autoguard.guards.Array<{
+                type: string;
+            }> | undefined;
+            style?: {
+                template?: string | undefined;
+                height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
+                overflow?: "hidden" | "visible" | undefined;
+                segmentation?: "auto" | "none" | undefined;
+                width?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             } | undefined;
         }>;
         Colors: autoguard.guards.ReferenceGuard<Colors>;

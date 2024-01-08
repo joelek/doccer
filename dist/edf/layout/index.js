@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./box"), exports);
 __exportStar(require("./shared"), exports);
 __exportStar(require("./text"), exports);
+__exportStar(require("./unrecognized"), exports);
