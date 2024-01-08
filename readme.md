@@ -317,3 +317,5 @@ NB: This project targets TypeScript 4 in strict mode.
 * Serialize PDF increments.
 * Consider adding variables to EDF format.
 * Implement support for multiple text segments in TextNode.
+	Properties columns, gutter, line_height and text_align should stay on TextNode container.
+	Properties line_anchor and white_space mighy stay on TextNode container.
