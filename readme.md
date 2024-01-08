@@ -35,7 +35,7 @@ Most authoring software provide functionality for the user to export the electro
 
 The PDF-format has become the de facto standard for document interchange. Documents stored using the format are almost guaranteed to be readable by their recipients. The format dates back to 1993 and was thoroughly standardized in 2008 in a 756-page document that may be retrieved from https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf.
 
-As the specifiation concerns a format now having existed for more than thirty years, it does contain its fair share of legacy features. There are features that can be considered more or less obsolete, features that are in direct conflict with other features and features that are of limited modern use. There are even features that are specified as optional but are to be treated as required if documents are to be rendered properly.
+As the specifiation concerns a format now having existed for more than thirty years, it does contain its fair share of legacy features. There are features that can be considered more or less obsolete, features that are in direct conflict with other features and features that are of limited modern use. There are even features that are specified as optional but are to be treated as required to ensure that documents are displayed properly.
 
 ### Text handling
 
@@ -71,11 +71,11 @@ The Electronic Document Format (EDF) was designed as a modern alternative to the
 
 The rendering of the document is defined deterministically. For every EDF-document, there exists exactly one visual representation, provided that all resources are available to the rendering software.
 
-#### Lengths and units
+#### Absolute lengths and units
 
 There are numerous places in the document where lengths may be specified. Lengths are always specified using non-negative numbers and may optionally specify a unit.
 
-The format supports the absolute units points `pt`, inches `in`, picas `pc`, millimeters `mm` and centimeters `cm`. There are exactly 72 points, 1 inch, 12 picas, 25.4 millimeters and 2.54 centimeters per inch. Points are used by default whenever the unit is omitted unless another default unit is specified using the `unit` property of the document. The default unit must be an absolute unit.
+The format supports the absolute units points `pt`, inches `in`, picas `pc`, millimeters `mm` and centimeters `cm`. There are exactly 72 points, 1 inch, 12 picas, 25.4 millimeters and 2.54 centimeters per inch. Points are used by default whenever the unit is omitted unless another default absolute unit is specified using the `unit` property of the document. Absolute lengths may be used anywhere in the document.
 
 ```json
 {
@@ -87,7 +87,11 @@ The format supports the absolute units points `pt`, inches `in`, picas `pc`, mil
 
 A length shall be specified as a two-element array when specified with a unit. The array shall contain a non-negative number and a unit expressed as a string `[5, "mm"]`. A length may also be specified as either a single-element array containing a non-negative number `[5]` or simply a non-negative number when the unit is omitted `5`.
 
-There are two additional units that are only supported in certain contexts. The relative unit percent `%` and the relative unit fractions `fr`. The two units are defined as relative to the space available on the media along the applicable dimension. For fractions, the space available is divided into equally sized fractions based on the total number of fractions declared along the dimension. Relative lengths can not be used inside intrinsically-sized layout contexts. There is additional information about the relative units in the section about the `document layout`.
+#### Relative lengths and units
+
+There are two relative units that may only be used within certain contexts where relative lengths are permitted. The relative unit percent `%` and the relative unit fractions `fr`.
+
+The two units are defined as relative to the space available. For fractions, the space available is divided into equally sized fractions based on the total number of fractions. If there are two lengths over which to distribute the space and the two lengths are defined as `[1 "fr"]` and `[2, "fr"]`, the space available will be split into three equally-sized parts. The first length will always be half as long as the second length as long as there is space available to distribute.
 
 #### Media size
 
@@ -111,6 +115,8 @@ The recommended media size is used as hint to the renderer and should be used as
 
 Color may be used at multiple places in the document and may be specified using either of the three supported color modes. The color mode used to specify colors may be different for different parts of the document. This feature allows for colors to be precisely specified.
 
+**RGB**
+
 Colors may be specified using the RGB color mode for which colors are specified using the `r`, `g` and `b` components. Each component should be specified as a number in the interval between zero and one.
 
 ```json
@@ -122,6 +128,8 @@ Colors may be specified using the RGB color mode for which colors are specified 
 ```
 
 > A yellow color is specified using the RGB color mode in the above example.
+
+**CMYK**
 
 Colors may be specified using the CMYK color mode for which colors are specified using the `c`, `m`, `y` and `k` components. Each component should be specified as a number in the interval between zero and one.
 
@@ -135,6 +143,8 @@ Colors may be specified using the CMYK color mode for which colors are specified
 ```
 
 > A yellow color is specified using the CMYK color mode in the above example.
+
+**Grayscale**
 
 Colors may be specified using the Grayscale color mode for which colors are specified using the `i` component. Each component should be specified as a number in the interval between zero and one.
 
@@ -150,7 +160,7 @@ Colors may be specified using the Grayscale color mode for which colors are spec
 
 A palette of colors swatches may be specified using the `colors` property of the document. The property should specify the palette as a record of colors for which each color should be specified using one of the color modes available.
 
-The keys used in the palette specification may be used throughout the document as references to the respective colors. This feature makes it simple to ensure that colors are being used consistently in document. It also makes editing colors simple and straight forward.
+The keys used in the palette specification may be used anywhere in the document as references to the respective colors. This feature makes it simple to ensure that colors are being used consistently throughout document. It also makes editing colors simple and straight-forward.
 
 ```json
 {
@@ -210,7 +220,7 @@ Font references may be specified in a way similar to how color swatches are spec
 
 The default font used for text rendering may be specified using the `font` property of the document. The property should when present specify the PostScript name of the default font.
 
-The renderer is allowed to use the PostScript name of the fonts to locate the actual font file only if the font is missing in the `fonts` record. The corresponding file, embedded or external, should always be used when the font is present in the record. The renderer should abort the rendering and display an error if it cannot locate the font file of a font being used in the document. The renderer should issue a warning about missing fonts but not abort the rendering when using the PostScript name to locate a font. No fonts may be assumed to exist.
+The renderer is allowed to use the PostScript name of the fonts to locate the actual font file only if the font is missing in the `fonts` record. The corresponding file, embedded or external, should always be used when the font is present. The renderer should abort the rendering and display an error if it cannot locate the font file of a font being used in the document. The renderer should issue a warning about missing fonts but not abort the rendering when using the PostScript name to locate a font. No fonts may be assumed to exist.
 
 ```json
 {
@@ -227,7 +237,7 @@ The renderer is allowed to use the PostScript name of the fonts to locate the ac
 
 The document stores its content as a tree of abstract nodes. The nodes contain data specific to each node and together define the layout of the document. The nodes are considered abstract in the sense that the tree stores them using a standardized format that is independent of their actual types.
 
-Each node must specify its type using the `type` property for which the type is specified as a string. The renderer should produce a warning whenever a node with an unrecognized type is encountered but should not abort the rendering. Nodes with unrecognized types should be layed out as if they had been recognized but rendered completely transparent.
+Each node must specify its type using the `type` property for which the type is specified as a string. The renderer should produce a warning whenever a node with an unrecognized type is encountered but should not abort the rendering. Nodes with unrecognized types should be layed out as if they had been recognized but should be rendered completely transparent.
 
 All nodes are child nodes but only some nodes are parent nodes in addition to also being child nodes. Child nodes may not store child nodes of their own but parent nodes may store any number of child nodes using the `children` property of the node. This definition creates a recursive, abstract and extensible structure supporting trees of any complexity.
 
@@ -247,7 +257,7 @@ All nodes are child nodes but only some nodes are parent nodes in addition to al
 
 > A parent node containing two child nodes is specified in the above example.
 
-The `content` property of the document must be used to specify the root node of the tree. The root node may for very simple documents be the only node in the entire tree but is more often the first of many parent nodes.
+The `content` property of the document must be used to specify the root node of the tree. The root node may for very simple documents be the only node in the entire tree but is more often the ancestor and parent node of a complex tree.
 
 ```json
 {
@@ -263,21 +273,23 @@ The `content` property of the document must be used to specify the root node of 
 
 The content tree is used to generate the layout of the document through the layout algorithm. The algorithm processes the nodes of the document hierarchically and automatically segments the content into multiple pages as needed.
 
-While generating the layout, the algorithm keeps track of the space available on the current page as well as the space that can become available through adding a new page. This information is used when rendering a node in order to decide whether to place the node on the current page, to add a new page and place it on the new page or to segment the node into multiple segments spanning multiple pages. The space available for layout is initialized to the full page size which also becomes the constraining size for the root node of the document.
+While generating the layout, the algorithm keeps track of the space available on the current page as well as the space that can become available through adding a new page. This information is used when rendering a node in order to decide whether to place the node on the current page, to place it on a new page or to segment the node into multiple segments spanning multiple pages. The space available for layout is initialized to the full page size which also becomes the constraining size for the root node of the document.
 
-Nodes are sized either absolutely, relatively or intrinsically. Absolutely-sized nodes have a size that is independent of the constraining size while relatively-sized nodes are dependent on the constraining size. Intrinsically-sized nodes do not define a size themselves but instead specify their size as relative to their content. Intrinsic height is a requirement for the algorithm to automatically segment a node into multiple pages. A node will be placed on a single page in its entirety whenever height is specified absolutely or relatively.
+Nodes are sized either absolutely, relatively or intrinsically. Absolutely-sized nodes have a size that is independent of the constraining size while relatively-sized nodes are dependent on the constraining size. Intrinsically-sized nodes do not define a size themselves but instead specify their size relative to their content.
 
-Child nodes of intrinsically-sized parent or ancestor nodes may not specify their sizes relatively as this creates a catch-22 situation. The size of the parent becomes dependent on the size of the child which is dependent on the size of the parent... The renderer should produce a warning and abort the rendering if such a sitation arises.
+The heights and widths of the nodes in the document may be specified independently. The properties should when present be specified either as absolute lengths, relative lengths or as strings containing either the value "intrinsic" or the value "extrinsic". The value "intrinsic" will make the node adapt its size to the size of its children while the value "extrinsic" will make the node adapt to the constraining size.
 
-The heights and widths of the nodes in the document may be specified independently. Both properties should when present be specified as lengths defined in the `lengths and units` section or as strings containing either the value "intrinsic" or the value "extrinsic". The value "intrinsic" will make the node adapt its size to the size of its children while the value "extrinsic" will make the node adapt to the constraining size. These rules are together called the `NodeLength` rules.
+Intrinsic node height is a requirement for the algorithm to automatically segment a node into multiple pages. A node will be placed on a single page in its entirety whenever height is specified absolutely or relatively. The algorithm should place such nodes on new pages if the entire height of the node cannot fit within the current constrained height.
+
+Direct or indirect child nodes of intrinsically-sized nodes may not specify their sizes relatively as this creates a catch-22 situation. The size of the parent node becomes dependent on the size of the child node which is dependent on the size of the parent node and so forth... The renderer should produce a warning and abort the rendering if such a sitation arises.
 
 #### Style attributes
 
-All nodes may define style attributes using the `style` property of the node. The property should when present specify any subset of the common and specific style attributes for the node type of the node in question. The common attributes are available for every node type and should be specified as detailed below.
+All nodes may define style attributes using the `style` property of the node. The property should when present specify any subset of the common and specific style attributes for the node type of the node in question. The common attributes are available for every node type and should be specified as detailed below when present.
 
 **height**
 
-The height of the node may be specified through the `height` attribute. The attribute should when present be specified as a `NodeLength` and will assume the value `intrinsic` by default.
+The height of the node may be specified through the `height` attribute. The attribute will assume the value `intrinsic` by default.
 
 **overflow**
 
@@ -287,9 +299,13 @@ The overflow behaviour of the node may be specified through the `overflow` attri
 
 The segmentation behaviour of the node may be specified through the `segmentation` attribute. The attribute should when present be specified as a string assuming either the value "auto" or the value "none". The default value is "auto" when the height of the node is "intrinsic" and "none" otherwise. It is invalid to specify the segmentation behaviour as "auto" while also specifying the height as "intrinsic". The renderer should display a warning and abort the rendering if such a situation arises.
 
+**template**
+
+The style template to apply may be specified using the `template` attribute. The attribute should be specified as a string containing the template name of the desired template. You can read more about style templates in the next section.
+
 **width**
 
-The width of the node may be specified through the `width` attribute. The attribute should when present be specified as a `NodeLength` and will assume the value `intrinsic` by default.
+The width of the node may be specified through the `width` attribute. The attribute will assume the value `intrinsic` by default.
 
 #### Box nodes
 
@@ -306,9 +322,9 @@ Documents may specify style templates for its nodes using the different subprope
 * The subproperty `box` may be used to specify templates for box nodes.
 * The subproperty `text` may be used to specify templates for text nodes.
 
-All node types may define a `default` template. It is defined using the the template name "default" and will be applied as a default set of attributes for all nodes of the type in question. Templates other than the default may be applied by setting the `template` attribute of a node to the template name of the desired template. The renderer must generate an error and abort the rendering if a template cannot be found unless the template name is "default".
+A `default` template may be defined for each node type. It is defined using the the template name "default" and will be applied as a default set of attributes for all nodes of the type in question. Templates other than the default may be applied by setting the `template` attribute of a node to the template name of the desired template. The renderer must generate an error and abort the rendering if a template cannot be found unless the template name is "default".
 
-The `template` attribute may also be used to define templates recursively. The templates are applied in order with each template having the option to override none, some or all of the attributes specified by the previous templates. The feature provides a simple mechanism for creating style variants with deterministic rules for precedence since no attributes are inherited within the content tree. The renderer must detect circularily defined templates and must generate an error and abort the rendering if the situation arises.
+The `template` attribute may also be used to define templates recursively. The templates are applied in order with each template having the option to override none, some or all of the attributes specified by the previous templates. The feature provides a simple mechanism for creating style variants with deterministic rules for precedence since no attributes are inherited within the content tree. The renderer must detect circularily defined templates, generate an error and abort the rendering if such a situation arises.
 
 ```json
 {
@@ -330,7 +346,7 @@ The `template` attribute may also be used to define templates recursively. The t
 }
 ```
 
-> The default style template and the templates "page-header" and "red-page-header" for text nodes are defined in the above example. The "page-header" template extends from the default template while the "red-page-header" extends from the default template as well as the "page-header" template.
+> The default style template and the templates "page-header" and "red-page-header" for text nodes are defined in the above example. The "page-header" template implicitly extends from the default template while the "red-page-header" explicitly extends from the "page-header" template and by that also from the default template.
 
 ### Tool suite
 
@@ -406,3 +422,6 @@ NB: This project targets TypeScript 4 in strict mode.
 * Implement support for multiple text segments in TextNode.
 	Properties columns, gutter, line_height and text_align should stay on TextNode container.
 	Properties line_anchor and white_space mighy stay on TextNode container.
+* Decide whether to drop or keep "font" property.
+* Add support for color profiles.
+* Ignore unknown nodes.
