@@ -393,10 +393,8 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add ImageNode.
 * Add support for compound paths.
 * Improve computation of binary offsets in PDF serialization.
-* Add support for absolute length units.
 * Use "extrinsic" as default width for all node types.
 * Document features.
-* Consider extracting truetype subproject into own project.
 * Move font size into Typesetter.
 * Consider improving handling of missing characters in PDF conversion.
 * Add support for prefix and suffix nodes.
