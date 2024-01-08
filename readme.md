@@ -424,4 +424,5 @@ NB: This project targets TypeScript 4 in strict mode.
 	Properties line_anchor and white_space mighy stay on TextNode container.
 * Decide whether to drop or keep "font" property.
 * Add support for color profiles.
-* Ignore unknown nodes.
+* Remove unused segmentation state.
+* Solve issue with `width` and `height` not being resolved when specified in style templates.
