@@ -241,7 +241,36 @@ The renderer is allowed to use the PostScript name of the fonts to locate the ac
 
 #### Style templates
 
-[TODO]
+Documents may specify style templates for its nodes using the different subproperties of the `templates` property of the document. Each subproperty should when present define the templates using a record of the style attributes for the node in question. The template names are used as keys. The same template name may be used for two unique templates as long as the two templates are specified for two different node types.
+
+* The subproperty `box` may be used to specify templates for box nodes.
+* The subproperty `text` may be used to specify templates for text nodes.
+
+All node types may define a `default` template. It is defined using the the template name "default" and will be applied as a default set of attributes for all nodes of the type in question. Templates other than the default may be applied by setting the `template` attribute of a node to the template name of the desired template. The renderer must generate an error and abort the rendering if a template cannot be found unless the template name is "default".
+
+The `template` attribute may also be used to define templates recursively. The templates are applied in order with each template having the option to override none, some or all of the attributes specified by the previous templates. The feature provides a simple mechanism for creating style variants with deterministic rules for precedence since no attributes are inherited within the layout tree. The renderer must detect circularily defined templates and must generate an error and abort the rendering if the situation arises.
+
+```json
+{
+	"templates": {
+		"text": {
+			"default": {
+				"color": "black",
+				"font_size": 12
+			},
+			"page-header": {
+				"font_size": 20 // Overrides the font size from the default template.
+			},
+			"red-page-header": {
+				"template": "page-header",
+				"color": "red" // Overrides the color from the default template.
+			}
+		}
+	}
+}
+```
+
+> The default style template and the templates "page-header" and "red-page-header" for text nodes are defined in the above example. The "page-header" template extends from the default template while the "red-page-header" extends from the default template as well as the "page-header" template.
 
 ### Tool suite
 
