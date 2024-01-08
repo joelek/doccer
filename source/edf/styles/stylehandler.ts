@@ -95,6 +95,14 @@ export class StyleHandler {
 		return color;
 	}
 
+	protected getNodeLength(length: format.NodeLength | undefined): format.NodeLength | undefined {
+		if (format.Length.is(length)) {
+			return this.getLength(length);
+		} else {
+			return length;
+		}
+	}
+
 	protected getLength(length: format.Length | undefined): format.Length | undefined {
 		if (format.AbsoluteLength.is(length)) {
 			return this.getAbsoluteLength(length);
@@ -121,6 +129,8 @@ export class StyleHandler {
 		style = this.getStyle("box", style, []) ?? {};
 		return {
 			...style,
+			height: this.getNodeLength(style.height),
+			width: this.getNodeLength(style.width),
 			background_color: this.getColor(style.background_color),
 			border_color: this.getColor(style.border_color),
 			border_radius: this.getLength(style.border_radius),
@@ -134,6 +144,8 @@ export class StyleHandler {
 		style = this.getStyle("text", style, []) ?? {};
 		return {
 			...style,
+			height: this.getNodeLength(style.height),
+			width: this.getNodeLength(style.width),
 			color: this.getColor(style.color),
 			font_size: this.getAbsoluteLength(style.font_size),
 			letter_spacing: this.getAbsoluteLength(style.letter_spacing),
@@ -145,7 +157,9 @@ export class StyleHandler {
 	getUnrecognizedStyle(style: format.UnrecognizedNodeStyle | undefined, type: string): format.UnrecognizedNodeStyle | undefined {
 		style = this.getStyle(type as keyof format.Templates, style, []) ?? {};
 		return {
-			...style
+			...style,
+			height: this.getNodeLength(style.height),
+			width: this.getNodeLength(style.width)
 		};
 	}
 };
