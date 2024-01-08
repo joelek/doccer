@@ -425,4 +425,3 @@ NB: This project targets TypeScript 4 in strict mode.
 * Decide whether to drop or keep "font" property.
 * Add support for color profiles.
 * Remove unused segmentation state.
-* Solve issue with `width` and `height` not being resolved when specified in style templates.
