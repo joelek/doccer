@@ -46,9 +46,9 @@ exports.Node = autoguard.guards.Object.of({
     "type": autoguard.guards.String
 }, {});
 exports.ChildNode = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => exports.Node), autoguard.guards.Object.of({}, {}));
-exports.ParentNode = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => exports.ChildNode), autoguard.guards.Object.of({
+exports.ParentNode = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => exports.ChildNode), autoguard.guards.Object.of({}, {
     "children": autoguard.guards.Array.of(autoguard.guards.Reference.of(() => exports.Node))
-}, {}));
+}));
 exports.TextStyle = autoguard.guards.Object.of({}, {
     "color": autoguard.guards.Union.of(autoguard.guards.String, autoguard.guards.StringLiteral.of("transparent"), autoguard.guards.Reference.of(() => exports.Color)),
     "columns": autoguard.guards.Reference.of(() => exports.PositiveInteger),

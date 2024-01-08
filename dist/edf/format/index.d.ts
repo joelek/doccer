@@ -113,9 +113,9 @@ export type ChildNode = autoguard.guards.Intersection<[
 export declare const ParentNode: autoguard.serialization.MessageGuard<ParentNode>;
 export type ParentNode = autoguard.guards.Intersection<[
     autoguard.guards.Reference<ChildNode>,
-    autoguard.guards.Object<{
+    autoguard.guards.Object<{}, {
         "children": autoguard.guards.Array<autoguard.guards.Reference<Node>>;
-    }, {}>
+    }>
 ]>;
 export declare const TextStyle: autoguard.serialization.MessageGuard<TextStyle>;
 export type TextStyle = autoguard.guards.Object<{}, {
@@ -301,9 +301,9 @@ export declare namespace Autoguard {
         }>;
         ParentNode: autoguard.guards.ReferenceGuard<{
             type: string;
-            children: autoguard.guards.Array<{
+            children?: autoguard.guards.Array<{
                 type: string;
-            }>;
+            }> | undefined;
         }>;
         TextStyle: autoguard.guards.ReferenceGuard<{
             color?: string | {
@@ -470,9 +470,9 @@ export declare namespace Autoguard {
         }>;
         BoxNode: autoguard.guards.ReferenceGuard<{
             type: "box";
-            children: autoguard.guards.Array<{
+            children?: autoguard.guards.Array<{
                 type: string;
-            }>;
+            }> | undefined;
             style?: {
                 template?: string | undefined;
                 height?: number | [number] | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
