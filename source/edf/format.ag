@@ -58,7 +58,7 @@ guard ChildNode: Node & {
 };
 
 guard ParentNode: ChildNode & {
-	children: Node[]
+	children?: Node[]
 };
 
 guard TextStyle: {

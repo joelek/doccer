@@ -226,16 +226,16 @@ export type ChildNode = autoguard.guards.Intersection<[
 
 export const ParentNode: autoguard.serialization.MessageGuard<ParentNode> = autoguard.guards.Intersection.of(
 	autoguard.guards.Reference.of(() => ChildNode),
-	autoguard.guards.Object.of({
+	autoguard.guards.Object.of({}, {
 		"children": autoguard.guards.Array.of(autoguard.guards.Reference.of(() => Node))
-	}, {})
+	})
 );
 
 export type ParentNode = autoguard.guards.Intersection<[
 	autoguard.guards.Reference<ChildNode>,
-	autoguard.guards.Object<{
+	autoguard.guards.Object<{}, {
 		"children": autoguard.guards.Array<autoguard.guards.Reference<Node>>
-	}, {}>
+	}>
 ]>;
 
 export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autoguard.guards.Object.of({}, {
