@@ -4,7 +4,7 @@ import * as pdf from "../pdf";
 import * as truetype from "../truetype";
 import { FontHandler, Typesetter } from "./fonts";
 import * as format from "./format";
-import { BoxNode, Document, TextNode } from "./format";
+import { BoxNode, Document, TextNode, UnrecognizedNode } from "./format";
 import * as layout from "./layout";
 import { StyleHandler } from "./styles";
 
@@ -42,7 +42,11 @@ export function createNodeClasses(font_handler: FontHandler, style_handler: Styl
 		return new layout.TextNode(node.content, font_handler.getTypesetter(font), font_handler.getTypeId(font), style);
 	}
 	if (BoxNode.is(node)) {
-		return new layout.BoxNode(style_handler.getBoxStyle(node.style), ...(node?.children ?? []).map((child) => createNodeClasses(font_handler, style_handler, child)));
+		let children = (node?.children ?? []).map((child) => createNodeClasses(font_handler, style_handler, child));
+		return new layout.BoxNode(style_handler.getBoxStyle(node.style), ...children);
+	}
+	if (UnrecognizedNode.is(node)) {
+		return new layout.UnrecognizedNode(style_handler.getUnrecognizedStyle(node.style, node.type));
 	}
 	throw new Error();
 };

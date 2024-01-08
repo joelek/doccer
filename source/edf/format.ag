@@ -104,6 +104,15 @@ guard BoxNode: ParentNode & {
 	style?: BoxNodeStyle
 };
 
+guard UnrecognizedStyle: {};
+
+guard UnrecognizedNodeStyle: Style & NodeStyle & UnrecognizedStyle;
+
+guard UnrecognizedNode: ParentNode & {
+	type: string,
+	style?: UnrecognizedNodeStyle
+};
+
 guard Colors: {
 	Color
 };

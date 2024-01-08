@@ -117,7 +117,7 @@ export class StyleHandler {
 		this.default_unit = default_unit;
 	}
 
-	getBoxStyle(style?: format.BoxNodeStyle): format.BoxNodeStyle | undefined {
+	getBoxStyle(style: format.BoxNodeStyle | undefined): format.BoxNodeStyle | undefined {
 		style = this.getStyle("box", style, []) ?? {};
 		return {
 			...style,
@@ -130,7 +130,7 @@ export class StyleHandler {
 		};
 	}
 
-	getTextStyle(style?: format.TextNodeStyle): format.TextNodeStyle | undefined {
+	getTextStyle(style: format.TextNodeStyle | undefined): format.TextNodeStyle | undefined {
 		style = this.getStyle("text", style, []) ?? {};
 		return {
 			...style,
@@ -139,6 +139,13 @@ export class StyleHandler {
 			letter_spacing: this.getAbsoluteLength(style.letter_spacing),
 			line_height: this.getAbsoluteLength(style.line_height),
 			word_spacing: this.getAbsoluteLength(style.word_spacing)
+		};
+	}
+
+	getUnrecognizedStyle(style: format.UnrecognizedNodeStyle | undefined, type: string): format.UnrecognizedNodeStyle | undefined {
+		style = this.getStyle(type as keyof format.Templates, style, []) ?? {};
+		return {
+			...style
 		};
 	}
 };

@@ -436,6 +436,40 @@ export type BoxNode = autoguard.guards.Intersection<[
 	}>
 ]>;
 
+export const UnrecognizedStyle: autoguard.serialization.MessageGuard<UnrecognizedStyle> = autoguard.guards.Object.of({}, {});
+
+export type UnrecognizedStyle = autoguard.guards.Object<{}, {}>;
+
+export const UnrecognizedNodeStyle: autoguard.serialization.MessageGuard<UnrecognizedNodeStyle> = autoguard.guards.Intersection.of(
+	autoguard.guards.Reference.of(() => Style),
+	autoguard.guards.Reference.of(() => NodeStyle),
+	autoguard.guards.Reference.of(() => UnrecognizedStyle)
+);
+
+export type UnrecognizedNodeStyle = autoguard.guards.Intersection<[
+	autoguard.guards.Reference<Style>,
+	autoguard.guards.Reference<NodeStyle>,
+	autoguard.guards.Reference<UnrecognizedStyle>
+]>;
+
+export const UnrecognizedNode: autoguard.serialization.MessageGuard<UnrecognizedNode> = autoguard.guards.Intersection.of(
+	autoguard.guards.Reference.of(() => ParentNode),
+	autoguard.guards.Object.of({
+		"type": autoguard.guards.String
+	}, {
+		"style": autoguard.guards.Reference.of(() => UnrecognizedNodeStyle)
+	})
+);
+
+export type UnrecognizedNode = autoguard.guards.Intersection<[
+	autoguard.guards.Reference<ParentNode>,
+	autoguard.guards.Object<{
+		"type": autoguard.guards.String
+	}, {
+		"style": autoguard.guards.Reference<UnrecognizedNodeStyle>
+	}>
+]>;
+
 export const Colors: autoguard.serialization.MessageGuard<Colors> = autoguard.guards.Record.of(autoguard.guards.Reference.of(() => Color));
 
 export type Colors = autoguard.guards.Record<autoguard.guards.Reference<Color>>;
@@ -515,6 +549,9 @@ export namespace Autoguard {
 		"BoxStyle": autoguard.guards.Reference.of(() => BoxStyle),
 		"BoxNodeStyle": autoguard.guards.Reference.of(() => BoxNodeStyle),
 		"BoxNode": autoguard.guards.Reference.of(() => BoxNode),
+		"UnrecognizedStyle": autoguard.guards.Reference.of(() => UnrecognizedStyle),
+		"UnrecognizedNodeStyle": autoguard.guards.Reference.of(() => UnrecognizedNodeStyle),
+		"UnrecognizedNode": autoguard.guards.Reference.of(() => UnrecognizedNode),
 		"Colors": autoguard.guards.Reference.of(() => Colors),
 		"Metadata": autoguard.guards.Reference.of(() => Metadata),
 		"Templates": autoguard.guards.Reference.of(() => Templates),
