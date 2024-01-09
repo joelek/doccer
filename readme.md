@@ -424,4 +424,10 @@ NB: This project targets TypeScript 4 in strict mode.
 	Properties line_anchor and white_space mighy stay on TextNode container.
 * Decide whether to drop or keep "font" property.
 * Add support for color profiles.
+	The built-in color spaces /DeviceGray, /DeviceRGB and /DeviceCMYK exist.
+	The command CS sets stroke color space.
+	The command cs sets fill color space.
+	The command SC sets stroke color (1-4 operands).
+	the command sc sets fill color (1-4 operands).
+	Can embed ICC color spaces as resources (see page 149).
 * Remove unused segmentation state.
