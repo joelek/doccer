@@ -422,6 +422,7 @@ NB: This project targets TypeScript 4 in strict mode.
 * Implement support for multiple text segments in TextNode.
 	Properties columns, gutter, line_height and text_align should stay on TextNode container.
 	Properties line_anchor and white_space mighy stay on TextNode container.
+	Style templates should be supported for each individual segment.
 * Decide whether to drop or keep "font" property.
 * Add support for color profiles.
 	The built-in color spaces /DeviceGray, /DeviceRGB and /DeviceCMYK exist.
