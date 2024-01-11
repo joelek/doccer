@@ -116,17 +116,17 @@ exports.DocumentUtils = {
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontName"), new pdf.format.PDFName(typesetter.getPostscriptName() ?? "Unknown")),
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("Flags"), new pdf.format.PDFInteger(32)),
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontBBox"), new pdf.format.PDFArray([
-                        new pdf.format.PDFReal(truetype_font.head.x_min),
-                        new pdf.format.PDFReal(truetype_font.head.y_min),
-                        new pdf.format.PDFReal(truetype_font.head.x_max),
-                        new pdf.format.PDFReal(truetype_font.head.y_max)
+                        new pdf.format.PDFReal(Math.round(truetype_font.head.x_min / truetype_font.head.units_per_em * 1000)),
+                        new pdf.format.PDFReal(Math.round(truetype_font.head.y_min / truetype_font.head.units_per_em * 1000)),
+                        new pdf.format.PDFReal(Math.round(truetype_font.head.x_max / truetype_font.head.units_per_em * 1000)),
+                        new pdf.format.PDFReal(Math.round(truetype_font.head.y_max / truetype_font.head.units_per_em * 1000))
                     ])),
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("ItalicAngle"), new pdf.format.PDFReal(typesetter.getItalicAngle())),
-                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("Ascent"), new pdf.format.PDFReal(typesetter.getAscent(false))),
-                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("Descent"), new pdf.format.PDFReal(typesetter.getDescent(false))),
-                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("CapHeight"), new pdf.format.PDFReal(typesetter.getCapHeight(false))),
-                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("XHeight"), new pdf.format.PDFReal(typesetter.getXHeight(false))),
-                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("StemV"), new pdf.format.PDFReal(typesetter.getStemWidth(false))),
+                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("Ascent"), new pdf.format.PDFReal(Math.round(typesetter.getAscent() * 1000))),
+                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("Descent"), new pdf.format.PDFReal(Math.round(typesetter.getDescent() * 1000))),
+                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("CapHeight"), new pdf.format.PDFReal(Math.round(typesetter.getCapHeight() * 1000))),
+                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("XHeight"), new pdf.format.PDFReal(Math.round(typesetter.getXHeight() * 1000))),
+                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("StemV"), new pdf.format.PDFReal(Math.round(typesetter.getStemWidth() * 1000))),
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("FontFile2"), pdf_font_file.getReference())
                 ]));
                 pdf_file.objects.push(pdf_font_descriptor);
@@ -134,7 +134,7 @@ exports.DocumentUtils = {
                 for (let [index, metric] of truetype_font.hmtx.metrics.entries()) {
                     widths.elements.push(new pdf.format.PDFInteger(index));
                     widths.elements.push(new pdf.format.PDFArray([
-                        new pdf.format.PDFReal(metric.advance_width)
+                        new pdf.format.PDFReal(Math.round(metric.advance_width / truetype_font.head.units_per_em * 1000))
                     ]));
                 }
                 let pdf_cid_font_type2 = new pdf.format.PDFObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([

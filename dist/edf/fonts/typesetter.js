@@ -13,28 +13,18 @@ class Typesetter {
     font_family;
     font_weight;
     options;
-    getCharacterBox(character, normalized = true) {
+    getCharacterBox(character) {
         let box = this.glyph_data.get(character)?.box ?? this.fallback_box;
-        if (normalized) {
-            return {
-                x_min: box.x_min * this.scale_factor,
-                y_min: box.y_min * this.scale_factor,
-                x_max: box.x_max * this.scale_factor,
-                y_max: box.y_max * this.scale_factor
-            };
-        }
-        else {
-            return box;
-        }
+        return {
+            x_min: box.x_min * this.scale_factor,
+            y_min: box.y_min * this.scale_factor,
+            x_max: box.x_max * this.scale_factor,
+            y_max: box.y_max * this.scale_factor
+        };
     }
-    getWidth(character, normalized = true) {
+    getWidth(character) {
         let width = this.widths.get(character) ?? this.fallback_width;
-        if (normalized) {
-            return width * this.scale_factor;
-        }
-        else {
-            return width;
-        }
+        return width * this.scale_factor;
     }
     getKerning(prefix, suffix) {
         if (prefix === "") {
@@ -161,16 +151,16 @@ class Typesetter {
             }
         ];
     }
-    getAscent(normalized = true) {
-        let box = this.getCharacterBox("", normalized);
+    getAscent() {
+        let box = this.getCharacterBox("");
         return box.y_max;
     }
-    getCapHeight(normalized = true) {
-        let box = this.getCharacterBox("I", normalized);
+    getCapHeight() {
+        let box = this.getCharacterBox("I");
         return box.y_max;
     }
-    getDescent(normalized = true) {
-        let box = this.getCharacterBox("", normalized);
+    getDescent() {
+        let box = this.getCharacterBox("");
         return box.y_min;
     }
     getFontFamily() {
@@ -188,12 +178,12 @@ class Typesetter {
     getPostscriptName() {
         return this.postscript_name;
     }
-    getStemWidth(normalized = true) {
-        let box = this.getCharacterBox("l", normalized);
+    getStemWidth() {
+        let box = this.getCharacterBox("l");
         return box.x_max - box.x_min;
     }
-    getXHeight(normalized = true) {
-        let box = this.getCharacterBox("x", normalized);
+    getXHeight() {
+        let box = this.getCharacterBox("x");
         return box.y_max;
     }
     getGlyphIndexArray(string) {
