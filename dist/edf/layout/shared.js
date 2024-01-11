@@ -203,13 +203,13 @@ const DPI72_POINTS_PER_CM = 72 / 2.54;
 exports.AbsoluteLength = {
     getComputedLength(length, default_unit) {
         if (typeof length === "number") {
-            length = [length];
+            if (default_unit == null) {
+                return length;
+            }
+            length = [length, default_unit];
         }
         let value = length[0];
-        let unit = length[1] ?? default_unit;
-        if (unit == null) {
-            return value;
-        }
+        let unit = length[1];
         if (unit === "pt") {
             return value * DPI72_POINTS_PER_PT;
         }
@@ -239,7 +239,7 @@ exports.AbsoluteLength = {
 exports.Length = {
     getComputedLength(length, relative_to) {
         if (typeof length === "number") {
-            length = [length];
+            return length;
         }
         if (length[1] === "%") {
             if (relative_to == null) {

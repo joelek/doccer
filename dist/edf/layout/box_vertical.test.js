@@ -57,7 +57,7 @@ class MockRemainingHeightNode extends shared_1.ChildNode {
 }
 ;
 wtf.test(`BoxNode with layout "vertical" should support children with fractional widths.`, (assert) => {
-    let node = new box_1.BoxNode({ layout: "vertical", width: 10, gap: [1] }, new MockNode({ width: [1, "fr"] }), new MockNode({ width: [2] }), new MockNode({ width: [2, "fr"] }));
+    let node = new box_1.BoxNode({ layout: "vertical", width: 10, gap: 1 }, new MockNode({ width: [1, "fr"] }), new MockNode({ width: 2 }), new MockNode({ width: [2, "fr"] }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -103,7 +103,7 @@ wtf.test(`BoxNode with layout "vertical" should support children with fractional
     ]);
 });
 wtf.test(`BoxNode with layout "vertical" should support children with fractional heights.`, (assert) => {
-    let node = new box_1.BoxNode({ layout: "vertical", height: 10, gap: [1] }, new MockNode({ height: [1, "fr"] }), new MockNode({ height: [2] }), new MockNode({ height: [2, "fr"] }));
+    let node = new box_1.BoxNode({ layout: "vertical", height: 10, gap: 1 }, new MockNode({ height: [1, "fr"] }), new MockNode({ height: 2 }), new MockNode({ height: [2, "fr"] }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {
@@ -1158,7 +1158,7 @@ wtf.test(`BoxNode with layout "vertical" should support align y "bottom" when th
     ]);
 });
 wtf.test(`BoxNode with layout "vertical" should support gap.`, (assert) => {
-    let node = new box_1.BoxNode({ layout: "vertical", gap: [1] }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
+    let node = new box_1.BoxNode({ layout: "vertical", gap: 1 }, new MockSegmentedNode({ w: 0, h: 2 }), new MockSegmentedNode({ w: 0, h: 2 }));
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
     assert.equals(atoms, [
         {

@@ -22,7 +22,7 @@ exports.CMYKColor = autoguard.guards.Object.of({
     "k": autoguard.guards.Reference.of(() => exports.ColorComponent)
 }, {});
 exports.Color = autoguard.guards.Union.of(autoguard.guards.Reference.of(() => exports.GrayscaleColor), autoguard.guards.Reference.of(() => exports.RGBColor), autoguard.guards.Reference.of(() => exports.CMYKColor));
-exports.UnitlessLength = autoguard.guards.Union.of(autoguard.guards.Reference.of(() => exports.NonNegativeNumber), autoguard.guards.Tuple.of(autoguard.guards.Reference.of(() => exports.NonNegativeNumber)));
+exports.UnitlessLength = autoguard.guards.Reference.of(() => exports.NonNegativeNumber);
 exports.AbsoluteUnit = autoguard.guards.Union.of(autoguard.guards.StringLiteral.of("pt"), autoguard.guards.StringLiteral.of("in"), autoguard.guards.StringLiteral.of("pc"), autoguard.guards.StringLiteral.of("mm"), autoguard.guards.StringLiteral.of("cm"));
 exports.AbsoluteLength = autoguard.guards.Union.of(autoguard.guards.Reference.of(() => exports.UnitlessLength), autoguard.guards.Tuple.of(autoguard.guards.Reference.of(() => exports.NonNegativeNumber), autoguard.guards.Reference.of(() => exports.AbsoluteUnit)));
 exports.RelativeUnit = autoguard.guards.StringLiteral.of("%");
