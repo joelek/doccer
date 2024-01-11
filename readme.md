@@ -421,7 +421,7 @@ NB: This project targets TypeScript 4 in strict mode.
 * Consider adding variables to EDF format.
 * Implement support for multiple text segments in TextNode.
 	Properties columns, gutter, line_height and text_align should stay on TextNode container.
-	Properties line_anchor and white_space mighy stay on TextNode container.
+	Properties line_anchor and white_space might stay on TextNode container.
 	Style templates should be supported for each individual segment.
 * Decide whether to drop or keep "font" property.
 * Add support for color profiles.
@@ -432,3 +432,4 @@ NB: This project targets TypeScript 4 in strict mode.
 	the command sc sets fill color (1-4 operands).
 	Can embed ICC color spaces as resources (see page 149).
 * Remove unused segmentation state.
+* Implement font subsetting.
