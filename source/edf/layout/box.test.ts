@@ -369,7 +369,7 @@ wtf.test(`BoxNode should support border color.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support border radius when clipping.`, (assert) => {
-	let node = new BoxNode({ border_radius: [1], overflow: "hidden", width: 4, height: 4 });
+	let node = new BoxNode({ border_radius: 1, overflow: "hidden", width: 4, height: 4 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -425,7 +425,7 @@ wtf.test(`BoxNode should support border radius "20%" when clipping.`, (assert) =
 });
 
 wtf.test(`BoxNode should support border radius when filling.`, (assert) => {
-	let node = new BoxNode({ border_radius: [1], background_color: { r: 0, g: 0, b: 0 }, width: 4, height: 4 });
+	let node = new BoxNode({ border_radius: 1, background_color: { r: 0, g: 0, b: 0 }, width: 4, height: 4 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -481,7 +481,7 @@ wtf.test(`BoxNode should support border radius "20%" when filling.`, (assert) =>
 });
 
 wtf.test(`BoxNode should support border radius when stroking.`, (assert) => {
-	let node = new BoxNode({ border_radius: [2], border_width: [1], width: 8, height: 8 });
+	let node = new BoxNode({ border_radius: 2, border_width: 1, width: 8, height: 8 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -510,7 +510,7 @@ wtf.test(`BoxNode should support border radius when stroking.`, (assert) => {
 });
 
 wtf.test(`BoxNode should support border radius "20%" when stroking.`, (assert) => {
-	let node = new BoxNode({ border_radius: [20, "%"], border_width: [1], width: 50, height: 50 });
+	let node = new BoxNode({ border_radius: [20, "%"], border_width: 1, width: 50, height: 50 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -539,7 +539,7 @@ wtf.test(`BoxNode should support border radius "20%" when stroking.`, (assert) =
 });
 
 wtf.test(`BoxNode should reduce border radius when greater than 50% of width.`, (assert) => {
-	let node = new BoxNode({ border_radius: [6], overflow: "hidden", width: 10, height: 50 });
+	let node = new BoxNode({ border_radius: 6, overflow: "hidden", width: 10, height: 50 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -567,7 +567,7 @@ wtf.test(`BoxNode should reduce border radius when greater than 50% of width.`, 
 });
 
 wtf.test(`BoxNode should reduce border radius when greater than 50% of height.`, (assert) => {
-	let node = new BoxNode({ border_radius: [6], overflow: "hidden", width: 50, height: 10 });
+	let node = new BoxNode({ border_radius: 6, overflow: "hidden", width: 50, height: 10 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -595,7 +595,7 @@ wtf.test(`BoxNode should reduce border radius when greater than 50% of height.`,
 });
 
 wtf.test(`BoxNode should support border width.`, (assert) => {
-	let node = new BoxNode({ border_width: [1] });
+	let node = new BoxNode({ border_width: 1 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{
@@ -645,7 +645,7 @@ wtf.test(`BoxNode should support border width "20%".`, (assert) => {
 });
 
 wtf.test(`BoxNode should support padding.`, (assert) => {
-	let node = new BoxNode({ padding: [1] },
+	let node = new BoxNode({ padding: 1 },
 		new MockSegmentedNode({ w: 2, h: 2 })
 	);
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
@@ -703,7 +703,7 @@ wtf.test(`BoxNode should support padding "20%".`, (assert) => {
 });
 
 wtf.test(`BoxNode should provide children with the correct target size.`, (assert) => {
-	let node = new BoxNode({ padding: [1], width: 4, height: 4 },
+	let node = new BoxNode({ padding: 1, width: 4, height: 4 },
 		new MockNode({ width: "extrinsic", height: "extrinsic" })
 	);
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });

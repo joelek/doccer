@@ -64,19 +64,9 @@ export type Color = autoguard.guards.Union<[
 	autoguard.guards.Reference<CMYKColor>
 ]>;
 
-export const UnitlessLength: autoguard.serialization.MessageGuard<UnitlessLength> = autoguard.guards.Union.of(
-	autoguard.guards.Reference.of(() => NonNegativeNumber),
-	autoguard.guards.Tuple.of(
-		autoguard.guards.Reference.of(() => NonNegativeNumber)
-	)
-);
+export const UnitlessLength: autoguard.serialization.MessageGuard<UnitlessLength> = autoguard.guards.Reference.of(() => NonNegativeNumber);
 
-export type UnitlessLength = autoguard.guards.Union<[
-	autoguard.guards.Reference<NonNegativeNumber>,
-	autoguard.guards.Tuple<[
-		autoguard.guards.Reference<NonNegativeNumber>
-	]>
-]>;
+export type UnitlessLength = autoguard.guards.Reference<NonNegativeNumber>;
 
 export const AbsoluteUnit: autoguard.serialization.MessageGuard<AbsoluteUnit> = autoguard.guards.Union.of(
 	autoguard.guards.StringLiteral.of("pt"),

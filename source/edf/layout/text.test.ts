@@ -1806,7 +1806,7 @@ wtf.test(`TextNode should support font size.`, (assert) => {
 });
 
 wtf.test(`TextNode should support gutter.`, (assert) => {
-	let node = new TextNode("aa bb", TYPESETTER, 0, { columns: 2, gutter: [2], width: 6 });
+	let node = new TextNode("aa bb", TYPESETTER, 0, { columns: 2, gutter: 2, width: 6 });
 	let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
 	assert.equals(atoms, [
 		{

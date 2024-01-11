@@ -85,7 +85,7 @@ The format supports the absolute units points `pt`, inches `in`, picas `pc`, mil
 
 > Millimeters is specified as the default unit in the above example.
 
-A length shall be specified as a two-element array when specified with a unit. The array shall contain a non-negative number and a unit expressed as a string `[5, "mm"]`. A length may also be specified as either a single-element array containing a non-negative number `[5]` or simply a non-negative number when the unit is omitted `5`.
+A length shall be specified as a two-element array when specified with a unit. The array shall contain a non-negative number and a unit expressed as a string `[5, "mm"]`. A length shall be specified as a non-negative number when the unit is omitted `5`.
 
 #### Relative lengths and units
 
