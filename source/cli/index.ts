@@ -54,8 +54,8 @@ function edf2pdf(): void {
 
 function embed(): void {
 	let options = {
-		source: undefined as string | undefined,
-		target: undefined as string | undefined
+		source: "stdin" as string | undefined,
+		target: "stdout" as string | undefined
 	};
 	let unrecognized_arguments = [] as Array<string>;
 	for (let [index, arg] of process.argv.slice(3).entries()) {
@@ -92,18 +92,20 @@ function embed(): void {
 		process.stderr.write(`		Set target file.\n`);
 		process.exit(0);
 	} else {
-		let json = JSON.parse(libfs.readFileSync(options.source, "utf8"));
+		let source = options.source === "stdin" ? process.stdin.fd : options.source;
+		let target = options.target === "stdout" ? process.stdout.fd : options.target;
+		let json = JSON.parse(libfs.readFileSync(source, "utf8"));
 		let edf = lib.edf.format.Document.as(json);
 		let embedded_edf = lib.edf.document.DocumentUtils.embedResources(edf);
-		libfs.writeFileSync(options.target, JSON.stringify(embedded_edf, null, "\t"));
+		libfs.writeFileSync(target, JSON.stringify(embedded_edf, null, "\t"));
 		process.exit(0);
 	}
 }
 
 function parsefont(): void {
 	let options = {
-		source: undefined as string | undefined,
-		target: undefined as string | undefined
+		source: "stdin" as string | undefined,
+		target: "stdout" as string | undefined
 	};
 	let unrecognized_arguments = [] as Array<string>;
 	for (let [index, arg] of process.argv.slice(3).entries()) {
@@ -140,9 +142,11 @@ function parsefont(): void {
 		process.stderr.write(`		Set target file.\n`);
 		process.exit(0);
 	} else {
-		let buffer = libfs.readFileSync(options.source).buffer;
+		let source = options.source === "stdin" ? process.stdin.fd : options.source;
+		let target = options.target === "stdout" ? process.stdout.fd : options.target;
+		let buffer = libfs.readFileSync(source).buffer;
 		let ttdata = lib.truetype.parseTrueTypeData(buffer);
-		libfs.writeFileSync(options.target, JSON.stringify(ttdata, (key, value) => {
+		libfs.writeFileSync(target, JSON.stringify(ttdata, (key, value) => {
 			if (typeof value === "bigint") {
 				return value.toString(16);
 			} else {
