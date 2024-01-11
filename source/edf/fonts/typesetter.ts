@@ -35,27 +35,19 @@ export class Typesetter {
 	protected font_weight?: number;
 	protected options: Options;
 
-	protected getCharacterBox(character: string, normalized: boolean = true): Box {
+	protected getCharacterBox(character: string): Box {
 		let box = this.glyph_data.get(character)?.box ?? this.fallback_box;
-		if (normalized) {
-			return {
-				x_min: box.x_min * this.scale_factor,
-				y_min: box.y_min * this.scale_factor,
-				x_max: box.x_max * this.scale_factor,
-				y_max: box.y_max * this.scale_factor
-			};
-		} else {
-			return box;
-		}
+		return {
+			x_min: box.x_min * this.scale_factor,
+			y_min: box.y_min * this.scale_factor,
+			x_max: box.x_max * this.scale_factor,
+			y_max: box.y_max * this.scale_factor
+		};
 	}
 
-	protected getWidth(character: string, normalized: boolean = true): number {
+	protected getWidth(character: string): number {
 		let width = this.widths.get(character) ?? this.fallback_width;
-		if (normalized) {
-			return width * this.scale_factor;
-		} else {
-			return width;
-		}
+		return width * this.scale_factor;
 	}
 
 	protected getKerning(prefix: string, suffix: string): number {
@@ -185,18 +177,18 @@ export class Typesetter {
 		];
 	}
 
-	getAscent(normalized: boolean = true): number {
-		let box = this.getCharacterBox("", normalized);
+	getAscent(): number {
+		let box = this.getCharacterBox("");
 		return box.y_max;
 	}
 
-	getCapHeight(normalized: boolean = true): number {
-		let box = this.getCharacterBox("I", normalized);
+	getCapHeight(): number {
+		let box = this.getCharacterBox("I");
 		return box.y_max;
 	}
 
-	getDescent(normalized: boolean = true): number {
-		let box = this.getCharacterBox("", normalized);
+	getDescent(): number {
+		let box = this.getCharacterBox("");
 		return box.y_min;
 	}
 
@@ -220,13 +212,13 @@ export class Typesetter {
 		return this.postscript_name;
 	}
 
-	getStemWidth(normalized: boolean = true): number {
-		let box = this.getCharacterBox("l", normalized);
+	getStemWidth(): number {
+		let box = this.getCharacterBox("l");
 		return box.x_max - box.x_min;
 	}
 
-	getXHeight(normalized: boolean = true): number {
-		let box = this.getCharacterBox("x", normalized);
+	getXHeight(): number {
+		let box = this.getCharacterBox("x");
 		return box.y_max;
 	}
 
