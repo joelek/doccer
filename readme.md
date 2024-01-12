@@ -372,6 +372,20 @@ All resources will be properly embedded into the target file, making it truly po
 [npx] doccer embed <source> <target>
 ```
 
+* The keyword `stdin` may be used to indicate that standard input should be used as the source.
+* The keyword `stdout` may be used to indicate that standard output should be used as the target.
+
+#### Parse font file into JSON format
+
+A font file may be parsed using the `parsefont` command. The source file is specified using the first positional argument or using the `--source=<string>` argument.The target file is specified using the second positional argument or using the `--target=<string>` argument.
+
+```
+[npx] doccer parsefont <source> <target>
+```
+
+* The keyword `stdin` may be used to indicate that standard input should be used as the source.
+* The keyword `stdout` may be used to indicate that standard output should be used as the target.
+
 ## Sponsorship
 
 The continued development of this software depends on your sponsorship. Please consider sponsoring this project if you find that the software creates value for you and your organization.
