@@ -364,7 +364,7 @@ export abstract class Node {
 					{
 						size: {
 							w: 0,
-							h: Math.round(segment_left.h * 1000) * 0.001 // TODO: Fix precision issue.
+							h: Math.floor(segment_left.h * 1000) * 0.001 // TODO: Fix precision issue.
 						}
 					}
 				];
