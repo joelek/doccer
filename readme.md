@@ -449,3 +449,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Implement font subsetting.
 * Add context helper for creating instances of layout nodes.
 * Add page-break control to all node types.
+* Use precise sizes and positions in layout computations.
