@@ -447,3 +447,5 @@ NB: This project targets TypeScript 4 in strict mode.
 	Can embed ICC color spaces as resources (see page 149).
 * Remove unused segmentation state.
 * Implement font subsetting.
+* Add context helper for creating instances of layout nodes.
+* Add page-break control to all node types.
