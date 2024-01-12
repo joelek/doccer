@@ -209,6 +209,190 @@ wtf.test(`BoxNode should support segmentation "auto".`, (assert) => {
 	]);
 });
 
+wtf.test(`BoxNode should support segmentation_threshold 0 when height used is 0%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 0 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 10 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support segmentation_threshold 0 when height used is 25%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 0 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 7.5 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 7.5
+			}
+		},
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support segmentation_threshold 0 when height used is 50%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 0 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 5 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 5
+			}
+		},
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support segmentation_threshold 0 when height used is 75%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 0 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2.5 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 2.5
+			}
+		},
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support segmentation_threshold 0 when height used is 100%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 0 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 0 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			}
+		},
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support segmentation_threshold 1 when height used is 0%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 1 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 10 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support segmentation_threshold 1 when height used is 25%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 1 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 7.5 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support segmentation_threshold 1 when height used is 50%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 1 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 5 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support segmentation_threshold 1 when height used is 75%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 1 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2.5 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
+wtf.test(`BoxNode should support segmentation_threshold 1 when height used is 100%.`, (assert) => {
+	let node = new BoxNode({ segmentation_threshold: 1 });
+	let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 0 });
+	assert.equals(atoms, [
+		{
+			"size": {
+				"w": 0,
+				"h": 0
+			},
+			"atoms": [],
+			"prefix": [],
+			"suffix": []
+		}
+	]);
+});
+
 wtf.test(`BoxNode should support segmentation "none".`, (assert) => {
 	let node = new BoxNode({ segmentation: "none" },
 		new MockSegmentedNode({ w: 0, h: 2 }),

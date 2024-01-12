@@ -297,7 +297,15 @@ The overflow behaviour of the node may be specified through the `overflow` attri
 
 **segmentation**
 
-The segmentation behaviour of the node may be specified through the `segmentation` attribute. The attribute should when present be specified as a string assuming either the value "auto" or the value "none". The default value is "auto" when the height of the node is "intrinsic" and "none" otherwise. It is invalid to specify the segmentation behaviour as "auto" while also specifying the height as "intrinsic". The renderer should display a warning and abort the rendering if such a situation arises.
+The segmentation behaviour of the node may be specified through the `segmentation` attribute. The attribute should when present be specified as a string assuming either the value "auto" or the value "none". The default value is "auto" when the height of the node is "intrinsic" and "none" otherwise. It is invalid to specify the segmentation behaviour as "auto" while also specifying the height as "intrinsic". The renderer should display an error and abort the rendering if such a situation arises.
+
+**segmentation_threshold**
+
+The threshold for when to automatically create a new segment in which to place the node may be specified through the `segmentation_threshold` attribute. The attribute should when present be specified as a number between the values 0 and 1. The default value is 1.0.
+
+Setting the value of the attribute to 0.0 will automatically create a new segment when more than 0% of the segment height is already used. Setting the value of the attribute to 1.0 will automatically create a new segment when more than 100% of the segment height is already used.
+
+Setting the value of the attribute to 0.0 will ensure that the node is always placed at the start of a new segment. Setting the value of the attribute to 1.0 will ensure that the node is always positioned using the normal positioning algorithm. The behaviour when setting the attribute to a value between 0.0 and 1.0 will use either strategy depending on the amount of height left in the current segment.
 
 **template**
 

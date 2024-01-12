@@ -46,6 +46,7 @@ guard NodeStyle: {
 	height?: NodeLength,
 	overflow?: "hidden" | "visible",
 	segmentation?: "auto" | "none",
+	segmentation_threshold?: number(0, 1),
 	width?: NodeLength
 };
 

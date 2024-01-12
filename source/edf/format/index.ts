@@ -180,6 +180,7 @@ export const NodeStyle: autoguard.serialization.MessageGuard<NodeStyle> = autogu
 		autoguard.guards.StringLiteral.of("auto"),
 		autoguard.guards.StringLiteral.of("none")
 	),
+	"segmentation_threshold": new autoguard.guards.NumberGuard(0, 1),
 	"width": autoguard.guards.Reference.of(() => NodeLength)
 });
 
@@ -193,6 +194,7 @@ export type NodeStyle = autoguard.guards.Object<{}, {
 		autoguard.guards.StringLiteral<"auto">,
 		autoguard.guards.StringLiteral<"none">
 	]>,
+	"segmentation_threshold": autoguard.guards.Number,
 	"width": autoguard.guards.Reference<NodeLength>
 }>;
 

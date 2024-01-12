@@ -356,6 +356,23 @@ export abstract class Node {
 		return context.getCommands();
 	}
 
+	protected getPushSegments(segment_size: Size, segment_left: Size): Array<Atom> {
+		if (this.node_style.segmentation === "auto" && Number.isFinite(segment_left.h) && Number.isFinite(segment_size.h)) {
+			let segment_used = (segment_size.h - segment_left.h) / segment_size.h;
+			if (segment_used > this.node_style.segmentation_threshold) {
+				return [
+					{
+						size: {
+							w: 0,
+							h: segment_left.h - 0.001 // TODO: Fix precision issue.
+						}
+					}
+				];
+			}
+		}
+		return [];
+	}
+
 	protected getSegmentLeft(segment_left: Size): Size {
 		if (this.node_style.segmentation === "auto") {
 			return segment_left;
@@ -372,6 +389,7 @@ export abstract class Node {
 		let height = style.height ?? "intrinsic";
 		let overflow = style.overflow ?? "visible";
 		let segmentation = style.segmentation ?? (height === "intrinsic" ? "auto" : "none");
+		let segmentation_threshold = style.segmentation_threshold ?? 1.0;
 		if (segmentation === "auto" && height !== "intrinsic") {
 			throw new Error();
 		}
@@ -379,6 +397,7 @@ export abstract class Node {
 		this.node_style = {
 			height,
 			overflow,
+			segmentation_threshold,
 			segmentation,
 			width
 		};

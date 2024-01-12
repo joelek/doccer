@@ -490,6 +490,10 @@ export class BoxNode extends ParentNode {
 
 	createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom> {
 		segment_left = this.getSegmentLeft(segment_left);
+		let push_segments = this.getPushSegments(segment_size, segment_left);
+		if (push_segments.length > 0) {
+			segment_left = { ...segment_size };
+		}
 		target_size = target_size ?? Node.getTargetSize(this, segment_size);
 		options = options ?? {};
 		let border_radius = Length.getComputedLength(this.style.border_radius, target_size.w);
@@ -528,6 +532,9 @@ export class BoxNode extends ParentNode {
 				...this.createSuffixCommands(path)
 			];
 		}
-		return segments;
+		return [
+			...push_segments,
+			...segments
+		];
 	}
 };
