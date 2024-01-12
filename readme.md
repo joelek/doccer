@@ -261,9 +261,7 @@ The `content` property of the document must be used to specify the root node of 
 
 ```json
 {
-	"content": {
-		"type": "a-child-node"
-	}
+	"type": "a-child-node"
 }
 ```
 
@@ -285,7 +283,7 @@ Direct or indirect child nodes of intrinsically-sized nodes may not specify thei
 
 #### Style attributes
 
-All nodes may define style attributes using the `style` property of the node. The property should when present specify any subset of the common and specific style attributes for the node type of the node in question. The common attributes are available for every node type and should be specified as detailed below when present.
+All nodes may define style attributes using the `style` property of the node. The property should when present specify any subset of the common and specific style attributes for the node type of the node in question. The common attributes are available for every node type and should when present be specified as detailed below.
 
 **height**
 
@@ -301,11 +299,9 @@ The segmentation behaviour of the node may be specified through the `segmentatio
 
 **segmentation_threshold**
 
-The threshold for when to automatically create a new segment in which to place the node may be specified through the `segmentation_threshold` attribute. The attribute should when present be specified as a number between the values 0 and 1. The default value is 1.0.
+The threshold for when to automatically create a new segment in which to place the node may be specified through the `segmentation_threshold` attribute. The attribute should when present be specified as a number between the values 0.0 and 1.0. The default value is 1.0.
 
-Setting the value of the attribute to 0.0 will automatically create a new segment when more than 0% of the segment height is already used. Setting the value of the attribute to 1.0 will automatically create a new segment when more than 100% of the segment height is already used.
-
-Setting the value of the attribute to 0.0 will ensure that the node is always placed at the start of a new segment. Setting the value of the attribute to 1.0 will ensure that the node is always positioned using the normal positioning algorithm. The behaviour when setting the attribute to a value between 0.0 and 1.0 will use either strategy depending on the amount of height left in the current segment.
+Setting the value of the attribute to 0.0 will ensure that the node is placed at the start of a new segment. Setting the value of the attribute to 1.0 will ensure that the node is placed at its natural position within the layout flow. The behaviour when setting the attribute to a value between 0.0 and 1.0 is to use either strategy depending on the amount of height left in the current segment. The segmentation algorithm is subsequently applied to the node regardless of the value set.
 
 **template**
 
@@ -317,11 +313,119 @@ The width of the node may be specified through the `width` attribute. The attrib
 
 #### Box nodes
 
-[TODO]
+Box nodes are identified through the type attribute of a node being set to the value `box`. Box nodes are parent nodes and may contain any number of children.
+
+```json
+{
+	"type": "box",
+	"children": [
+		// ...
+	]
+}
+```
+
+> A box node is defined in the above example.
+
+**align_x**
+
+The horizontal alignment of the child nodes within the box node may be specified through the `align_x` attribute. The attribute should when present be specified as a string assuming either the value "left", the value "center" or the value "right". The default value is "left".
+
+**align_y**
+
+The vertical alignment of the child nodes within the box node may be specified through the `align_y` attribute. The attribute should when present be specified as a string assuming either the value "top", the value "middle" or the value "bottom". The default value is "top".
+
+**background_color**
+
+The background color of the box node may be specified through the `background_color` attribute. The attribute should when present be specified as a color or as a string assuming the value "transparent". The default value is "transparent".
+
+**border_color**
+
+The border color of the box node may be specified through the `border_color` attribute. The attribute should when present be specified as a color or as a string assuming the value "transparent". The default value is "transparent".
+
+**border_radius**
+
+The border radius of the box node may be specified through the `border_radius` attribute. The attribute should when present be specified as either a unitless length, an absolute length or a relative length. The default value is 0.
+
+**border_width**
+
+The border width of the box node may be specified through the `border_width` attribute. The attribute should when present be specified as either a unitless length, an absolute length or a relative length. The default value is 0.
+
+**gap**
+
+The gap between the child nodes within the box node may be specified through the `gap` attribute. The attribute should when present be specified as either a unitless length, an absolute length or a relative length. The default value is 0.
+
+**layout**
+
+The layout axis of the box node may be specified through the `layout` attribute. The attribute should when present be specified as a string assuming either the value "vertical" or the value "horizontal". The default value is "vertical".
+
+**padding**
+
+The padding of the box node may be specified through the `padding` attribute. The attribute should when present be specified as either a unitless length, an absolute length or a relative length. The default value is 0.
 
 #### Text nodes
 
-[TODO]
+Text nodes are identified through the type attribute of a node being set to the value `text`. Text nodes are child nodes and may not contain any children of their own. The text content of a text node must be specified through the `content` attribute.
+
+```json
+{
+	"type": "text",
+	"content": "..."
+}
+```
+
+> A text node is defined in the above example.
+
+**color**
+
+The color of the text node may be specified through the `color` attribute. The attribute should when present be specified as a color or as a string assuming the value "transparent". Please note that the default value is "transparent" and that this attribute must be set explicitly in order for the text node to become visible.
+
+**columns**
+
+The number of columns for the text node may be specified through the `columns` attribute. The attribute should when present be specified as an integer greater than or equal to one. The default value is 1.
+
+**font**
+
+The name of the font used for the text node may be specified through the `font` attribute. The attribute should when present be specified as a string assuming the PostScript name of the font. This attribute should be specified either explicitly or implicitly as there is no default value.
+
+**font_size**
+
+The font size for the text node may be specified through the `font_size` attribute. The attribute should when present be specified as either a unitless length or an absolute length. The default value is 1 expressed using the default unit of the document which is `pt` unless explicitly specified.
+
+**gutter**
+
+The gutter between the columns of the text node may be specified through the `gutter` attribute. The attribute should when present be specified as either a unitless length, an absolute length or a relative length. The default value is 0.
+
+**letter_spacing**
+
+The letter spacing for the text node may be specified through the `letter_spacing` attribute. The attribute should when present be specified as either a unitless length or an absolute length. The default value is 0.
+
+**line_anchor**
+
+The line anchor of the text node may be specified through the `line_anchor` attribute. The attribute should when present be specified as a string assuming either the value "meanline", the value "capline", the value "topline", the value "bottomline" or the value "baseline". The default value is "topline".
+
+**line_height**
+
+The line height for the text node may be specified through the `line_height` attribute. The attribute should when present be specified as either a unitless length or an absolute length. The default value is the same value as used for the font size.
+
+**orphans**
+
+The desired minimum number of text lines that are placed in separate segments for the text node may be specified through the `orphans` attribute. The attribute should when present be specified as an integer greater than or equal to one. The default value is 1.
+
+**text_align**
+
+The text alignment of the text node may be specified through the `text_align` attribute. The attribute should when present be specified as a string assuming either the value "start", the value "center" or the value "end". The default value is "start".
+
+**text_transform**
+
+The text transformation of the text node may be specified through the `text_transform` attribute. The attribute should when present be specified as a string assuming either the value "none", the value "lowercase" or the value "uppercase". The default value is "none".
+
+**white_space**
+
+The white space handling of the text node may be specified through the `white_space` attribute. The attribute should when present be specified as a string assuming either the value "wrap" or the value "nowrap". The default value is "wrap".
+
+**word_spacing**
+
+The word spacing for the text node may be specified through the `word_spacing` attribute. The attribute should when present be specified as either a unitless length or an absolute length. The default value is 0.
 
 #### Style templates
 
