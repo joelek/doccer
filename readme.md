@@ -536,20 +536,18 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add support for compound paths.
 * Improve computation of binary offsets in PDF serialization.
 * Use "extrinsic" as default width for all node types.
-* Document features.
 * Move font size into Typesetter.
-* Consider improving handling of missing characters in PDF conversion.
 * Add support for prefix and suffix nodes.
 * Parse kerning data from truetype font.
 * Parse ligature data from truetype font.
 * Parse PDF increments.
 * Serialize PDF increments.
-* Consider adding variables to EDF format.
 * Implement support for multiple text segments in TextNode.
 	Properties columns, gutter, line_height and text_align should stay on TextNode container.
 	Properties line_anchor and white_space might stay on TextNode container.
 	Style templates should be supported for each individual segment.
 * Decide whether to drop or keep "font" property.
+	Depends on how multiple text segments are implemented for TextNode.
 * Add support for color profiles.
 	The built-in color spaces /DeviceGray, /DeviceRGB and /DeviceCMYK exist.
 	The command CS sets stroke color space.
@@ -560,5 +558,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Remove unused segmentation state.
 * Implement font subsetting.
 * Add context helper for creating instances of layout nodes.
-* Add page-break control to all node types.
 * Use precise sizes and positions in layout computations.
