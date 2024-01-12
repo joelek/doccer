@@ -207,12 +207,12 @@ The embedded files are used as substitutes for real files whenever referenced in
 ```json
 {
 	"files": {
-		"./fonts/DMSans-Regular.ttf": "..."
+		"./fonts/OpenSans-Regular.ttf": "..."
 	}
 }
 ```
 
-> The file "./fonts/DMSans-Regular.ttf" is embeded in the above example.
+> The file "./fonts/OpenSans-Regular.ttf" is embeded in the above example.
 
 #### Font handling
 
@@ -224,14 +224,14 @@ The renderer is allowed to use the PostScript name of the fonts to locate the ac
 
 ```json
 {
-	"font": "DMSans-Regular",
+	"font": "OpenSans-Regular",
 	"fonts": {
-		"DMSans-Regular": "./fonts/DMSans-Regular.ttf"
+		"OpenSans-Regular": "./fonts/OpenSans-Regular.ttf"
 	}
 }
 ```
 
-> The path of the font "DMSans-Regular" is specified and set as the default font in the above example.
+> The path of the font "OpenSans-Regular" is specified and set as the default font in the above example.
 
 #### The content tree
 

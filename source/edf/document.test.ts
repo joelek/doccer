@@ -5,9 +5,9 @@ import { BoxNode, Document, Node, TextNode } from "./format";
 
 wtf.test(`DocumentUtils should create PDF files.`, (assert) => {
 	let document: Document = {
-		font: "DMSans-Regular",
+		font: "OpenSans-Regular",
 		fonts: {
-			"DMSans-Regular": "./public/DMSans-Regular.ttf"
+			"OpenSans-Regular": "./public/OpenSans-Regular.ttf"
 		},
 		size: {
 			w: 210,
