@@ -40,6 +40,7 @@ exports.NodeStyle = autoguard.guards.Object.of({}, {
     "height": autoguard.guards.Reference.of(() => exports.NodeLength),
     "overflow": autoguard.guards.Union.of(autoguard.guards.StringLiteral.of("hidden"), autoguard.guards.StringLiteral.of("visible")),
     "segmentation": autoguard.guards.Union.of(autoguard.guards.StringLiteral.of("auto"), autoguard.guards.StringLiteral.of("none")),
+    "segmentation_threshold": new autoguard.guards.NumberGuard(0, 1),
     "width": autoguard.guards.Reference.of(() => exports.NodeLength)
 });
 exports.Node = autoguard.guards.Object.of({

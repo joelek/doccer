@@ -94,6 +94,7 @@ export type NodeStyle = autoguard.guards.Object<{}, {
         autoguard.guards.StringLiteral<"auto">,
         autoguard.guards.StringLiteral<"none">
     ]>;
+    "segmentation_threshold": autoguard.guards.Number;
     "width": autoguard.guards.Reference<NodeLength>;
 }>;
 export declare const Node: autoguard.serialization.MessageGuard<Node>;
@@ -303,6 +304,7 @@ export declare namespace Autoguard {
             height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
+            segmentation_threshold?: number | undefined;
             width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
         }>;
         Node: autoguard.guards.ReferenceGuard<{
@@ -348,6 +350,7 @@ export declare namespace Autoguard {
             height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
+            segmentation_threshold?: number | undefined;
             width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             color?: string | {
                 i: number;
@@ -382,6 +385,7 @@ export declare namespace Autoguard {
                 height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
+                segmentation_threshold?: number | undefined;
                 width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 color?: string | {
                     i: number;
@@ -447,6 +451,7 @@ export declare namespace Autoguard {
             height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
+            segmentation_threshold?: number | undefined;
             width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             align_x?: "center" | "left" | "right" | undefined;
             align_y?: "top" | "middle" | "bottom" | undefined;
@@ -490,6 +495,7 @@ export declare namespace Autoguard {
                 height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
+                segmentation_threshold?: number | undefined;
                 width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
@@ -530,6 +536,7 @@ export declare namespace Autoguard {
             height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             overflow?: "hidden" | "visible" | undefined;
             segmentation?: "auto" | "none" | undefined;
+            segmentation_threshold?: number | undefined;
             width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
         }>;
         UnrecognizedNode: autoguard.guards.ReferenceGuard<{
@@ -542,6 +549,7 @@ export declare namespace Autoguard {
                 height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
+                segmentation_threshold?: number | undefined;
                 width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             } | undefined;
         }>;
@@ -556,6 +564,7 @@ export declare namespace Autoguard {
                 height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
+                segmentation_threshold?: number | undefined;
                 width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 align_x?: "center" | "left" | "right" | undefined;
                 align_y?: "top" | "middle" | "bottom" | undefined;
@@ -594,6 +603,7 @@ export declare namespace Autoguard {
                 height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 overflow?: "hidden" | "visible" | undefined;
                 segmentation?: "auto" | "none" | undefined;
+                segmentation_threshold?: number | undefined;
                 width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 color?: string | {
                     i: number;
@@ -643,6 +653,7 @@ export declare namespace Autoguard {
                     height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
+                    segmentation_threshold?: number | undefined;
                     width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     align_x?: "center" | "left" | "right" | undefined;
                     align_y?: "top" | "middle" | "bottom" | undefined;
@@ -681,6 +692,7 @@ export declare namespace Autoguard {
                     height?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     overflow?: "hidden" | "visible" | undefined;
                     segmentation?: "auto" | "none" | undefined;
+                    segmentation_threshold?: number | undefined;
                     width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     color?: string | {
                         i: number;

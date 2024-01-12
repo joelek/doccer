@@ -74,6 +74,7 @@ export declare abstract class Node {
     protected node_style: NodeStyle;
     protected createPrefixCommands(path: Path): Array<string>;
     protected createSuffixCommands(path: Path): Array<string>;
+    protected getPushSegments(segment_size: Size, segment_left: Size): Array<Atom>;
     protected getSegmentLeft(segment_left: Size): Size;
     constructor(style?: Partial<NodeStyle>);
     abstract createSegments(segment_size: Size, segment_left: Size, target_size?: Partial<Size>, options?: Partial<CreateSegmentsOptions>): Array<Atom>;

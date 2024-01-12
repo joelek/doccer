@@ -261,6 +261,10 @@ class TextNode extends shared_1.ChildNode {
         }
         options = options ?? {};
         segment_left = this.getSegmentLeft(segment_left);
+        let push_segments = this.getPushSegments(segment_size, segment_left);
+        if (push_segments.length > 0) {
+            segment_left = { ...segment_size };
+        }
         let gutter = shared_1.Length.getComputedLength(this.style.gutter, target_size.w);
         let target_column_width = this.getColumnWidth(target_size);
         let segments = [];
@@ -312,7 +316,10 @@ class TextNode extends shared_1.ChildNode {
             segment.prefix = this.createPrefixCommands(path);
             segment.suffix = this.createSuffixCommands(path);
         }
-        return segments;
+        return [
+            ...push_segments,
+            ...segments
+        ];
     }
 }
 exports.TextNode = TextNode;

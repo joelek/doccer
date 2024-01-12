@@ -483,6 +483,10 @@ class BoxNode extends shared_1.ParentNode {
     }
     createSegments(segment_size, segment_left, target_size, options) {
         segment_left = this.getSegmentLeft(segment_left);
+        let push_segments = this.getPushSegments(segment_size, segment_left);
+        if (push_segments.length > 0) {
+            segment_left = { ...segment_size };
+        }
         target_size = target_size ?? shared_1.Node.getTargetSize(this, segment_size);
         options = options ?? {};
         let border_radius = shared_1.Length.getComputedLength(this.style.border_radius, target_size.w);
@@ -521,7 +525,10 @@ class BoxNode extends shared_1.ParentNode {
                 ...this.createSuffixCommands(path)
             ];
         }
-        return segments;
+        return [
+            ...push_segments,
+            ...segments
+        ];
     }
 }
 exports.BoxNode = BoxNode;

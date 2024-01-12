@@ -1485,6 +1485,520 @@ wtf.test(`TextNode should support segmentation "none".`, (assert) => {
         }
     ]);
 });
+wtf.test(`TextNode should support segmentation_threshold 0 when height used is 0%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 0 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 10 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
+wtf.test(`TextNode should support segmentation_threshold 0 when height used is 25%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 0 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 7.5 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 0,
+                "h": 7.5
+            }
+        },
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
+wtf.test(`TextNode should support segmentation_threshold 0 when height used is 50%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 0 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 5 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 0,
+                "h": 5
+            }
+        },
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
+wtf.test(`TextNode should support segmentation_threshold 0 when height used is 75%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 0 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2.5 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 0,
+                "h": 2.5
+            }
+        },
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
+wtf.test(`TextNode should support segmentation_threshold 0 when height used is 100%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 0 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 0 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 0,
+                "h": 0
+            }
+        },
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
+wtf.test(`TextNode should support segmentation_threshold 1 when height used is 0%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 1 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 10 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
+wtf.test(`TextNode should support segmentation_threshold 1 when height used is 25%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 1 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 7.5 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
+wtf.test(`TextNode should support segmentation_threshold 1 when height used is 50%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 1 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 5 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
+wtf.test(`TextNode should support segmentation_threshold 1 when height used is 75%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 1 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 2.5 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
+wtf.test(`TextNode should support segmentation_threshold 1 when height used is 100%.`, (assert) => {
+    let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { segmentation_threshold: 1 });
+    let atoms = node.createSegments({ w: 0, h: 10 }, { w: 0, h: 0 });
+    assert.equals(atoms, [
+        {
+            "size": {
+                "w": 4,
+                "h": 1
+            },
+            "atoms": [
+                {
+                    "size": {
+                        "w": 4,
+                        "h": 1
+                    },
+                    "atoms": [
+                        {
+                            "size": {
+                                "w": 4,
+                                "h": 1
+                            },
+                            "prefix": [
+                                "(aaaa) Tj"
+                            ],
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            }
+                        }
+                    ],
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    }
+                }
+            ],
+            "prefix": [
+                "BT",
+                "/F0 1 Tf",
+                "1 TL",
+                "3 Tr",
+                "1 0 0 1 0 -1 cm"
+            ],
+            "suffix": [
+                "ET"
+            ]
+        }
+    ]);
+});
 wtf.test(`TextNode should support width.`, (assert) => {
     let node = new text_1.TextNode("aaaa", TYPESETTER, 0, { width: 10 });
     let atoms = node.createSegments({ w: 0, h: 0 }, { w: 0, h: Infinity });
