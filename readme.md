@@ -559,3 +559,8 @@ NB: This project targets TypeScript 4 in strict mode.
 * Implement font subsetting.
 * Add context helper for creating instances of layout nodes.
 * Use precise sizes and positions in layout computations.
+* Add support for max text lines to TextNode.
+* Investigate possibility to support segmentation for nodes with non-intrinsic heights.
+* Implement the LZWDecode filter.
+* Implement the FlatDecode filter.
+* Implement the AsciiHexDecode filter.
