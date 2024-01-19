@@ -54,7 +54,7 @@ export function createNodeClasses(font_handler: FontHandler, style_handler: Styl
 export const DocumentUtils = {
 	convertToPDF(document: Document): pdf.format.PDFFile {
 		let pdf_file = new pdf.format.PDFFile(
-			new pdf.format.PDFVersion(1, 4),
+			new pdf.format.PDFVersion(1, 6),
 			[],
 			new pdf.format.PDFRecord([]),
 			[]
