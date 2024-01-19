@@ -7,6 +7,7 @@ import * as format from "./format";
 import { BoxNode, Document, TextNode, UnrecognizedNode } from "./format";
 import * as layout from "./layout";
 import { StyleHandler } from "./styles";
+import { PDFArray, PDFStreamObject } from "../pdf/format";
 
 export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 	let lines = [] as Array<string>;
@@ -51,8 +52,46 @@ export function createNodeClasses(font_handler: FontHandler, style_handler: Styl
 	throw new Error();
 };
 
+export function getLZWStream(source: Uint8Array): PDFStreamObject {
+	let buffer = stdlib.data.chunk.Chunk.fromString(pdf.filters.Ascii85.encode(pdf.filters.LZW.encode(source)), "binary");
+	let pdf_stream = new pdf.format.PDFStreamObject(
+		new pdf.format.PDFInteger(1),
+		new pdf.format.PDFInteger(0),
+		new pdf.format.PDFRecord([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new PDFArray([
+				new pdf.format.PDFName("ASCII85Decode"),
+				new pdf.format.PDFName("LZWDecode")
+			])),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParams"), new PDFArray([
+				new pdf.format.PDFNull(),
+				new pdf.format.PDFRecord([
+					new pdf.format.PDFRecordMember(new pdf.format.PDFName("EarlyChange"), new pdf.format.PDFInteger(0))
+				])
+			]))
+		]),
+		new pdf.format.PDFStream(buffer)
+	);
+	return pdf_stream;
+};
+
+export function getASCII85Stream(source: Uint8Array): PDFStreamObject {
+	let buffer = stdlib.data.chunk.Chunk.fromString(pdf.filters.Ascii85.encode(source), "binary");
+	let pdf_stream = new pdf.format.PDFStreamObject(
+		new pdf.format.PDFInteger(1),
+		new pdf.format.PDFInteger(0),
+		new pdf.format.PDFRecord([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("ASCII85Decode")),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength))
+		]),
+		new pdf.format.PDFStream(buffer)
+	);
+	return pdf_stream;
+};
+
 export const DocumentUtils = {
-	convertToPDF(document: Document): pdf.format.PDFFile {
+	convertToPDF(document: Document, options?: { compression: "LZW"; }): pdf.format.PDFFile {
+		let compression = options?.compression;
 		let pdf_file = new pdf.format.PDFFile(
 			new pdf.format.PDFVersion(1, 6),
 			[],
@@ -118,16 +157,7 @@ export const DocumentUtils = {
 					])
 				);
 				pdf_file.objects.push(pdf_cid_system_info);
-				let pdf_font_file_buffer = stdlib.data.chunk.Chunk.fromString(pdf.filters.Ascii85.encode(buffer), "binary");
-				let pdf_font_file = new pdf.format.PDFStreamObject(
-					new pdf.format.PDFInteger(1),
-					new pdf.format.PDFInteger(0),
-					new pdf.format.PDFRecord([
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("ASCII85Decode")),
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(pdf_font_file_buffer.byteLength))
-					]),
-					new pdf.format.PDFStream(pdf_font_file_buffer)
-				);
+				let pdf_font_file = compression === "LZW" ? getLZWStream(buffer) : getASCII85Stream(buffer);
 				pdf_file.objects.push(pdf_font_file);
 				let pdf_font_descriptor = new pdf.format.PDFObject(
 					new pdf.format.PDFInteger(1),
