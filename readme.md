@@ -562,6 +562,7 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add support for max text lines to TextNode.
 * Investigate possibility to support segmentation for nodes with non-intrinsic heights.
 * Implement the LZWDecode filter.
+	Fix issue with decoder switching bit depths one code unit too late.
 * Implement the FlatDecode filter.
 * Implement the AsciiHexDecode filter.
 * Implement the RunLengthDecode filter.
