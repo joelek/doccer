@@ -564,3 +564,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Implement the LZWDecode filter.
 * Implement the FlatDecode filter.
 * Implement the AsciiHexDecode filter.
+* Implement the RunLengthDecode filter.
