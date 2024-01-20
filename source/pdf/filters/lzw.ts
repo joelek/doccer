@@ -3,7 +3,86 @@ const END_OF_DATA = 257;
 
 export const LZW = {
 	decode(source: Uint8Array): Uint8Array {
-		throw new Error("Not yet implemented!");
+		let table = [] as Array<string>;
+		let dictionary = new Map<string, number>();
+		let bit_length = 9;
+		function clearTable(): void {
+			table = [];
+			dictionary = new Map();
+			for (let i = 0; i < 256; i++) {
+				let key = String.fromCharCode(i);
+				table.push(key);
+				dictionary.set(key, table.length - 1);
+			}
+			table.push(""); // CLEAR_TABLE
+			table.push(""); // END_OF_DATA
+			bit_length = 9;
+		}
+		function appendTable(key: string): void {
+			let code = dictionary.get(key);
+			if (code != null) {
+				return;
+			}
+			table.push(key);
+			dictionary.set(key, table.length - 1);
+			if (table.length === 2 ** bit_length) {
+				bit_length += 1;
+				if (bit_length > 12) {
+					clearTable();
+				}
+			}
+		}
+		clearTable();
+		let byte_index = 0;
+		let bits_left_in_byte = 8;
+		function readCode(): number {
+			let bits_read = 0;
+			let bits_left = bit_length;
+			let code = 0;
+			while (bits_left > 0) {
+				if (bits_left_in_byte === 0) {
+					byte_index += 1;
+					bits_left_in_byte = 8;
+				}
+				let bits_to_read = Math.min(bits_left_in_byte, bits_left);
+				let byte = source[byte_index];
+				let mask = (1 << bits_to_read) - 1;
+				let right_shift = bits_left_in_byte - bits_to_read;
+				let left_shift = bits_left - bits_to_read;
+				let bits_to_embed = ((byte >> right_shift) & mask) << left_shift;
+				code |= bits_to_embed;
+				bits_read += bits_to_read;
+				bits_left -= bits_to_read;
+				bits_left_in_byte -= bits_to_read;
+			}
+			return code;
+		}
+		let keys = [] as Array<string>;
+		let last_key = "";
+		while (byte_index < source.length) {
+			let code = readCode();
+			if (code === CLEAR_TABLE) {
+				clearTable();
+			} else if (code === END_OF_DATA) {
+				break;
+			} else if (code < table.length) {
+				let key = table[code];
+				keys.push(key);
+				let key_to_append = last_key + key[0];
+				appendTable(key_to_append);
+				last_key = key;
+			} else if (code === table.length) {
+				let key_to_append = last_key + last_key[0];
+				appendTable(key_to_append);
+				let key = table[code];
+				keys.push(key);
+				last_key = key;
+			} else {
+				throw new Error();
+			}
+		}
+		let buffer = Uint8Array.from([...keys.join("")].map((character) => character.charCodeAt(0)));
+		return buffer;
 	},
 
 	encode(source: Uint8Array): Uint8Array {
