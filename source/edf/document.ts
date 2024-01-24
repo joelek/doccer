@@ -291,9 +291,9 @@ export const DocumentUtils = {
 			])
 		);
 		pdf_file.objects.push(catalog);
-		let id = 0;
+		let id = 1;
 		for (let object of pdf_file.objects) {
-			(object.id as any).value = ++id;
+			(object.id as any).value = id++;
 		}
 		pdf_file.trailer.members.push(
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Size"), new pdf.format.PDFInteger(id)),
