@@ -106,6 +106,20 @@ export function createASCII85Stream(source: Uint8Array): PDFStreamObject {
 	return pdf_stream;
 };
 
+export function createASCIIHexStream(source: Uint8Array): PDFStreamObject {
+	let buffer = pdf.filters.AsciiHex.encode(source);
+	let pdf_stream = new pdf.format.PDFStreamObject(
+		new pdf.format.PDFInteger(1),
+		new pdf.format.PDFInteger(0),
+		new pdf.format.PDFRecord([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("ASCIIHexDecode")),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength))
+		]),
+		new pdf.format.PDFStream(buffer)
+	);
+	return pdf_stream;
+};
+
 export function createUncompressedStream(source: Uint8Array): PDFStreamObject {
 	let buffer = source;
 	let pdf_stream = new pdf.format.PDFStreamObject(
@@ -119,7 +133,7 @@ export function createUncompressedStream(source: Uint8Array): PDFStreamObject {
 	return pdf_stream;
 };
 
-export function createStream(source: Uint8Array, compression: "LZW" | "RLE" | "ASCII85" | undefined): PDFStreamObject {
+export function createStream(source: Uint8Array, compression: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX" | undefined): PDFStreamObject {
 	if (compression === "LZW") {
 		return createLZWStream(source);
 	}
@@ -129,11 +143,14 @@ export function createStream(source: Uint8Array, compression: "LZW" | "RLE" | "A
 	if (compression === "ASCII85") {
 		return createASCII85Stream(source);
 	}
+	if (compression === "ASCIIHEX") {
+		return createASCIIHexStream(source);
+	}
 	return createUncompressedStream(source);
 };
 
 export const DocumentUtils = {
-	convertToPDF(document: Document, options?: { compression: "LZW" | "RLE" | "ASCII85"; }): pdf.format.PDFFile {
+	convertToPDF(document: Document, options?: { compression: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX"; }): pdf.format.PDFFile {
 		let compression = options?.compression;
 		let pdf_file = new pdf.format.PDFFile(
 			new pdf.format.PDFVersion(1, 6),
