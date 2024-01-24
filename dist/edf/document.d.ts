@@ -11,11 +11,12 @@ export declare function createNodeClasses(font_handler: FontHandler, style_handl
 export declare function createLZWStream(source: Uint8Array): PDFStreamObject;
 export declare function createRLEStream(source: Uint8Array): PDFStreamObject;
 export declare function createASCII85Stream(source: Uint8Array): PDFStreamObject;
+export declare function createASCIIHexStream(source: Uint8Array): PDFStreamObject;
 export declare function createUncompressedStream(source: Uint8Array): PDFStreamObject;
-export declare function createStream(source: Uint8Array, compression: "LZW" | "RLE" | "ASCII85" | undefined): PDFStreamObject;
+export declare function createStream(source: Uint8Array, compression: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX" | undefined): PDFStreamObject;
 export declare const DocumentUtils: {
     convertToPDF(document: Document, options?: {
-        compression: "LZW" | "RLE" | "ASCII85";
+        compression: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX";
     }): pdf.format.PDFFile;
     embedResources(document: format.Document): format.Document;
 };

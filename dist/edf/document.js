@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DocumentUtils = exports.createStream = exports.createUncompressedStream = exports.createASCII85Stream = exports.createRLEStream = exports.createLZWStream = exports.createNodeClasses = exports.makeToUnicode = void 0;
+exports.DocumentUtils = exports.createStream = exports.createUncompressedStream = exports.createASCIIHexStream = exports.createASCII85Stream = exports.createRLEStream = exports.createLZWStream = exports.createNodeClasses = exports.makeToUnicode = void 0;
 const stdlib = require("@joelek/ts-stdlib");
 const app = require("../app.json");
 const pdf = require("../pdf");
@@ -97,6 +97,16 @@ function createASCII85Stream(source) {
 }
 exports.createASCII85Stream = createASCII85Stream;
 ;
+function createASCIIHexStream(source) {
+    let buffer = pdf.filters.AsciiHex.encode(source);
+    let pdf_stream = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("ASCIIHexDecode")),
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength))
+    ]), new pdf.format.PDFStream(buffer));
+    return pdf_stream;
+}
+exports.createASCIIHexStream = createASCIIHexStream;
+;
 function createUncompressedStream(source) {
     let buffer = source;
     let pdf_stream = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
@@ -115,6 +125,9 @@ function createStream(source, compression) {
     }
     if (compression === "ASCII85") {
         return createASCII85Stream(source);
+    }
+    if (compression === "ASCIIHEX") {
+        return createASCIIHexStream(source);
     }
     return createUncompressedStream(source);
 }
