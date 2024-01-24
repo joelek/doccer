@@ -623,7 +623,7 @@ class PDFFile extends PDFEntity {
     tokenize() {
         let lines = [];
         lines.push(`${this.version.tokenize().join(" ")}`);
-        lines.push(`%%EOF`);
+        lines.push(`%\x80\x80\x80\x80`);
         let offsets = [];
         for (let object of this.objects) {
             offsets.push(lines.join(" ").length);

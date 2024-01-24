@@ -16,3 +16,4 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./ascii85"), exports);
 __exportStar(require("./lzw"), exports);
+__exportStar(require("./rle"), exports);

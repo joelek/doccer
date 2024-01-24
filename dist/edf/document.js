@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DocumentUtils = exports.getASCII85Stream = exports.getLZWStream = exports.createNodeClasses = exports.makeToUnicode = void 0;
+exports.DocumentUtils = exports.createStream = exports.createUncompressedStream = exports.createASCII85Stream = exports.createRLEStream = exports.createLZWStream = exports.createNodeClasses = exports.makeToUnicode = void 0;
 const stdlib = require("@joelek/ts-stdlib");
 const app = require("../app.json");
 const pdf = require("../pdf");
@@ -55,16 +55,14 @@ function createNodeClasses(font_handler, style_handler, node) {
 }
 exports.createNodeClasses = createNodeClasses;
 ;
-function getLZWStream(source) {
-    let buffer = stdlib.data.chunk.Chunk.fromString(pdf.filters.Ascii85.encode(pdf.filters.LZW.encode(source)), "binary");
+function createLZWStream(source) {
+    let buffer = pdf.filters.LZW.encode(source);
     let pdf_stream = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new format_2.PDFArray([
-            new pdf.format.PDFName("ASCII85Decode"),
             new pdf.format.PDFName("LZWDecode")
         ])),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParams"), new format_2.PDFArray([
-            new pdf.format.PDFNull(),
             new pdf.format.PDFRecord([
                 new pdf.format.PDFRecordMember(new pdf.format.PDFName("EarlyChange"), new pdf.format.PDFInteger(0))
             ])
@@ -72,9 +70,24 @@ function getLZWStream(source) {
     ]), new pdf.format.PDFStream(buffer));
     return pdf_stream;
 }
-exports.getLZWStream = getLZWStream;
+exports.createLZWStream = createLZWStream;
 ;
-function getASCII85Stream(source) {
+function createRLEStream(source) {
+    let buffer = pdf.filters.RLE.encode(source);
+    let pdf_stream = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new format_2.PDFArray([
+            new pdf.format.PDFName("RunLengthDecode")
+        ])),
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParams"), new format_2.PDFArray([
+            new pdf.format.PDFNull()
+        ]))
+    ]), new pdf.format.PDFStream(buffer));
+    return pdf_stream;
+}
+exports.createRLEStream = createRLEStream;
+;
+function createASCII85Stream(source) {
     let buffer = stdlib.data.chunk.Chunk.fromString(pdf.filters.Ascii85.encode(source), "binary");
     let pdf_stream = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("ASCII85Decode")),
@@ -82,7 +95,30 @@ function getASCII85Stream(source) {
     ]), new pdf.format.PDFStream(buffer));
     return pdf_stream;
 }
-exports.getASCII85Stream = getASCII85Stream;
+exports.createASCII85Stream = createASCII85Stream;
+;
+function createUncompressedStream(source) {
+    let buffer = source;
+    let pdf_stream = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength))
+    ]), new pdf.format.PDFStream(buffer));
+    return pdf_stream;
+}
+exports.createUncompressedStream = createUncompressedStream;
+;
+function createStream(source, compression) {
+    if (compression === "LZW") {
+        return createLZWStream(source);
+    }
+    if (compression === "RLE") {
+        return createRLEStream(source);
+    }
+    if (compression === "ASCII85") {
+        return createASCII85Stream(source);
+    }
+    return createUncompressedStream(source);
+}
+exports.createStream = createStream;
 ;
 exports.DocumentUtils = {
     convertToPDF(document, options) {
@@ -136,7 +172,7 @@ exports.DocumentUtils = {
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("Supplement"), new pdf.format.PDFInteger(0))
                 ]));
                 pdf_file.objects.push(pdf_cid_system_info);
-                let pdf_font_file = compression === "LZW" ? getLZWStream(buffer) : getASCII85Stream(buffer);
+                let pdf_font_file = createStream(buffer, compression);
                 pdf_file.objects.push(pdf_font_file);
                 let pdf_font_descriptor = new pdf.format.PDFObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("FontDescriptor")),
@@ -174,9 +210,7 @@ exports.DocumentUtils = {
                 ]));
                 pdf_file.objects.push(pdf_cid_font_type2);
                 let to_unicode_buffer = makeToUnicode(truetype_font);
-                let pdf_to_unicode = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
-                    new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(to_unicode_buffer.byteLength))
-                ]), new pdf.format.PDFStream(to_unicode_buffer));
+                let pdf_to_unicode = createStream(to_unicode_buffer, compression);
                 pdf_file.objects.push(pdf_to_unicode);
                 let pdf_type0_font = new pdf.format.PDFObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
                     new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("Font")),
@@ -212,9 +246,7 @@ exports.DocumentUtils = {
             context.concatenateMatrix(1, 0, 0, 1, 0, segment_size.h);
             commands.unshift(...context.getCommands());
             let pdf_content_stream_buffer = stdlib.data.chunk.Chunk.fromString(commands.join("\n"), "binary");
-            let pdf_content_stream = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
-                new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(pdf_content_stream_buffer.byteLength))
-            ]), new pdf.format.PDFStream(pdf_content_stream_buffer));
+            let pdf_content_stream = createStream(pdf_content_stream_buffer, compression);
             pdf_file.objects.push(pdf_content_stream);
             let page = new pdf.format.PDFObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
                 new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("Page")),
@@ -236,9 +268,9 @@ exports.DocumentUtils = {
             new pdf.format.PDFRecordMember(new pdf.format.PDFName("Pages"), pages.getReference()),
         ]));
         pdf_file.objects.push(catalog);
-        let id = 0;
+        let id = 1;
         for (let object of pdf_file.objects) {
-            object.id.value = ++id;
+            object.id.value = id++;
         }
         pdf_file.trailer.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("Size"), new pdf.format.PDFInteger(id)), new pdf.format.PDFRecordMember(new pdf.format.PDFName("Root"), catalog.getReference()), new pdf.format.PDFRecordMember(new pdf.format.PDFName("Info"), information.getReference()));
         return pdf_file;

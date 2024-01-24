@@ -48,7 +48,7 @@ function edf2pdf() {
         let json = JSON.parse(libfs.readFileSync(options.source, "utf8"));
         let edf = lib.edf.format.Document.as(json);
         let pdf = lib.edf.document.DocumentUtils.convertToPDF(edf);
-        libfs.writeFileSync(options.target, pdf.tokenize().join("\n"));
+        libfs.writeFileSync(options.target, pdf.tokenize().join("\n"), "binary");
         process.exit(0);
     }
 }
