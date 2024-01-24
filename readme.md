@@ -562,4 +562,3 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add support for max text lines to TextNode.
 * Investigate possibility to support segmentation for nodes with non-intrinsic heights.
 * Implement the FlateDecode filter.
-* Implement the AsciiHexDecode filter.
