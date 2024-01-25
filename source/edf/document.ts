@@ -207,7 +207,7 @@ export const DocumentUtils = {
 			} else {
 				buffer = stdlib.data.chunk.Chunk.fromString(file, "base64url");
 			}
-			let truetype_font = truetype.parseTrueTypeData(buffer.buffer);
+			let truetype_font = truetype.parseTrueTypeData(new Uint8Array(buffer).buffer);
 			let typesetter = Typesetter.createFromFont(truetype_font);
 			font_handler.addTypesetter(key, typesetter);
 			{
