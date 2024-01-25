@@ -557,6 +557,7 @@ NB: This project targets TypeScript 4 in strict mode.
 	Can embed ICC color spaces as resources (see page 149).
 * Remove unused segmentation state.
 * Implement font subsetting.
+* Resolve EDF paths relative to document instead of CWD.
 * Add context helper for creating instances of layout nodes.
 * Use precise sizes and positions in layout computations.
 * Add support for max text lines to TextNode.
