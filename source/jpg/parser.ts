@@ -147,7 +147,7 @@ function parseStartOfFrame2(buffer: ArrayBuffer): StartOfFrame2 {
 	};
 };
 
-export function parseHeader(buffer: ArrayBuffer) {
+export function parseJpegData(buffer: ArrayBuffer) {
 	let dw = new DataView(buffer);
 	let offset = 0;
 	let soi_marker = dw.getUint16(offset); offset += 2;
@@ -196,3 +196,5 @@ export function parseHeader(buffer: ArrayBuffer) {
 		sof
 	};
 };
+
+export type JpegData = ReturnType<typeof parseJpegData>;
