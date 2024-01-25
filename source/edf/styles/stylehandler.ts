@@ -140,6 +140,15 @@ export class StyleHandler {
 		};
 	}
 
+	getImageStyle(style: format.ImageNodeStyle | undefined): format.ImageNodeStyle | undefined {
+		style = this.getStyle("image", style, []) ?? {};
+		return {
+			...style,
+			height: this.getNodeLength(style.height),
+			width: this.getNodeLength(style.width),
+		};
+	}
+
 	getTextStyle(style: format.TextNodeStyle | undefined): format.TextNodeStyle | undefined {
 		style = this.getStyle("text", style, []) ?? {};
 		return {

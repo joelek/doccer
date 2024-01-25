@@ -62,6 +62,18 @@ guard ParentNode: ChildNode & {
 	children?: Node[]
 };
 
+guard ImageStyle: {
+	image?: string,
+	fit?: "fill" | "cover" | "contain"
+};
+
+guard ImageNodeStyle: Style & NodeStyle & ImageStyle;
+
+guard ImageNode: ChildNode & {
+	type: "image",
+	style?: ImageNodeStyle
+};
+
 guard TextStyle: {
 	color?: string | "transparent" | Color,
 	columns?: PositiveInteger,
@@ -125,6 +137,7 @@ guard Metadata: {
 
 guard Templates: {
 	box?: { BoxNodeStyle },
+	image?: { ImageNodeStyle },
 	text?: { TextNodeStyle }
 };
 
@@ -134,6 +147,7 @@ guard Document: {
 	files?: { PaddedBase64URL },
 	font?: string,
 	fonts?: { string },
+	images?: { string },
 	metadata?: Metadata,
 	size: Size,
 	templates?: Templates,

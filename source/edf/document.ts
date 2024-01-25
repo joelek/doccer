@@ -8,6 +8,8 @@ import { BoxNode, Document, TextNode, UnrecognizedNode } from "./format";
 import * as layout from "./layout";
 import { StyleHandler } from "./styles";
 import { PDFArray, PDFStreamObject } from "../pdf/format";
+import { ImageHandler } from "./images";
+import * as jpg from "../jpg";
 
 export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 	let lines = [] as Array<string>;
@@ -33,7 +35,10 @@ export function makeToUnicode(font: truetype.TrueTypeData): Uint8Array {
 	return buffer;
 };
 
-export function createNodeClasses(font_handler: FontHandler, style_handler: StyleHandler, node: format.Node): layout.Node {
+export function createNodeClasses(image_handler: ImageHandler, font_handler: FontHandler, style_handler: StyleHandler, node: format.Node): layout.Node {
+	if (format.ImageNode.is(node)) {
+		return new layout.ImageNode(image_handler, style_handler.getImageStyle(node.style));
+	}
 	if (TextNode.is(node)) {
 		let style = style_handler.getTextStyle(node.style);
 		let font = style?.font ?? font_handler.getDefaultFont();
@@ -43,7 +48,7 @@ export function createNodeClasses(font_handler: FontHandler, style_handler: Styl
 		return new layout.TextNode(node.content, font_handler.getTypesetter(font), font_handler.getTypeId(font), style);
 	}
 	if (BoxNode.is(node)) {
-		let children = (node?.children ?? []).map((child) => createNodeClasses(font_handler, style_handler, child));
+		let children = (node?.children ?? []).map((child) => createNodeClasses(image_handler, font_handler, style_handler, child));
 		return new layout.BoxNode(style_handler.getBoxStyle(node.style), ...children);
 	}
 	if (UnrecognizedNode.is(node)) {
@@ -178,6 +183,7 @@ export const DocumentUtils = {
 		);
 		pdf_file.objects.push(information);
 		let pdf_fonts = new pdf.format.PDFRecord([]);
+		let pdf_xobjects = new pdf.format.PDFRecord([]);
 		let resources = new pdf.format.PDFObject(
 			new pdf.format.PDFInteger(1),
 			new pdf.format.PDFInteger(0),
@@ -189,7 +195,8 @@ export const DocumentUtils = {
 					new pdf.format.PDFName("ImageC"),
 					new pdf.format.PDFName("ImageI")
 				])),
-				new pdf.format.PDFRecordMember(new pdf.format.PDFName("Font"), pdf_fonts)
+				new pdf.format.PDFRecordMember(new pdf.format.PDFName("Font"), pdf_fonts),
+				new pdf.format.PDFRecordMember(new pdf.format.PDFName("XObject"), pdf_xobjects)
 			])
 		);
 		pdf_file.objects.push(resources);
@@ -287,12 +294,51 @@ export const DocumentUtils = {
 				pdf_file.objects.push(pdf_type0_font);
 			}
 		}
+		let image_handler = new ImageHandler();
+		for (let key in document.images) {
+			let filename = document.images[key];
+			if (filename == null) {
+				continue;
+			}
+			let file = document.files?.[filename];
+			let buffer: Uint8Array | undefined;
+			if (file == null) {
+				// @ts-ignore
+				buffer = require("fs").readFileSync(filename) as Uint8Array;
+			} else {
+				buffer = stdlib.data.chunk.Chunk.fromString(file, "base64url");
+			}
+			try {
+				let data = jpg.parseJpegData(new Uint8Array(buffer).buffer);
+				image_handler.addEntry(key, data.sof.width, data.sof.height);
+				let pdf_xobject = new pdf.format.PDFStreamObject(
+					new pdf.format.PDFInteger(1),
+					new pdf.format.PDFInteger(0),
+					new pdf.format.PDFRecord([
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("XObject")),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Subtype"), new pdf.format.PDFName("Image")),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Width"), new pdf.format.PDFInteger(data.sof.width)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Height"), new pdf.format.PDFInteger(data.sof.height)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("ColorSpace"), new pdf.format.PDFName("DeviceRGB")),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.sof.precision)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("DCTDecode")),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParams"), new pdf.format.PDFRecord([]))
+					]),
+					new pdf.format.PDFStream(buffer)
+				);
+				pdf_xobjects.members.push(new pdf.format.PDFRecordMember(new pdf.format.PDFName("I" + image_handler.getEntry(key).id), pdf_xobject.getReference()));
+				pdf_file.objects.push(pdf_xobject);
+				continue;
+			} catch (error) {}
+			throw new Error(`Expected a valid image file!`);
+		}
 		let style_handler = new StyleHandler(document.templates, document.colors, document.unit);
 		let segment_size = {
 			w: layout.AbsoluteLength.getComputedLength(document.size.w, document.unit),
 			h: layout.AbsoluteLength.getComputedLength(document.size.h, document.unit)
 		};
-		let node = createNodeClasses(font_handler, style_handler, document.content);
+		let node = createNodeClasses(image_handler, font_handler, style_handler, document.content);
 		let segments = node.createSegments(segment_size, segment_size, undefined, { text_operand: "bytestring" });
 		let kids = new pdf.format.PDFArray([]);
 		let pages = new pdf.format.PDFObject(
@@ -357,6 +403,22 @@ export const DocumentUtils = {
 		let files: Record<string, string | undefined> = {};
 		for (let key in document.fonts) {
 			let filename = document.fonts[key];
+			if (filename == null) {
+				continue;
+			}
+			let file = document.files?.[filename];
+			let buffer: Uint8Array | undefined;
+			if (file == null) {
+				// @ts-ignore
+				buffer = require("fs").readFileSync(filename) as Uint8Array;
+			} else {
+				buffer = stdlib.data.chunk.Chunk.fromString(file, "base64url");
+			}
+			let padded_base64url = stdlib.data.chunk.Chunk.toString(buffer, "base64").replaceAll("+", "-").replaceAll("/", "_");
+			files[filename] = padded_base64url;
+		}
+		for (let key in document.images) {
+			let filename = document.images[key];
 			if (filename == null) {
 				continue;
 			}

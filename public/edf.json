@@ -3,6 +3,9 @@
 	"fonts": {
 		"OpenSans-Regular": "./public/OpenSans-Regular.ttf"
 	},
+	"images": {
+		"logo": "./public/jpg_32x16_24bit_standard.jpg"
+	},
 	"size": {
 		"w": 210,
 		"h": 297
@@ -13,6 +16,11 @@
 		"author": "Author"
 	},
 	"templates": {
+		"image": {
+			"default": {
+				"overflow": "hidden"
+			}
+		},
 		"text": {
 			"default": {
 				"font_size": 2,
@@ -33,9 +41,78 @@
 		"type": "box",
 		"style": {
 			"padding": 20,
+			"gap": 10,
 			"width": "extrinsic"
 		},
 		"children": [
+			{
+				"type": "image",
+				"style": {
+					"image": "logo",
+					"width": 30
+				}
+			},
+			{
+				"type": "image",
+				"style": {
+					"image": "logo",
+					"height": 40
+				}
+			},
+			{
+				"type": "image",
+				"style": {
+					"image": "logo",
+					"width": 30,
+					"height": 40,
+					"fit": "fill"
+				}
+			},
+			{
+				"type": "image",
+				"style": {
+					"image": "logo",
+					"width": 40,
+					"height": 30,
+					"fit": "fill"
+				}
+			},
+			{
+				"type": "image",
+				"style": {
+					"image": "logo",
+					"width": 30,
+					"height": 40,
+					"fit": "cover"
+				}
+			},
+			{
+				"type": "image",
+				"style": {
+					"image": "logo",
+					"width": 40,
+					"height": 30,
+					"fit": "cover"
+				}
+			},
+			{
+				"type": "image",
+				"style": {
+					"image": "logo",
+					"width": 30,
+					"height": 40,
+					"fit": "contain"
+				}
+			},
+			{
+				"type": "image",
+				"style": {
+					"image": "logo",
+					"width": 40,
+					"height": 30,
+					"fit": "contain"
+				}
+			},
 			{
 				"type": "text",
 				"style": {

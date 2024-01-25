@@ -232,6 +232,54 @@ export type ParentNode = autoguard.guards.Intersection<[
 	}>
 ]>;
 
+export const ImageStyle: autoguard.serialization.MessageGuard<ImageStyle> = autoguard.guards.Object.of({}, {
+	"image": autoguard.guards.String,
+	"fit": autoguard.guards.Union.of(
+		autoguard.guards.StringLiteral.of("fill"),
+		autoguard.guards.StringLiteral.of("cover"),
+		autoguard.guards.StringLiteral.of("contain")
+	)
+});
+
+export type ImageStyle = autoguard.guards.Object<{}, {
+	"image": autoguard.guards.String,
+	"fit": autoguard.guards.Union<[
+		autoguard.guards.StringLiteral<"fill">,
+		autoguard.guards.StringLiteral<"cover">,
+		autoguard.guards.StringLiteral<"contain">
+	]>
+}>;
+
+export const ImageNodeStyle: autoguard.serialization.MessageGuard<ImageNodeStyle> = autoguard.guards.Intersection.of(
+	autoguard.guards.Reference.of(() => Style),
+	autoguard.guards.Reference.of(() => NodeStyle),
+	autoguard.guards.Reference.of(() => ImageStyle)
+);
+
+export type ImageNodeStyle = autoguard.guards.Intersection<[
+	autoguard.guards.Reference<Style>,
+	autoguard.guards.Reference<NodeStyle>,
+	autoguard.guards.Reference<ImageStyle>
+]>;
+
+export const ImageNode: autoguard.serialization.MessageGuard<ImageNode> = autoguard.guards.Intersection.of(
+	autoguard.guards.Reference.of(() => ChildNode),
+	autoguard.guards.Object.of({
+		"type": autoguard.guards.StringLiteral.of("image")
+	}, {
+		"style": autoguard.guards.Reference.of(() => ImageNodeStyle)
+	})
+);
+
+export type ImageNode = autoguard.guards.Intersection<[
+	autoguard.guards.Reference<ChildNode>,
+	autoguard.guards.Object<{
+		"type": autoguard.guards.StringLiteral<"image">
+	}, {
+		"style": autoguard.guards.Reference<ImageNodeStyle>
+	}>
+]>;
+
 export const TextStyle: autoguard.serialization.MessageGuard<TextStyle> = autoguard.guards.Object.of({}, {
 	"color": autoguard.guards.Union.of(
 		autoguard.guards.String,
@@ -480,11 +528,13 @@ export type Metadata = autoguard.guards.Object<{}, {
 
 export const Templates: autoguard.serialization.MessageGuard<Templates> = autoguard.guards.Object.of({}, {
 	"box": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => BoxNodeStyle)),
+	"image": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => ImageNodeStyle)),
 	"text": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => TextNodeStyle))
 });
 
 export type Templates = autoguard.guards.Object<{}, {
 	"box": autoguard.guards.Record<autoguard.guards.Reference<BoxNodeStyle>>,
+	"image": autoguard.guards.Record<autoguard.guards.Reference<ImageNodeStyle>>,
 	"text": autoguard.guards.Record<autoguard.guards.Reference<TextNodeStyle>>
 }>;
 
@@ -496,6 +546,7 @@ export const Document: autoguard.serialization.MessageGuard<Document> = autoguar
 	"files": autoguard.guards.Record.of(autoguard.guards.Reference.of(() => PaddedBase64URL)),
 	"font": autoguard.guards.String,
 	"fonts": autoguard.guards.Record.of(autoguard.guards.String),
+	"images": autoguard.guards.Record.of(autoguard.guards.String),
 	"metadata": autoguard.guards.Reference.of(() => Metadata),
 	"templates": autoguard.guards.Reference.of(() => Templates),
 	"unit": autoguard.guards.Reference.of(() => AbsoluteUnit)
@@ -509,6 +560,7 @@ export type Document = autoguard.guards.Object<{
 	"files": autoguard.guards.Record<autoguard.guards.Reference<PaddedBase64URL>>,
 	"font": autoguard.guards.String,
 	"fonts": autoguard.guards.Record<autoguard.guards.String>,
+	"images": autoguard.guards.Record<autoguard.guards.String>,
 	"metadata": autoguard.guards.Reference<Metadata>,
 	"templates": autoguard.guards.Reference<Templates>,
 	"unit": autoguard.guards.Reference<AbsoluteUnit>
@@ -537,6 +589,9 @@ export namespace Autoguard {
 		"Node": autoguard.guards.Reference.of(() => Node),
 		"ChildNode": autoguard.guards.Reference.of(() => ChildNode),
 		"ParentNode": autoguard.guards.Reference.of(() => ParentNode),
+		"ImageStyle": autoguard.guards.Reference.of(() => ImageStyle),
+		"ImageNodeStyle": autoguard.guards.Reference.of(() => ImageNodeStyle),
+		"ImageNode": autoguard.guards.Reference.of(() => ImageNode),
 		"TextStyle": autoguard.guards.Reference.of(() => TextStyle),
 		"TextNodeStyle": autoguard.guards.Reference.of(() => TextNodeStyle),
 		"TextNode": autoguard.guards.Reference.of(() => TextNode),
