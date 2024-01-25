@@ -5,10 +5,7 @@ import * as app from "../app.json";
 import * as lib from "../lib";
 
 function edf2pdf(): void {
-	let options = {
-		source: undefined as string | undefined,
-		target: undefined as string | undefined
-	};
+	let options: Partial<lib.edf.document.ConvertToPDFOptions & { source: string; target: string; }> = {};
 	let unrecognized_arguments = [] as Array<string>;
 	for (let [index, arg] of process.argv.slice(3).entries()) {
 		let parts: RegExpExecArray | null = null;
@@ -18,6 +15,10 @@ function edf2pdf(): void {
 		}
 		if ((parts = /^--target=(.+)$/.exec(arg)) != null) {
 			options.target = parts[1];
+			continue;
+		}
+		if ((parts = /^--stream-filter=(LZW|RLE|ASCII85|ASCIIHEX)$/.exec(arg)) != null) {
+			options.filter = parts[1] as lib.edf.document.ConvertToPDFOptions["filter"];
 			continue;
 		}
 		if (index === 0) {
@@ -42,11 +43,13 @@ function edf2pdf(): void {
 		process.stderr.write(`		Set source file.\n`);
 		process.stderr.write(`	--target=string\n`);
 		process.stderr.write(`		Set target file.\n`);
+		process.stderr.write(`	--stream-filter=LZW|RLE|ASCII85|ASCIIHEX\n`);
+		process.stderr.write(`		Set stream filter.\n`);
 		process.exit(0);
 	} else {
 		let json = JSON.parse(libfs.readFileSync(options.source, "utf8"));
 		let edf = lib.edf.format.Document.as(json);
-		let pdf = lib.edf.document.DocumentUtils.convertToPDF(edf);
+		let pdf = lib.edf.document.DocumentUtils.convertToPDF(edf, options);
 		libfs.writeFileSync(options.target, pdf.tokenize().join("\n"), "binary");
 		process.exit(0);
 	}
@@ -87,9 +90,9 @@ function embed(): void {
 		process.stderr.write(`\n`);
 		process.stderr.write(`Arguments:\n`);
 		process.stderr.write(`	--source=string\n`);
-		process.stderr.write(`		Set source file.\n`);
+		process.stderr.write(`		Set source file (default stdin).\n`);
 		process.stderr.write(`	--target=string\n`);
-		process.stderr.write(`		Set target file.\n`);
+		process.stderr.write(`		Set target file (default stdout).\n`);
 		process.exit(0);
 	} else {
 		let source = options.source === "stdin" ? process.stdin.fd : options.source;
@@ -137,9 +140,9 @@ function parsefont(): void {
 		process.stderr.write(`\n`);
 		process.stderr.write(`Arguments:\n`);
 		process.stderr.write(`	--source=string\n`);
-		process.stderr.write(`		Set source file.\n`);
+		process.stderr.write(`		Set source file (default stdin).\n`);
 		process.stderr.write(`	--target=string\n`);
-		process.stderr.write(`		Set target file.\n`);
+		process.stderr.write(`		Set target file (default stdout).\n`);
 		process.exit(0);
 	} else {
 		let source = options.source === "stdin" ? process.stdin.fd : options.source;

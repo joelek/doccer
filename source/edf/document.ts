@@ -133,25 +133,29 @@ export function createUncompressedStream(source: Uint8Array): PDFStreamObject {
 	return pdf_stream;
 };
 
-export function createStream(source: Uint8Array, compression: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX" | undefined): PDFStreamObject {
-	if (compression === "LZW") {
+export function createStream(source: Uint8Array, filter: Partial<ConvertToPDFOptions>["filter"]): PDFStreamObject {
+	if (filter === "LZW") {
 		return createLZWStream(source);
 	}
-	if (compression === "RLE") {
+	if (filter === "RLE") {
 		return createRLEStream(source);
 	}
-	if (compression === "ASCII85") {
+	if (filter === "ASCII85") {
 		return createASCII85Stream(source);
 	}
-	if (compression === "ASCIIHEX") {
+	if (filter === "ASCIIHEX") {
 		return createASCIIHexStream(source);
 	}
 	return createUncompressedStream(source);
 };
 
+export type ConvertToPDFOptions = {
+	filter: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX";
+};
+
 export const DocumentUtils = {
-	convertToPDF(document: Document, options?: { compression: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX"; }): pdf.format.PDFFile {
-		let compression = options?.compression;
+	convertToPDF(document: Document, options?: Partial<ConvertToPDFOptions>): pdf.format.PDFFile {
+		let filter = options?.filter;
 		let pdf_file = new pdf.format.PDFFile(
 			new pdf.format.PDFVersion(1, 6),
 			[],
@@ -217,7 +221,7 @@ export const DocumentUtils = {
 					])
 				);
 				pdf_file.objects.push(pdf_cid_system_info);
-				let pdf_font_file = createStream(buffer, compression);
+				let pdf_font_file = createStream(buffer, filter);
 				pdf_file.objects.push(pdf_font_file);
 				let pdf_font_descriptor = new pdf.format.PDFObject(
 					new pdf.format.PDFInteger(1),
@@ -263,7 +267,7 @@ export const DocumentUtils = {
 				);
 				pdf_file.objects.push(pdf_cid_font_type2);
 				let to_unicode_buffer = makeToUnicode(truetype_font);
-				let pdf_to_unicode = createStream(to_unicode_buffer, compression);
+				let pdf_to_unicode = createStream(to_unicode_buffer, filter);
 				pdf_file.objects.push(pdf_to_unicode);
 				let pdf_type0_font = new pdf.format.PDFObject(
 					new pdf.format.PDFInteger(1),
@@ -307,7 +311,7 @@ export const DocumentUtils = {
 			context.concatenateMatrix(1, 0, 0, 1, 0, segment_size.h);
 			commands.unshift(...context.getCommands());
 			let pdf_content_stream_buffer = stdlib.data.chunk.Chunk.fromString(commands.join("\n"), "binary");
-			let pdf_content_stream = createStream(pdf_content_stream_buffer, compression);
+			let pdf_content_stream = createStream(pdf_content_stream_buffer, filter);
 			pdf_file.objects.push(pdf_content_stream);
 			let page = new pdf.format.PDFObject(
 				new pdf.format.PDFInteger(1),
