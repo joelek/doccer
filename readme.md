@@ -207,12 +207,13 @@ The embedded files are used as substitutes for real files whenever referenced in
 ```json
 {
 	"files": {
-		"./fonts/OpenSans-Regular.ttf": "..."
+		"./fonts/OpenSans-Regular.ttf": "...",
+		"./images/logo.jpg": "..."
 	}
 }
 ```
 
-> The file "./fonts/OpenSans-Regular.ttf" is embeded in the above example.
+> The files "./fonts/OpenSans-Regular.ttf" and "./images/logo.jpg" are embeded in the above example.
 
 #### Font handling
 
@@ -232,6 +233,22 @@ The renderer is allowed to use the PostScript name of the fonts to locate the ac
 ```
 
 > The path of the font "OpenSans-Regular" is specified and set as the default font in the above example.
+
+#### Image handling
+
+Image references may be specified in a way similar to how both color swatches and font references are specified. The `images` property of the document should when present specify the images of the document using a record of strings where each string corresponds to an image file. The image file should use the JPEG format.
+
+The actual files may be embedded or external and should for maximum compatibility be specified using paths relative to the document, written using unix syntax. The renderer should abort the rendering and display an error if it cannot locate the image file of an image being used in the document. No images may be assumed to exist.
+
+```json
+{
+	"images": {
+		"Logo": "./images/logo.jpg"
+	}
+}
+```
+
+> The path of the image "Logo" is specified in the above example.
 
 #### The content tree
 
@@ -362,6 +379,31 @@ The layout axis of the box node may be specified through the `layout` attribute.
 
 The padding of the box node may be specified through the `padding` attribute. The attribute should when present be specified as either a unitless length, an absolute length or a relative length. The default value is 0.
 
+#### Image nodes
+
+Image nodes are identified through the type attribute of a node being set to the value `image`. Image nodes are child nodes and may not contain any children of their own.
+
+Image nodes have an intrinsic size corresponding to the natural size of the image used. The image is scaled such that its aspect ratio is maintained when either width or height are extrinsically-sized. The aspect ratio of the image is not maintained when both width and height are extrinsically-sized.
+
+```json
+{
+	"type": "image",
+	"style": {
+		"image": "Logo"
+	}
+}
+```
+
+> An image node is defined in the above example.
+
+**image**
+
+The name of the image used for the image node may be specified through the `image` attribute. The attribute should when present be specified as a string assuming the value of a key in the `images` record of the document. The default value is "default" which must exist as a key in the `images` record when unspecified.
+
+**fit**
+
+The image fitting mode of the image node may be specified through the `fit` attribute. The attribute should when present be specified as a string assuming either the value "fill", the value "cover" or the value "contain". The default value is "fill".
+
 #### Text nodes
 
 Text nodes are identified through the type attribute of a node being set to the value `text`. Text nodes are child nodes and may not contain any children of their own. The text content of a text node must be specified through the `content` attribute.
@@ -432,6 +474,7 @@ The word spacing for the text node may be specified through the `word_spacing` a
 Documents may specify style templates for its nodes using the different subproperties of the `templates` property of the document. Each subproperty should when present define the templates using a record of the style attributes for the node in question. The template names are used as keys. The same template name may be used for two unique templates as long as the two templates are specified for two different node types.
 
 * The subproperty `box` may be used to specify templates for box nodes.
+* The subproperty `image` may be used to specify templates for image nodes.
 * The subproperty `text` may be used to specify templates for text nodes.
 
 A `default` template may be defined for each node type. It is defined using the the template name "default" and will be applied as a default set of attributes for all nodes of the type in question. Templates other than the default may be applied by setting the `template` attribute of a node to the template name of the desired template. The renderer must generate an error and abort the rendering if a template cannot be found unless the template name is "default".
