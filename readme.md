@@ -532,7 +532,6 @@ NB: This project targets TypeScript 4 in strict mode.
 
 * Add support for word-break to TextNode.
 * Improve PDF serialization.
-* Add ImageNode.
 * Add support for compound paths.
 * Improve computation of binary offsets in PDF serialization.
 * Use "extrinsic" as default width for all node types.
@@ -561,5 +560,9 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add context helper for creating instances of layout nodes.
 * Use precise sizes and positions in layout computations.
 * Add support for max text lines to TextNode.
+* Move text content into text node style.
 * Investigate possibility to support segmentation for nodes with non-intrinsic heights.
 * Implement the FlateDecode filter.
+* Document ImageNode and document images.
+* Add tests for ImageNode.
+* Add support for PNG images.
