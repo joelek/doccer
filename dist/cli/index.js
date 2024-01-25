@@ -5,10 +5,7 @@ const libfs = require("fs");
 const app = require("../app.json");
 const lib = require("../lib");
 function edf2pdf() {
-    let options = {
-        source: undefined,
-        target: undefined
-    };
+    let options = {};
     let unrecognized_arguments = [];
     for (let [index, arg] of process.argv.slice(3).entries()) {
         let parts = null;
@@ -18,6 +15,10 @@ function edf2pdf() {
         }
         if ((parts = /^--target=(.+)$/.exec(arg)) != null) {
             options.target = parts[1];
+            continue;
+        }
+        if ((parts = /^--stream-filter=(LZW|RLE|ASCII85|ASCIIHEX)$/.exec(arg)) != null) {
+            options.filter = parts[1];
             continue;
         }
         if (index === 0) {
@@ -42,12 +43,14 @@ function edf2pdf() {
         process.stderr.write(`		Set source file.\n`);
         process.stderr.write(`	--target=string\n`);
         process.stderr.write(`		Set target file.\n`);
+        process.stderr.write(`	--stream-filter=LZW|RLE|ASCII85|ASCIIHEX\n`);
+        process.stderr.write(`		Set stream filter.\n`);
         process.exit(0);
     }
     else {
         let json = JSON.parse(libfs.readFileSync(options.source, "utf8"));
         let edf = lib.edf.format.Document.as(json);
-        let pdf = lib.edf.document.DocumentUtils.convertToPDF(edf);
+        let pdf = lib.edf.document.DocumentUtils.convertToPDF(edf, options);
         libfs.writeFileSync(options.target, pdf.tokenize().join("\n"), "binary");
         process.exit(0);
     }
@@ -87,9 +90,9 @@ function embed() {
         process.stderr.write(`\n`);
         process.stderr.write(`Arguments:\n`);
         process.stderr.write(`	--source=string\n`);
-        process.stderr.write(`		Set source file.\n`);
+        process.stderr.write(`		Set source file (default stdin).\n`);
         process.stderr.write(`	--target=string\n`);
-        process.stderr.write(`		Set target file.\n`);
+        process.stderr.write(`		Set target file (default stdout).\n`);
         process.exit(0);
     }
     else {
@@ -137,9 +140,9 @@ function parsefont() {
         process.stderr.write(`\n`);
         process.stderr.write(`Arguments:\n`);
         process.stderr.write(`	--source=string\n`);
-        process.stderr.write(`		Set source file.\n`);
+        process.stderr.write(`		Set source file (default stdin).\n`);
         process.stderr.write(`	--target=string\n`);
-        process.stderr.write(`		Set target file.\n`);
+        process.stderr.write(`		Set target file (default stdout).\n`);
         process.exit(0);
     }
     else {
