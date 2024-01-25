@@ -240,6 +240,7 @@ const DPI72_POINTS_PER_IN = 72 / 1;
 const DPI72_POINTS_PER_PC = 72 / 12;
 const DPI72_POINTS_PER_MM = 72 / 25.4;
 const DPI72_POINTS_PER_CM = 72 / 2.54;
+const DPI72_POINTS_PER_PX = 72 / 96;
 
 export type AbsoluteLength = format.AbsoluteLength;
 
@@ -267,6 +268,9 @@ export const AbsoluteLength = {
 		}
 		if (unit === "cm") {
 			return value * DPI72_POINTS_PER_CM;
+		}
+		if (unit === "px") {
+			return value * DPI72_POINTS_PER_PX;
 		}
 		throw new Error(`Unexpected absolute unit!`);
 	},

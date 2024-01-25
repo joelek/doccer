@@ -73,7 +73,8 @@ export const AbsoluteUnit: autoguard.serialization.MessageGuard<AbsoluteUnit> = 
 	autoguard.guards.StringLiteral.of("in"),
 	autoguard.guards.StringLiteral.of("pc"),
 	autoguard.guards.StringLiteral.of("mm"),
-	autoguard.guards.StringLiteral.of("cm")
+	autoguard.guards.StringLiteral.of("cm"),
+	autoguard.guards.StringLiteral.of("px")
 );
 
 export type AbsoluteUnit = autoguard.guards.Union<[
@@ -81,7 +82,8 @@ export type AbsoluteUnit = autoguard.guards.Union<[
 	autoguard.guards.StringLiteral<"in">,
 	autoguard.guards.StringLiteral<"pc">,
 	autoguard.guards.StringLiteral<"mm">,
-	autoguard.guards.StringLiteral<"cm">
+	autoguard.guards.StringLiteral<"cm">,
+	autoguard.guards.StringLiteral<"px">
 ]>;
 
 export const AbsoluteLength: autoguard.serialization.MessageGuard<AbsoluteLength> = autoguard.guards.Union.of(

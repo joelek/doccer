@@ -26,7 +26,7 @@ guard CMYKColor: {
 guard Color: GrayscaleColor | RGBColor | CMYKColor;
 
 guard UnitlessLength: NonNegativeNumber;
-guard AbsoluteUnit: "pt" | "in" | "pc" | "mm" | "cm";
+guard AbsoluteUnit: "pt" | "in" | "pc" | "mm" | "cm" | "px";
 guard AbsoluteLength: UnitlessLength | [NonNegativeNumber, AbsoluteUnit];
 guard RelativeUnit: "%";
 guard RelativeLength: UnitlessLength | [NonNegativeNumber, RelativeUnit];

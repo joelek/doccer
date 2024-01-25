@@ -75,7 +75,7 @@ The rendering of the document is defined deterministically. For every EDF-docume
 
 There are numerous places in the document where lengths may be specified. Lengths are always specified using non-negative numbers and may optionally specify a unit.
 
-The format supports the absolute units points `pt`, inches `in`, picas `pc`, millimeters `mm` and centimeters `cm`. There are exactly 72 points, 1 inch, 12 picas, 25.4 millimeters and 2.54 centimeters per inch. Points are used by default whenever the unit is omitted unless another default absolute unit is specified using the `unit` property of the document. Absolute lengths may be used anywhere in the document.
+The format supports the absolute units points `pt`, inches `in`, picas `pc`, millimeters `mm`, centimeters `cm` and pixels `px`. There are exactly 72 points, 1 inch, 12 picas, 25.4 millimeters, 2.54 centimeters and 96 pixels per inch. Points are used by default whenever the unit is omitted unless another default absolute unit is specified using the `unit` property of the document. Absolute lengths may be used anywhere in the document.
 
 ```json
 {
