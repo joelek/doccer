@@ -606,6 +606,6 @@ NB: This project targets TypeScript 4 in strict mode.
 * Move text content into text node style.
 * Investigate possibility to support segmentation for nodes with non-intrinsic heights.
 * Implement the FlateDecode filter.
-* Document ImageNode and document images.
 * Add tests for ImageNode.
+* Consider removing the fit attribute for ImageNodes.
 * Add support for PNG images.
