@@ -17,6 +17,9 @@
 			"path": "./source/edf/"
 		},
 		{
+			"path": "./source/jpg/"
+		},
+		{
 			"path": "./source/lib/"
 		},
 		{
