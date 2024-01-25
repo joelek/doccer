@@ -134,6 +134,14 @@ class StyleHandler {
             padding: this.getLength(style.padding)
         };
     }
+    getImageStyle(style) {
+        style = this.getStyle("image", style, []) ?? {};
+        return {
+            ...style,
+            height: this.getNodeLength(style.height),
+            width: this.getNodeLength(style.width),
+        };
+    }
     getTextStyle(style) {
         style = this.getStyle("text", style, []) ?? {};
         return {
