@@ -402,7 +402,7 @@ The name of the image used for the image node may be specified through the `imag
 
 **fit**
 
-The image fitting mode of the image node may be specified through the `fit` attribute. The attribute should when present be specified as a string assuming either the value "fill", the value "cover" or the value "contain". The default value is "fill".
+The image fitting mode of the image node may be specified through the `fit` attribute. The attribute should when present be specified as a string assuming either the value "fill", the value "cover" or the value "contain". The default value is "contain".
 
 #### Text nodes
 
