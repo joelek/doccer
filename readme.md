@@ -383,7 +383,7 @@ The padding of the box node may be specified through the `padding` attribute. Th
 
 Image nodes are identified through the type attribute of a node being set to the value `image`. Image nodes are child nodes and may not contain any children of their own.
 
-Image nodes have an intrinsic size corresponding to the natural size of the image used. The image is scaled such that its aspect ratio is maintained when either width or height are extrinsically-sized. The aspect ratio of the image is not maintained when both width and height are extrinsically-sized.
+Image nodes have an intrinsic size corresponding to the natural size of the image used. The image is scaled such that its aspect ratio is maintained when either width or height are sized non-intrinsically. The aspect ratio of the image is not maintained when both width and height are sized non-intrinsically.
 
 ```json
 {
