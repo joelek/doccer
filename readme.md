@@ -588,6 +588,7 @@ NB: This project targets TypeScript 4 in strict mode.
 	Properties columns, gutter, line_height and text_align should stay on TextNode container.
 	Properties line_anchor and white_space might stay on TextNode container.
 	Style templates should be supported for each individual segment.
+	Nodes must be stored outside of node tree or restricted to only contain text segment nodes.
 * Decide whether to drop or keep "font" property.
 	Depends on how multiple text segments are implemented for TextNode.
 * Add support for color profiles.
