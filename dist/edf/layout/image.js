@@ -10,7 +10,7 @@ class ImageNode extends shared_1.ChildNode {
         super(style);
         style = style ?? {};
         let image = style.image ?? "default";
-        let fit = style.fit ?? "fill";
+        let fit = style.fit ?? "contain";
         this.entry = image_handler.getEntry(image);
         this.style = {
             image,
