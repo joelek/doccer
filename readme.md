@@ -383,7 +383,7 @@ The padding of the box node may be specified through the `padding` attribute. Th
 
 Image nodes are identified through the type attribute of a node being set to the value `image`. Image nodes are child nodes and may not contain any children of their own.
 
-Image nodes have an intrinsic size corresponding to the natural size of the image used. The image is scaled such that its aspect ratio is maintained when either width or height are sized non-intrinsically. The aspect ratio of the image is not maintained when both width and height are sized non-intrinsically.
+Image nodes have an intrinsic size corresponding to the natural size of the image used. The image is scaled such that its proportions are maintained when either width or height are sized non-intrinsically. The proportions of the image may be maintained when both width and height are sized non-intrinsically, depending on the value of the `fit` attribute. When set to "cover", the image might get cropped but it will never be distorted. When set to "contain", the image might get padded but it will never be distorted. When set to "fill", the image will become distorted when it is sized in a way such that its aspect ratio changes.
 
 ```json
 {
