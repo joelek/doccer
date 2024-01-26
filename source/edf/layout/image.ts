@@ -13,7 +13,7 @@ export class ImageNode extends ChildNode {
 		super(style);
 		style = style ?? {};
 		let image = style.image ?? "default";
-		let fit = style.fit ?? "fill";
+		let fit = style.fit ?? "contain";
 		this.entry = image_handler.getEntry(image);
 		this.style = {
 			image,
