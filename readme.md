@@ -607,5 +607,4 @@ NB: This project targets TypeScript 4 in strict mode.
 * Investigate possibility to support segmentation for nodes with non-intrinsic heights.
 * Implement the FlateDecode filter.
 * Add tests for ImageNode.
-* Consider removing the fit attribute for ImageNodes.
 * Add support for PNG images.
