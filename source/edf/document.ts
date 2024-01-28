@@ -69,7 +69,7 @@ export function createLZWStream(source: Uint8Array): PDFStreamObject {
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new PDFArray([
 				new pdf.format.PDFRecord([
-					new pdf.format.PDFRecordMember(new pdf.format.PDFName("EarlyChange"), new pdf.format.PDFInteger(0))
+					new pdf.format.PDFRecordMember(new pdf.format.PDFName("EarlyChange"), new pdf.format.PDFInteger(1))
 				])
 			]))
 		]),
