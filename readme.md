@@ -236,19 +236,20 @@ The renderer is allowed to use the PostScript name of the fonts to locate the ac
 
 #### Image handling
 
-Image references may be specified in a way similar to how both color swatches and font references are specified. The `images` property of the document should when present specify the images of the document using a record of strings where each string corresponds to an image file. The image file should use the JPEG format.
+Image references may be specified in a way similar to how both color swatches and font references are specified. The `images` property of the document should when present specify the images of the document using a record of strings where each string corresponds to an image file. The image file should use the JPEG format or the PNG format.
 
 The actual files may be embedded or external and should for maximum compatibility be specified using paths relative to the document, written using unix syntax. The renderer should abort the rendering and display an error if it cannot locate the image file of an image being used in the document. No images may be assumed to exist.
 
 ```json
 {
 	"images": {
-		"Logo": "./images/logo.jpg"
+		"Logo": "./images/logo.png",
+		"Photograph": "./images/photograph.jpg"
 	}
 }
 ```
 
-> The path of the image "Logo" is specified in the above example.
+> The path of the images "Logo" and "Photograph" are specified in the above example.
 
 #### The content tree
 
