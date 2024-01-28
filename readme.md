@@ -580,7 +580,6 @@ NB: This project targets TypeScript 4 in strict mode.
 * Improve computation of binary offsets in PDF serialization.
 * Use "extrinsic" as default width for all node types.
 * Move font size into Typesetter.
-* Add support for prefix and suffix nodes.
 * Parse kerning data from truetype font.
 * Parse ligature data from truetype font.
 * Parse PDF increments.
@@ -599,14 +598,16 @@ NB: This project targets TypeScript 4 in strict mode.
 	The command SC sets stroke color (1-4 operands).
 	the command sc sets fill color (1-4 operands).
 	Can embed ICC color spaces as resources (see page 149).
-* Remove unused segmentation state.
 * Implement font subsetting.
 * Resolve EDF paths relative to document instead of CWD.
 * Add context helper for creating instances of layout nodes.
 * Use precise sizes and positions in layout computations.
 * Add support for max text lines to TextNode.
 * Move text content into text node style.
-* Investigate possibility to support segmentation for nodes with non-intrinsic heights.
+* Investigate possibility to support segmentation for nodes with non-intrinsic heights (adds support for prefix and suffix nodes).
+* Remove unused segmentation state.
 * Implement the FlateDecode filter.
 * Add tests for ImageNode.
-* Add support for PNG images.
+* Add support for transparent PNG images through the /SMask stream dict key.
+* Add support for interlaced PNG images by re-encoding them.
+* Add support for the EarlyChange=0 LZW option.
