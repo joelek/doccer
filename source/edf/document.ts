@@ -67,7 +67,7 @@ export function createLZWStream(source: Uint8Array): PDFStreamObject {
 				new pdf.format.PDFName("LZWDecode")
 			])),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
-			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParams"), new PDFArray([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new PDFArray([
 				new pdf.format.PDFRecord([
 					new pdf.format.PDFRecordMember(new pdf.format.PDFName("EarlyChange"), new pdf.format.PDFInteger(0))
 				])
@@ -88,7 +88,7 @@ export function createRLEStream(source: Uint8Array): PDFStreamObject {
 				new pdf.format.PDFName("RunLengthDecode")
 			])),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
-			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParams"), new PDFArray([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new PDFArray([
 				new pdf.format.PDFNull()
 			]))
 		]),
@@ -323,7 +323,7 @@ export const DocumentUtils = {
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.sof.precision)),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("DCTDecode")),
 						new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
-						new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParams"), new pdf.format.PDFRecord([]))
+						new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([]))
 					]),
 					new pdf.format.PDFStream(buffer)
 				);
