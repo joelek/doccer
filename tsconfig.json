@@ -26,6 +26,9 @@
 			"path": "./source/pdf/"
 		},
 		{
+			"path": "./source/png/"
+		},
+		{
 			"path": "./source/truetype/"
 		}
 	]
