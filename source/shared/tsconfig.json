@@ -7,11 +7,7 @@
 	"extends": "../../tsconfig.json",
 	"include": [
 		"./",
-		"./cp_pdfdoc.json"
+		"./cppdfdoc.json"
 	],
-	"references": [
-		{
-			"path": "../shared/"
-		}
-	]
+	"references": []
 }
