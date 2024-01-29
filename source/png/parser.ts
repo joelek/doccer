@@ -1,4 +1,5 @@
 import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
+import { BitstreamReader, BitstreamWriter } from "../shared";
 
 export enum ColorType {
 	GRAYSCALE = 0,
