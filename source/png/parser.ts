@@ -218,3 +218,42 @@ export function decodeImageData(png: PNGData): Uint8Array {
 	}
 	return Uint8Array.from(bytes);
 };
+
+export function splitImageData(png: PNGData): { color: Uint8Array; alpha?: Uint8Array; } {
+	let image_data = decodeImageData(png);
+	if (png.ihdr.color_type === "GRAYSCALE_AND_ALPHA") {
+		let color_bytes = [] as Array<number>;
+		let alpha_bytes = [] as Array<number>;
+		let offset = 0;
+		for (let y = 0; y < png.ihdr.height; y++) {
+			for (let x = 0; x < png.ihdr.width; x++) {
+				color_bytes.push(image_data[offset++]);
+				alpha_bytes.push(image_data[offset++]);
+			}
+		}
+		return {
+			color: Uint8Array.from(color_bytes),
+			alpha: Uint8Array.from(alpha_bytes)
+		};
+	} else if (png.ihdr.color_type === "TRUECOLOR_AND_ALPHA") {
+		let color_bytes = [] as Array<number>;
+		let alpha_bytes = [] as Array<number>;
+		let offset = 0;
+		for (let y = 0; y < png.ihdr.height; y++) {
+			for (let x = 0; x < png.ihdr.width; x++) {
+				color_bytes.push(image_data[offset++]);
+				color_bytes.push(image_data[offset++]);
+				color_bytes.push(image_data[offset++]);
+				alpha_bytes.push(image_data[offset++]);
+			}
+		}
+		return {
+			color: Uint8Array.from(color_bytes),
+			alpha: Uint8Array.from(alpha_bytes)
+		};
+	} else {
+		return {
+			color: image_data
+		};
+	}
+};
