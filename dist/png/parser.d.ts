@@ -55,3 +55,7 @@ export declare function averagePredictor(left: number, top: number): number;
 export declare function paethPredictor(left: number, top: number, top_left: number): number;
 export declare function modulo(number: number, modulo: number): number;
 export declare function decodeImageData(png: PNGData): Uint8Array;
+export declare function splitImageData(png: PNGData): {
+    color: Uint8Array;
+    alpha?: Uint8Array;
+};
