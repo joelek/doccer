@@ -24,6 +24,10 @@ export declare function parseIHDRChunk(buffer: ArrayBuffer): {
     filter_method: string;
     interlace_method: string;
 };
+export type IHDRChunk = ReturnType<typeof parseIHDRChunk>;
+export declare function getPermittedBitDepths(color_type: typeof ColorType[number]): Array<number>;
+export declare function getNumberOfChannels(color_type: typeof ColorType[number]): number;
+export declare function getBitsPerPixel(ihdr: IHDRChunk): number;
 export declare function parsePNGChunk(buffer: ArrayBuffer, offset: number): {
     type: string;
     data: ArrayBuffer;
@@ -47,3 +51,7 @@ export declare function parsePNGData(buffer: ArrayBuffer): {
     }[];
 };
 export type PNGData = ReturnType<typeof parsePNGData>;
+export declare function averagePredictor(left: number, top: number): number;
+export declare function paethPredictor(left: number, top: number, top_left: number): number;
+export declare function modulo(number: number, modulo: number): number;
+export declare function decodeImageData(png: PNGData): Uint8Array;
