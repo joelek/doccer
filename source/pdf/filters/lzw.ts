@@ -1,4 +1,4 @@
-import { BitstreamReader, BitstreamWriter } from "../../shared";
+import { BitstreamReader, BitstreamWriter, StreamEndError } from "../../shared";
 
 const CLEAR_TABLE = 256;
 const END_OF_DATA = 257;
@@ -39,13 +39,22 @@ export const LZW = {
 				}
 			}
 		}
+		function getNextCode(): number | undefined {
+			try {
+				return bsr.decode(bit_length);
+			} catch (error) {
+				if (!(error instanceof StreamEndError)) {
+					throw error;
+				}
+			}
+		}
 		clearTable();
 		let bsr = new BitstreamReader(source);
 		let keys = [] as Array<string>;
 		let last_key = "";
 		let should_clear = false;
 		while (true) {
-			let code = bsr.decode(bit_length);
+			let code = getNextCode();
 			if (code == null) {
 				break;
 			} else if (code === CLEAR_TABLE) {
