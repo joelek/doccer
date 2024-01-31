@@ -4,7 +4,7 @@
 		"OpenSans-Regular": "./public/OpenSans-Regular.ttf"
 	},
 	"images": {
-		"logo": "./public/png_2x4_8bit_nonint.png"
+		"logo": "./public/png/normal_4x2_truecolor_and_alpha_8bit.png"
 	},
 	"size": {
 		"w": 210,
