@@ -1,3 +1,9 @@
+export class StreamEndError extends Error {
+	constructor(message?: string) {
+		super(message);
+	}
+};
+
 export class BitstreamReader {
 	protected bytes: Array<number>;
 	protected byte_index: number;
@@ -9,7 +15,7 @@ export class BitstreamReader {
 		this.bits_left_in_byte = bytes.length > 0 ? 8 : 0;
 	}
 
-	decode(bit_length: number): number | undefined {
+	decode(bit_length: number): number {
 		if (bit_length < 1 || bit_length > 24) {
 			throw new Error(`Expected bit length to be at least 1 and at most 24!`);
 		}
@@ -20,7 +26,11 @@ export class BitstreamReader {
 				this.byte_index += 1;
 				this.bits_left_in_byte = 8;
 				if (this.byte_index >= this.bytes.length) {
-					return;
+					if (bits_left === bit_length) {
+						throw new StreamEndError();
+					} else {
+						throw new Error(`Expected stream to contain additional bits!`);
+					}
 				}
 			}
 			let bits_to_decode = Math.min(this.bits_left_in_byte, bits_left);
