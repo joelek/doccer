@@ -14,7 +14,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.inflate = void 0;
+exports.inflate = exports.deflate = void 0;
 __exportStar(require("./bitstreams"), exports);
 var deflate_1 = require("./deflate");
+Object.defineProperty(exports, "deflate", { enumerable: true, get: function () { return deflate_1.deflate; } });
 Object.defineProperty(exports, "inflate", { enumerable: true, get: function () { return deflate_1.inflate; } });

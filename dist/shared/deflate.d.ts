@@ -25,4 +25,5 @@ export declare function readDeflateHeader(bsr: BitstreamReaderLSB): {
     dictionary_id: number | undefined;
 };
 export type DeflateHeader = ReturnType<typeof readDeflateHeader>;
+export declare function deflate(buffer: ArrayBuffer): Uint8Array;
 export declare function inflate(buffer: ArrayBuffer): Uint8Array;

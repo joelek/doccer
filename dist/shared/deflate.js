@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.inflate = exports.readDeflateHeader = exports.CompressionLevel = exports.CompressionMethod = exports.EncodingMethod = exports.STATIC_DISTANCES = exports.STATIC_LITERALS = exports.CODE_LENGTH_CODES_ORDER = void 0;
+exports.inflate = exports.deflate = exports.readDeflateHeader = exports.CompressionLevel = exports.CompressionMethod = exports.EncodingMethod = exports.STATIC_DISTANCES = exports.STATIC_LITERALS = exports.CODE_LENGTH_CODES_ORDER = void 0;
 const bitstreams_1 = require("./bitstreams");
 const huffman_1 = require("./huffman");
 exports.CODE_LENGTH_CODES_ORDER = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
@@ -72,6 +72,11 @@ function readDeflateHeader(bsr) {
     };
 }
 exports.readDeflateHeader = readDeflateHeader;
+;
+function deflate(buffer) {
+    throw new Error(`Not yet implemented!`);
+}
+exports.deflate = deflate;
 ;
 function inflate(buffer) {
     let bsr = new bitstreams_1.BitstreamReaderLSB(new Uint8Array(buffer));

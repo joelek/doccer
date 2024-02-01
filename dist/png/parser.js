@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.splitImageData = exports.decodeImageData = exports.modulo = exports.paethPredictor = exports.averagePredictor = exports.parsePNGData = exports.parsePNGChunk = exports.getBitsPerPixel = exports.getNumberOfChannels = exports.getPermittedBitDepths = exports.parseIHDRChunk = exports.InterlaceMethod = exports.FilterMethod = exports.CompressionMethod = exports.ColorType = void 0;
+exports.splitImageData = exports.encodeImageData = exports.createScanlineData = exports.decodeImageData = exports.PredictorType = exports.modulo = exports.paethPredictor = exports.averagePredictor = exports.parsePNGData = exports.parsePNGChunk = exports.getBitsPerPixel = exports.getNumberOfChannels = exports.getPermittedBitDepths = exports.parseIHDRChunk = exports.InterlaceMethod = exports.FilterMethod = exports.CompressionMethod = exports.ColorType = void 0;
 const chunk_1 = require("@joelek/ts-stdlib/dist/lib/data/chunk");
 const shared_1 = require("../shared");
 var ColorType;
@@ -180,6 +180,15 @@ function modulo(number, modulo) {
 }
 exports.modulo = modulo;
 ;
+var PredictorType;
+(function (PredictorType) {
+    PredictorType[PredictorType["NONE"] = 0] = "NONE";
+    PredictorType[PredictorType["SUB"] = 1] = "SUB";
+    PredictorType[PredictorType["UP"] = 2] = "UP";
+    PredictorType[PredictorType["AVERAGE"] = 3] = "AVERAGE";
+    PredictorType[PredictorType["PAETH"] = 4] = "PAETH";
+})(PredictorType = exports.PredictorType || (exports.PredictorType = {}));
+;
 function decodeImageData(png) {
     let idats = png.chunks.filter((chunk) => chunk.type === "IDAT");
     if (idats.length !== 1) {
@@ -204,26 +213,26 @@ function decodeImageData(png) {
     }
     for (let y = 0; y < png.ihdr.height; y++) {
         let predictor = inflated_idat[offset++];
-        if (predictor === 0) {
+        if (predictor === PredictorType.NONE) {
             for (let x = 0; x < bytes_per_scanline; x++) {
                 bytes.push(inflated_idat[offset++]);
             }
         }
-        else if (predictor === 1) {
+        else if (predictor === PredictorType.SUB) {
             for (let x = 0; x < bytes_per_scanline; x++) {
                 let left_byte = getLeftByte(x, y);
                 let byte = modulo(inflated_idat[offset++] + left_byte, 256);
                 bytes.push(byte);
             }
         }
-        else if (predictor === 2) {
+        else if (predictor === PredictorType.UP) {
             for (let x = 0; x < bytes_per_scanline; x++) {
                 let top_byte = getTopByte(x, y);
                 let byte = modulo(inflated_idat[offset++] + top_byte, 256);
                 bytes.push(byte);
             }
         }
-        else if (predictor === 3) {
+        else if (predictor === PredictorType.AVERAGE) {
             for (let x = 0; x < bytes_per_scanline; x++) {
                 let left_byte = getLeftByte(x, y);
                 let top_byte = getTopByte(x, y);
@@ -231,7 +240,7 @@ function decodeImageData(png) {
                 bytes.push(byte);
             }
         }
-        else if (predictor === 4) {
+        else if (predictor === PredictorType.PAETH) {
             for (let x = 0; x < bytes_per_scanline; x++) {
                 let left_byte = getLeftByte(x, y);
                 let top_byte = getTopByte(x, y);
@@ -247,6 +256,83 @@ function decodeImageData(png) {
     return Uint8Array.from(bytes);
 }
 exports.decodeImageData = decodeImageData;
+;
+function createScanlineData(ihdr, data) {
+    let bits_per_pixel = getBitsPerPixel(ihdr);
+    let x_delta = Math.ceil(bits_per_pixel / 8);
+    let y_delta = 1;
+    let bytes_per_scanline = Math.ceil(bits_per_pixel * ihdr.width / 8);
+    let bytes = [];
+    let offset = 0;
+    function getLeftByte(x, y) {
+        return x >= x_delta ? bytes[(y) * bytes_per_scanline + (x - x_delta)] : 0;
+    }
+    function getTopByte(x, y) {
+        return y >= y_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x)] : 0;
+    }
+    function getTopLeftByte(x, y) {
+        return y >= y_delta && x >= x_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x - x_delta)] : 0;
+    }
+    let predictors = [];
+    predictors.push((x, y) => {
+        return data[offset];
+    });
+    if (ihdr.color_type !== "INDEXED" && ihdr.bit_depth >= 8) {
+        predictors.push((x, y) => {
+            let left_byte = getLeftByte(x, y);
+            return left_byte;
+        });
+        predictors.push((x, y) => {
+            let top_byte = getTopByte(x, y);
+            return top_byte;
+        });
+        predictors.push((x, y) => {
+            let left_byte = getLeftByte(x, y);
+            let top_byte = getTopByte(x, y);
+            return averagePredictor(left_byte, top_byte);
+        });
+        predictors.push((x, y) => {
+            let left_byte = getLeftByte(x, y);
+            let top_byte = getTopByte(x, y);
+            let top_left_byte = getTopLeftByte(x, y);
+            return paethPredictor(left_byte, top_byte, top_left_byte);
+        });
+    }
+    for (let y = 0; y < ihdr.height; y++) {
+        let scanlines = [];
+        let original_offset = offset;
+        for (let predictor of predictors) {
+            offset = original_offset;
+            let signed_bytes = [];
+            let signed_bytes_sum = 0;
+            for (let x = 0; x < bytes_per_scanline; x++) {
+                let byte = data[offset++] - predictor(x, y);
+                signed_bytes.push(byte);
+                signed_bytes_sum += byte;
+            }
+            scanlines.push({
+                predictor: scanlines.length,
+                signed_bytes,
+                signed_bytes_sum
+            });
+        }
+        scanlines.sort((one, two) => Math.abs(one.signed_bytes_sum) - Math.abs(two.signed_bytes_sum));
+        let scanline = scanlines[0];
+        bytes.push(scanline.predictor);
+        for (let signed_byte of scanline.signed_bytes) {
+            bytes.push(modulo(signed_byte, 256));
+        }
+    }
+    return Uint8Array.from(bytes);
+}
+exports.createScanlineData = createScanlineData;
+;
+function encodeImageData(ihdr, data) {
+    let inflated_idat = createScanlineData(ihdr, data);
+    let deflated_idat = (0, shared_1.deflate)(inflated_idat.buffer);
+    return deflated_idat;
+}
+exports.encodeImageData = encodeImageData;
 ;
 function splitImageData(png) {
     let image_data = decodeImageData(png);

@@ -54,7 +54,17 @@ export type PNGData = ReturnType<typeof parsePNGData>;
 export declare function averagePredictor(left: number, top: number): number;
 export declare function paethPredictor(left: number, top: number, top_left: number): number;
 export declare function modulo(number: number, modulo: number): number;
+export declare enum PredictorType {
+    NONE = 0,
+    SUB = 1,
+    UP = 2,
+    AVERAGE = 3,
+    PAETH = 4
+}
 export declare function decodeImageData(png: PNGData): Uint8Array;
+export type Predictor = (x: number, y: number) => number;
+export declare function createScanlineData(ihdr: IHDRChunk, data: Uint8Array): Uint8Array;
+export declare function encodeImageData(ihdr: IHDRChunk, data: Uint8Array): Uint8Array;
 export declare function splitImageData(png: PNGData): {
     color: Uint8Array;
     alpha?: Uint8Array;
