@@ -1,2 +1,2 @@
 export * from "./bitstreams";
-export { inflate } from "./deflate";
+export { deflate, inflate } from "./deflate";

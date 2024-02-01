@@ -78,6 +78,10 @@ export function readDeflateHeader(bsr: BitstreamReaderLSB) {
 
 export type DeflateHeader = ReturnType<typeof readDeflateHeader>;
 
+export function deflate(buffer: ArrayBuffer): Uint8Array {
+	throw new Error(`Not yet implemented!`);
+};
+
 export function inflate(buffer: ArrayBuffer): Uint8Array {
 	let bsr = new BitstreamReaderLSB(new Uint8Array(buffer));
 	let header = readDeflateHeader(bsr);
