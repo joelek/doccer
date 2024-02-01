@@ -1,5 +1,5 @@
 import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
-import { inflate } from "../shared";
+import { deflate, inflate } from "../shared";
 
 export enum ColorType {
 	GRAYSCALE = 0,
@@ -225,6 +225,87 @@ export function decodeImageData(png: PNGData): Uint8Array {
 		}
 	}
 	return Uint8Array.from(bytes);
+};
+
+export type Predictor = (x: number, y: number) => number;
+
+export function createScanlineData(ihdr: IHDRChunk, data: Uint8Array): Uint8Array {
+	let bits_per_pixel = getBitsPerPixel(ihdr);
+	let x_delta = Math.ceil(bits_per_pixel / 8);
+	let y_delta = 1;
+	let bytes_per_scanline = Math.ceil(bits_per_pixel * ihdr.width / 8);
+	let bytes = [] as Array<number>;
+	let offset = 0;
+	function getLeftByte(x: number, y: number): number {
+		return x >= x_delta ? bytes[(y) * bytes_per_scanline + (x - x_delta)] : 0;
+	}
+	function getTopByte(x: number, y: number): number {
+		return y >= y_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x)] : 0;
+	}
+	function getTopLeftByte(x: number, y: number): number {
+		return y >= y_delta && x >= x_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x - x_delta)] : 0;
+	}
+	let predictors = [] as Array<Predictor>;
+	predictors.push((x, y) => {
+		return data[offset];
+	});
+	if (ihdr.color_type !== "INDEXED" && ihdr.bit_depth >= 8) {
+		predictors.push((x, y) => {
+			let left_byte = getLeftByte(x, y);
+			return left_byte;
+		});
+		predictors.push((x, y) => {
+			let top_byte = getTopByte(x, y);
+			return  top_byte;
+		});
+		predictors.push((x, y) => {
+			let left_byte = getLeftByte(x, y);
+			let top_byte = getTopByte(x, y);
+			return averagePredictor(left_byte, top_byte);
+		});
+		predictors.push((x, y) => {
+			let left_byte = getLeftByte(x, y);
+			let top_byte = getTopByte(x, y);
+			let top_left_byte = getTopLeftByte(x, y);
+			return paethPredictor(left_byte, top_byte, top_left_byte);
+		});
+	}
+	for (let y = 0; y < ihdr.height; y++) {
+		let scanlines = [] as Array<{
+			predictor: number;
+			signed_bytes: Array<number>;
+			signed_bytes_sum: number;
+		}>;
+		let original_offset = offset;
+		for (let predictor of predictors) {
+			offset = original_offset;
+			let signed_bytes = [] as Array<number>;
+			let signed_bytes_sum = 0;
+			for (let x = 0; x < bytes_per_scanline; x++) {
+				let byte = data[offset++] - predictor(x, y);
+				signed_bytes.push(byte);
+				signed_bytes_sum += byte;
+			}
+			scanlines.push({
+				predictor: scanlines.length,
+				signed_bytes,
+				signed_bytes_sum
+			});
+		}
+		scanlines.sort((one, two) => Math.abs(one.signed_bytes_sum) - Math.abs(two.signed_bytes_sum));
+		let scanline = scanlines[0];
+		bytes.push(scanline.predictor);
+		for (let signed_byte of scanline.signed_bytes) {
+			bytes.push(modulo(signed_byte, 256));
+		}
+	}
+	return Uint8Array.from(bytes);
+};
+
+export function encodeImageData(ihdr: IHDRChunk, data: Uint8Array): Uint8Array {
+	let inflated_idat = createScanlineData(ihdr, data);
+	let deflated_idat = deflate(inflated_idat.buffer);
+	return deflated_idat;
 };
 
 export function splitImageData(png: PNGData): { color: Uint8Array; alpha?: Uint8Array; } {
