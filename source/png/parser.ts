@@ -157,6 +157,14 @@ export function modulo(number: number, modulo: number): number {
 	return ((number % modulo) + modulo) % modulo;
 };
 
+export enum PredictorType {
+	NONE = 0,
+	SUB = 1,
+	UP = 2,
+	AVERAGE = 3,
+	PAETH = 4
+};
+
 export function decodeImageData(png: PNGData): Uint8Array {
 	let idats = png.chunks.filter((chunk) => chunk.type === "IDAT");
 	if (idats.length !== 1) {
@@ -181,30 +189,30 @@ export function decodeImageData(png: PNGData): Uint8Array {
 	}
 	for (let y = 0; y < png.ihdr.height; y++) {
 		let predictor = inflated_idat[offset++];
-		if (predictor === 0) {
+		if (predictor === PredictorType.NONE) {
 			for (let x = 0; x < bytes_per_scanline; x++) {
 				bytes.push(inflated_idat[offset++]);
 			}
-		} else if (predictor === 1) {
+		} else if (predictor === PredictorType.SUB) {
 			for (let x = 0; x < bytes_per_scanline; x++) {
 				let left_byte = getLeftByte(x, y);
 				let byte = modulo(inflated_idat[offset++] + left_byte, 256);
 				bytes.push(byte);
 			}
-		} else if (predictor === 2) {
+		} else if (predictor === PredictorType.UP) {
 			for (let x = 0; x < bytes_per_scanline; x++) {
 				let top_byte = getTopByte(x, y);
 				let byte = modulo(inflated_idat[offset++] + top_byte, 256);
 				bytes.push(byte);
 			}
-		} else if (predictor === 3) {
+		} else if (predictor === PredictorType.AVERAGE) {
 			for (let x = 0; x < bytes_per_scanline; x++) {
 				let left_byte = getLeftByte(x, y);
 				let top_byte = getTopByte(x, y);
 				let byte = modulo(inflated_idat[offset++] + averagePredictor(left_byte, top_byte), 256);
 				bytes.push(byte);
 			}
-		} else if (predictor === 4) {
+		} else if (predictor === PredictorType.PAETH) {
 			for (let x = 0; x < bytes_per_scanline; x++) {
 				let left_byte = getLeftByte(x, y);
 				let top_byte = getTopByte(x, y);
