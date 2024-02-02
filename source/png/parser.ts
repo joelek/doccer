@@ -247,7 +247,7 @@ export function createScanlineData(ihdr: IHDRChunk, data: Uint8Array): Uint8Arra
 	}
 	let predictors = [] as Array<Predictor>;
 	predictors.push((x, y) => {
-		return data[offset];
+		return 0;
 	});
 	if (ihdr.color_type !== "INDEXED" && ihdr.bit_depth >= 8) {
 		predictors.push((x, y) => {
