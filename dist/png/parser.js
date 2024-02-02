@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.splitImageData = exports.encodeImageData = exports.createScanlineData = exports.decodeImageData = exports.PredictorType = exports.modulo = exports.paethPredictor = exports.averagePredictor = exports.parsePNGData = exports.parsePNGChunk = exports.getBitsPerPixel = exports.getNumberOfChannels = exports.getPermittedBitDepths = exports.parseIHDRChunk = exports.InterlaceMethod = exports.FilterMethod = exports.CompressionMethod = exports.ColorType = void 0;
+exports.splitImageIntoColorAndAlpha = exports.encodeImageData = exports.createScanlineData = exports.decodeImageData = exports.PredictorType = exports.modulo = exports.paethPredictor = exports.averagePredictor = exports.parsePNGData = exports.parsePNGChunk = exports.getBitsPerPixel = exports.getNumberOfChannels = exports.getPermittedBitDepths = exports.parseIHDRChunk = exports.InterlaceMethod = exports.FilterMethod = exports.CompressionMethod = exports.ColorType = void 0;
 const chunk_1 = require("@joelek/ts-stdlib/dist/lib/data/chunk");
 const shared_1 = require("../shared");
 var ColorType;
@@ -334,7 +334,7 @@ function encodeImageData(ihdr, data) {
 }
 exports.encodeImageData = encodeImageData;
 ;
-function splitImageData(png) {
+function splitImageIntoColorAndAlpha(png) {
     let image_data = decodeImageData(png);
     if (png.ihdr.color_type === "GRAYSCALE_AND_ALPHA") {
         let color_bytes = [];
@@ -346,9 +346,25 @@ function splitImageData(png) {
                 alpha_bytes.push(image_data[offset++]);
             }
         }
+        let color_ihdr = {
+            ...png.ihdr,
+            color_type: "GRAYSCALE"
+        };
+        let color_idat = encodeImageData(color_ihdr, Uint8Array.from(color_bytes));
+        let alpha_ihdr = {
+            ...png.ihdr,
+            color_type: "GRAYSCALE"
+        };
+        let alpha_idat = encodeImageData(alpha_ihdr, Uint8Array.from(alpha_bytes));
         return {
-            color: Uint8Array.from(color_bytes),
-            alpha: Uint8Array.from(alpha_bytes)
+            color: {
+                ihdr: color_ihdr,
+                idat: color_idat
+            },
+            alpha: {
+                ihdr: alpha_ihdr,
+                idat: alpha_idat
+            }
         };
     }
     else if (png.ihdr.color_type === "TRUECOLOR_AND_ALPHA") {
@@ -363,16 +379,39 @@ function splitImageData(png) {
                 alpha_bytes.push(image_data[offset++]);
             }
         }
+        let color_ihdr = {
+            ...png.ihdr,
+            color_type: "TRUECOLOR"
+        };
+        let color_idat = encodeImageData(color_ihdr, Uint8Array.from(color_bytes));
+        let alpha_ihdr = {
+            ...png.ihdr,
+            color_type: "GRAYSCALE"
+        };
+        let alpha_idat = encodeImageData(alpha_ihdr, Uint8Array.from(alpha_bytes));
         return {
-            color: Uint8Array.from(color_bytes),
-            alpha: Uint8Array.from(alpha_bytes)
+            color: {
+                ihdr: color_ihdr,
+                idat: color_idat
+            },
+            alpha: {
+                ihdr: alpha_ihdr,
+                idat: alpha_idat
+            }
         };
     }
     else {
+        let color_ihdr = {
+            ...png.ihdr
+        };
+        let color_idat = encodeImageData(color_ihdr, image_data);
         return {
-            color: image_data
+            color: {
+                ihdr: color_ihdr,
+                idat: color_idat
+            }
         };
     }
 }
-exports.splitImageData = splitImageData;
+exports.splitImageIntoColorAndAlpha = splitImageIntoColorAndAlpha;
 ;

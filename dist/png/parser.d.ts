@@ -65,7 +65,13 @@ export declare function decodeImageData(png: PNGData): Uint8Array;
 export type Predictor = (x: number, y: number) => number;
 export declare function createScanlineData(ihdr: IHDRChunk, data: Uint8Array): Uint8Array;
 export declare function encodeImageData(ihdr: IHDRChunk, data: Uint8Array): Uint8Array;
-export declare function splitImageData(png: PNGData): {
-    color: Uint8Array;
-    alpha?: Uint8Array;
+export declare function splitImageIntoColorAndAlpha(png: PNGData): {
+    color: {
+        ihdr: IHDRChunk;
+        idat: Uint8Array;
+    };
+    alpha?: {
+        ihdr: IHDRChunk;
+        idat: Uint8Array;
+    };
 };
