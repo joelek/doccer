@@ -45,7 +45,7 @@ export function createGrayscalePNGXObjects(data: png.PNGData): Array<PDFStreamOb
 };
 
 export function createGrayscaleAndAlphaPNGXObjects(data: png.PNGData): Array<PDFStreamObject> {
-	let { color, alpha } = png.splitImageData(data);
+	let { color, alpha } = png.splitImageIntoColorAndAlpha(data);
 	if (alpha == null) {
 		throw new Error(`Expected an alpha channel!`);
 	}
@@ -59,16 +59,16 @@ export function createGrayscaleAndAlphaPNGXObjects(data: png.PNGData): Array<PDF
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Height"), new pdf.format.PDFInteger(data.ihdr.height)),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("ColorSpace"), new pdf.format.PDFName("DeviceGray")),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
-/* 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")), */
-			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(alpha.byteLength)),
-/* 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(alpha.idat.byteLength)),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
 				new PDFRecordMember(new PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
 				new PDFRecordMember(new PDFName("Predictor"), new pdf.format.PDFInteger(15)),
 				new PDFRecordMember(new PDFName("Columns"), new pdf.format.PDFInteger(data.ihdr.width)),
 				new PDFRecordMember(new PDFName("Colors"), new pdf.format.PDFInteger(1))
-			])) */
+			]))
 		]),
-		new pdf.format.PDFStream(alpha)
+		new pdf.format.PDFStream(alpha.idat)
 	);
 	let image_xobject = new pdf.format.PDFStreamObject(
 		new pdf.format.PDFInteger(1),
@@ -81,16 +81,16 @@ export function createGrayscaleAndAlphaPNGXObjects(data: png.PNGData): Array<PDF
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("ColorSpace"), new pdf.format.PDFName("DeviceGray")),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("SMask"), mask_xobject.getReference()),
-/* 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")), */
-			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(color.byteLength)),
-/* 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(color.idat.byteLength)),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
 				new PDFRecordMember(new PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
 				new PDFRecordMember(new PDFName("Predictor"), new pdf.format.PDFInteger(15)),
 				new PDFRecordMember(new PDFName("Columns"), new pdf.format.PDFInteger(data.ihdr.width)),
 				new PDFRecordMember(new PDFName("Colors"), new pdf.format.PDFInteger(1))
-			])) */
+			]))
 		]),
-		new pdf.format.PDFStream(color)
+		new pdf.format.PDFStream(color.idat)
 	);
 	return [image_xobject, mask_xobject];
 };
@@ -128,7 +128,7 @@ export function createTruecolorPNGXObjects(data: png.PNGData): Array<PDFStreamOb
 };
 
 export function createTruecolorAndAlphaPNGXObjects(data: png.PNGData): Array<PDFStreamObject> {
-	let { color, alpha } = png.splitImageData(data);
+	let { color, alpha } = png.splitImageIntoColorAndAlpha(data);
 	if (alpha == null) {
 		throw new Error(`Expected an alpha channel!`);
 	}
@@ -142,16 +142,16 @@ export function createTruecolorAndAlphaPNGXObjects(data: png.PNGData): Array<PDF
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Height"), new pdf.format.PDFInteger(data.ihdr.height)),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("ColorSpace"), new pdf.format.PDFName("DeviceGray")),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
-/* 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")), */
-			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(alpha.byteLength)),
-/* 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(alpha.idat.byteLength)),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
 				new PDFRecordMember(new PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
 				new PDFRecordMember(new PDFName("Predictor"), new pdf.format.PDFInteger(15)),
 				new PDFRecordMember(new PDFName("Columns"), new pdf.format.PDFInteger(data.ihdr.width)),
 				new PDFRecordMember(new PDFName("Colors"), new pdf.format.PDFInteger(1))
-			])) */
+			]))
 		]),
-		new pdf.format.PDFStream(alpha)
+		new pdf.format.PDFStream(alpha.idat)
 	);
 	let image_xobject = new pdf.format.PDFStreamObject(
 		new pdf.format.PDFInteger(1),
@@ -164,16 +164,16 @@ export function createTruecolorAndAlphaPNGXObjects(data: png.PNGData): Array<PDF
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("ColorSpace"), new pdf.format.PDFName("DeviceRGB")),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("SMask"), mask_xobject.getReference()),
-/* 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")), */
-			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(color.byteLength)),
-/* 			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(color.idat.byteLength)),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
 				new PDFRecordMember(new PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
 				new PDFRecordMember(new PDFName("Predictor"), new pdf.format.PDFInteger(15)),
 				new PDFRecordMember(new PDFName("Columns"), new pdf.format.PDFInteger(data.ihdr.width)),
 				new PDFRecordMember(new PDFName("Colors"), new pdf.format.PDFInteger(3))
-			])) */
+			]))
 		]),
-		new pdf.format.PDFStream(color)
+		new pdf.format.PDFStream(color.idat)
 	);
 	return [image_xobject, mask_xobject];
 };

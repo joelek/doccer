@@ -308,7 +308,7 @@ export function encodeImageData(ihdr: IHDRChunk, data: Uint8Array): Uint8Array {
 	return deflated_idat;
 };
 
-export function splitImageData(png: PNGData): { color: Uint8Array; alpha?: Uint8Array; } {
+export function splitImageIntoColorAndAlpha(png: PNGData): { color: { ihdr: IHDRChunk; idat: Uint8Array; }; alpha?: { ihdr: IHDRChunk; idat: Uint8Array; }; } {
 	let image_data = decodeImageData(png);
 	if (png.ihdr.color_type === "GRAYSCALE_AND_ALPHA") {
 		let color_bytes = [] as Array<number>;
@@ -320,9 +320,25 @@ export function splitImageData(png: PNGData): { color: Uint8Array; alpha?: Uint8
 				alpha_bytes.push(image_data[offset++]);
 			}
 		}
+		let color_ihdr: IHDRChunk = {
+			...png.ihdr,
+			color_type: "GRAYSCALE"
+		};
+		let color_idat = encodeImageData(color_ihdr, Uint8Array.from(color_bytes));
+		let alpha_ihdr: IHDRChunk = {
+			...png.ihdr,
+			color_type: "GRAYSCALE"
+		};
+		let alpha_idat = encodeImageData(alpha_ihdr, Uint8Array.from(alpha_bytes));
 		return {
-			color: Uint8Array.from(color_bytes),
-			alpha: Uint8Array.from(alpha_bytes)
+			color: {
+				ihdr: color_ihdr,
+				idat: color_idat
+			},
+			alpha:{
+				ihdr: alpha_ihdr,
+				idat: alpha_idat
+			}
 		};
 	} else if (png.ihdr.color_type === "TRUECOLOR_AND_ALPHA") {
 		let color_bytes = [] as Array<number>;
@@ -336,13 +352,36 @@ export function splitImageData(png: PNGData): { color: Uint8Array; alpha?: Uint8
 				alpha_bytes.push(image_data[offset++]);
 			}
 		}
+		let color_ihdr: IHDRChunk = {
+			...png.ihdr,
+			color_type: "TRUECOLOR"
+		};
+		let color_idat = encodeImageData(color_ihdr, Uint8Array.from(color_bytes));
+		let alpha_ihdr: IHDRChunk = {
+			...png.ihdr,
+			color_type: "GRAYSCALE"
+		};
+		let alpha_idat = encodeImageData(alpha_ihdr, Uint8Array.from(alpha_bytes));
 		return {
-			color: Uint8Array.from(color_bytes),
-			alpha: Uint8Array.from(alpha_bytes)
+			color: {
+				ihdr: color_ihdr,
+				idat: color_idat
+			},
+			alpha:{
+				ihdr: alpha_ihdr,
+				idat: alpha_idat
+			}
 		};
 	} else {
+		let color_ihdr: IHDRChunk = {
+			...png.ihdr
+		};
+		let color_idat = encodeImageData(color_ihdr, image_data);
 		return {
-			color: image_data
+			color: {
+				ihdr: color_ihdr,
+				idat: color_idat
+			}
 		};
 	}
 };
