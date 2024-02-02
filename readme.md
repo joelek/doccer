@@ -510,7 +510,7 @@ The tool suite can be installed locally or globally. Use the `npx doccer` comman
 
 #### Convert an EDF-document into a PDF-document
 
-An EDF-document may be converted into a PDF-document using the `edf2pdf` command. The source file is specified using the first positional argument or using the `--source=<string>` argument. The target file is specified using the second positional argument or using the `--target=<string>` argument. The stream filter may be specified using the `--stream-filter=LZW|RLE|ASCII85|ASCIIHEX` argument.
+An EDF-document may be converted into a PDF-document using the `edf2pdf` command. The source file is specified using the first positional argument or using the `--source=<string>` argument. The target file is specified using the second positional argument or using the `--target=<string>` argument. The stream filter may be specified using the `--stream-filter=LZW|RLE|ASCII85|ASCIIHEX|DEFLATE` argument.
 
 All resources will be properly embedded into the target file, making it truly portable although not being editable.
 

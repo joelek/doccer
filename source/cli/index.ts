@@ -17,7 +17,7 @@ function edf2pdf(): void {
 			options.target = parts[1];
 			continue;
 		}
-		if ((parts = /^--stream-filter=(LZW|RLE|ASCII85|ASCIIHEX)$/.exec(arg)) != null) {
+		if ((parts = /^--stream-filter=(LZW|RLE|ASCII85|ASCIIHEX|DEFLATE)$/.exec(arg)) != null) {
 			options.filter = parts[1] as lib.edf.document.ConvertToPDFOptions["filter"];
 			continue;
 		}
@@ -43,7 +43,7 @@ function edf2pdf(): void {
 		process.stderr.write(`		Set source file.\n`);
 		process.stderr.write(`	--target=string\n`);
 		process.stderr.write(`		Set target file.\n`);
-		process.stderr.write(`	--stream-filter=LZW|RLE|ASCII85|ASCIIHEX\n`);
+		process.stderr.write(`	--stream-filter=LZW|RLE|ASCII85|ASCIIHEX|DEFLATE\n`);
 		process.stderr.write(`		Set stream filter.\n`);
 		process.exit(0);
 	} else {

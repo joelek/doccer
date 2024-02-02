@@ -352,6 +352,25 @@ export function createASCIIHexStream(source: Uint8Array): PDFStreamObject {
 	return pdf_stream;
 };
 
+export function createDeflateStream(source: Uint8Array): PDFStreamObject {
+	let buffer = pdf.filters.Deflate.encode(source);
+	let pdf_stream = new pdf.format.PDFStreamObject(
+		new pdf.format.PDFInteger(1),
+		new pdf.format.PDFInteger(0),
+		new pdf.format.PDFRecord([
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new PDFArray([
+				new pdf.format.PDFName("FlateDecode")
+			])),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
+			new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new PDFArray([
+				new pdf.format.PDFNull()
+			]))
+		]),
+		new pdf.format.PDFStream(buffer)
+	);
+	return pdf_stream;
+};
+
 export function createUncompressedStream(source: Uint8Array): PDFStreamObject {
 	let buffer = source;
 	let pdf_stream = new pdf.format.PDFStreamObject(
@@ -378,11 +397,14 @@ export function createStream(source: Uint8Array, filter: Partial<ConvertToPDFOpt
 	if (filter === "ASCIIHEX") {
 		return createASCIIHexStream(source);
 	}
+	if (filter === "DEFLATE") {
+		return createDeflateStream(source);
+	}
 	return createUncompressedStream(source);
 };
 
 export type ConvertToPDFOptions = {
-	filter: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX";
+	filter: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX" | "DEFLATE";
 };
 
 export const DocumentUtils = {
