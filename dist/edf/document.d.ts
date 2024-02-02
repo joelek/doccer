@@ -20,10 +20,11 @@ export declare function createLZWStream(source: Uint8Array): PDFStreamObject;
 export declare function createRLEStream(source: Uint8Array): PDFStreamObject;
 export declare function createASCII85Stream(source: Uint8Array): PDFStreamObject;
 export declare function createASCIIHexStream(source: Uint8Array): PDFStreamObject;
+export declare function createDeflateStream(source: Uint8Array): PDFStreamObject;
 export declare function createUncompressedStream(source: Uint8Array): PDFStreamObject;
 export declare function createStream(source: Uint8Array, filter: Partial<ConvertToPDFOptions>["filter"]): PDFStreamObject;
 export type ConvertToPDFOptions = {
-    filter: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX";
+    filter: "LZW" | "RLE" | "ASCII85" | "ASCIIHEX" | "DEFLATE";
 };
 export declare const DocumentUtils: {
     convertToPDF(document: Document, options?: Partial<ConvertToPDFOptions>): pdf.format.PDFFile;

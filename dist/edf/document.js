@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DocumentUtils = exports.createStream = exports.createUncompressedStream = exports.createASCIIHexStream = exports.createASCII85Stream = exports.createRLEStream = exports.createLZWStream = exports.createNodeClasses = exports.makeToUnicode = exports.createPNGXObjects = exports.createIndexedPNGXObjects = exports.createTruecolorAndAlphaPNGXObjects = exports.createTruecolorPNGXObjects = exports.createGrayscaleAndAlphaPNGXObjects = exports.createGrayscalePNGXObjects = void 0;
+exports.DocumentUtils = exports.createStream = exports.createUncompressedStream = exports.createDeflateStream = exports.createASCIIHexStream = exports.createASCII85Stream = exports.createRLEStream = exports.createLZWStream = exports.createNodeClasses = exports.makeToUnicode = exports.createPNGXObjects = exports.createIndexedPNGXObjects = exports.createTruecolorAndAlphaPNGXObjects = exports.createTruecolorPNGXObjects = exports.createGrayscaleAndAlphaPNGXObjects = exports.createGrayscalePNGXObjects = void 0;
 const stdlib = require("@joelek/ts-stdlib");
 const app = require("../app.json");
 const pdf = require("../pdf");
@@ -311,6 +311,21 @@ function createASCIIHexStream(source) {
 }
 exports.createASCIIHexStream = createASCIIHexStream;
 ;
+function createDeflateStream(source) {
+    let buffer = pdf.filters.Deflate.encode(source);
+    let pdf_stream = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new format_2.PDFArray([
+            new pdf.format.PDFName("FlateDecode")
+        ])),
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(buffer.byteLength)),
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new format_2.PDFArray([
+            new pdf.format.PDFNull()
+        ]))
+    ]), new pdf.format.PDFStream(buffer));
+    return pdf_stream;
+}
+exports.createDeflateStream = createDeflateStream;
+;
 function createUncompressedStream(source) {
     let buffer = source;
     let pdf_stream = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
@@ -332,6 +347,9 @@ function createStream(source, filter) {
     }
     if (filter === "ASCIIHEX") {
         return createASCIIHexStream(source);
+    }
+    if (filter === "DEFLATE") {
+        return createDeflateStream(source);
     }
     return createUncompressedStream(source);
 }

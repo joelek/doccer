@@ -17,7 +17,7 @@ function edf2pdf() {
             options.target = parts[1];
             continue;
         }
-        if ((parts = /^--stream-filter=(LZW|RLE|ASCII85|ASCIIHEX)$/.exec(arg)) != null) {
+        if ((parts = /^--stream-filter=(LZW|RLE|ASCII85|ASCIIHEX|DEFLATE)$/.exec(arg)) != null) {
             options.filter = parts[1];
             continue;
         }
@@ -43,7 +43,7 @@ function edf2pdf() {
         process.stderr.write(`		Set source file.\n`);
         process.stderr.write(`	--target=string\n`);
         process.stderr.write(`		Set target file.\n`);
-        process.stderr.write(`	--stream-filter=LZW|RLE|ASCII85|ASCIIHEX\n`);
+        process.stderr.write(`	--stream-filter=LZW|RLE|ASCII85|ASCIIHEX|DEFLATE\n`);
         process.stderr.write(`		Set stream filter.\n`);
         process.exit(0);
     }

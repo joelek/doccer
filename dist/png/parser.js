@@ -275,7 +275,7 @@ function createScanlineData(ihdr, data) {
     }
     let predictors = [];
     predictors.push((x, y) => {
-        return data[offset];
+        return 0;
     });
     if (ihdr.color_type !== "INDEXED" && ihdr.bit_depth >= 8) {
         predictors.push((x, y) => {
