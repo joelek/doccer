@@ -1,4 +1,4 @@
-import { BitstreamReaderLSB } from "./bitstreams";
+import { BitstreamReaderLSB, BitstreamWriterLSB } from "./bitstreams";
 import { HuffmanRecord } from "./huffman";
 
 export const CODE_LENGTH_CODES_ORDER = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
@@ -11,6 +11,18 @@ function computeOffsets(first_offset: number, bit_lengths: Array<number>): Array
 		next_offset += (1 << bit_length);
 	}
 	return offsets;
+};
+
+function getOffsetIndex(target_offset: number, offsets: Array<number>): number {
+	let index = -1;
+	for (let offset of offsets) {
+		if (target_offset >= offset) {
+			index += 1;
+		} else {
+			break;
+		}
+	}
+	return index;
 };
 
 const LENGTH_EXTRA_BITS = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0];
@@ -78,8 +90,179 @@ export function readDeflateHeader(bsr: BitstreamReaderLSB) {
 
 export type DeflateHeader = ReturnType<typeof readDeflateHeader>;
 
+export type Match = {
+	distance: number;
+	length: number;
+};
+
+export type MatchOptions = {
+	max_distance: number;
+	min_length: number;
+	max_length: number;
+};
+
+export function getDistanceFromIndex(active_length: number, index: number, top_of_stack: number): number {
+	return ((active_length - 1 - index + top_of_stack) % active_length) + 1;
+};
+
+export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOptions>): Generator<number | Match> {
+	let max_distance = options?.max_distance ?? 32768;
+	let min_length = options?.min_length ?? 3;
+	let max_length = options?.max_length ?? 258
+	let jump_table = new Array<number>(max_distance).fill(-1);
+	let head_indices = new Array<number>(256).fill(-1);
+	let tail_indices = new Array<number>(256).fill(-1);
+	let top_of_stack = 0;
+	for (let i = 0; i < bytes.length;) {
+		let match: Match | undefined
+		let byte = bytes[i];
+		let index = head_indices[byte];
+		while (index !== -1) {
+			let active_length = i >= max_distance ? max_distance : i;
+			let distance = ((active_length - 1 - index + top_of_stack) % active_length) + 1;
+			let length = 1;
+			for (; length < max_length; length++) {
+				if (i + length >= bytes.length) {
+					break;
+				}
+				if (bytes[i - distance + length] !== bytes[i + length]) {
+					break;
+				}
+			}
+			if (length >= min_length) {
+				if (match == null) {
+					match = {
+						distance,
+						length
+					};
+				} else {
+					if (length > match.length) {
+						match.distance = distance;
+						match.length = length;
+					}
+				}
+			}
+			index = jump_table[index];
+		}
+		let number_of_bytes_encoded = 0;
+		if (match == null) {
+			number_of_bytes_encoded = 1;
+			yield byte;
+		} else {
+			number_of_bytes_encoded = match.length;
+			yield match;
+		}
+		for (let j = 0; j < number_of_bytes_encoded; j++) {
+			let byte = bytes[i];
+			if (i >= max_distance) {
+				let byte = bytes[i - max_distance];
+				let head_index = head_indices[byte];
+				if (head_index !== -1) {
+					head_indices[byte] = jump_table[head_index];
+					let tail_index = tail_indices[byte];
+					if (tail_index === head_index) {
+						tail_indices[byte] = -1;
+					}
+					jump_table[top_of_stack];
+				}
+			}
+			jump_table[top_of_stack] = -1;
+			let tail_index = tail_indices[byte];
+			if (tail_index !== -1) {
+				jump_table[tail_index] = top_of_stack;
+			} else {
+				head_indices[byte] = top_of_stack;
+			}
+			tail_indices[byte] = top_of_stack;
+			i += 1;
+			top_of_stack = i % max_distance;
+		}
+	}
+};
+
+export function getInitializedBSW(): BitstreamWriterLSB {
+	let checksum = 0;
+	let bsw = new BitstreamWriterLSB();
+	bsw.encode(CompressionMethod.DEFLATE, 4);
+	bsw.encode(7, 4);
+	bsw.encode(checksum, 5);
+	bsw.encode(0, 1);
+	bsw.encode(CompressionLevel.DEFAULT, 2);
+	let bytes = bsw.getBuffer();
+	let integer = (bytes[0] << 8) | (bytes[1] << 0);
+	let remainder = integer % 31;
+	if (remainder !== 0) {
+		checksum = 31 - remainder;
+		(bsw as any).bytes[1] |= checksum;
+	}
+	return bsw;
+};
+
+export const ADLER32_MODULO = 65521;
+
+export function computeAdler32(buffer: Uint8Array): number {
+	let a = 1;
+	let b = 0;
+	for (let byte of buffer) {
+		a = (a + byte) % ADLER32_MODULO;
+		b = (b + a) % ADLER32_MODULO;
+	}
+	return ((b << 16) | a) >>> 0;
+};
+
+export function writeAdler32Checksum(bsw: BitstreamWriterLSB, checksum: number): void {
+	bsw.encode((checksum >> 24) & 0xFF, 8);
+	bsw.encode((checksum >> 16) & 0xFF, 8);
+	bsw.encode((checksum >> 8) & 0xFF, 8);
+	bsw.encode((checksum >> 0) & 0xFF, 8);
+};
+
+export function readAdler32Checksum(bsr: BitstreamReaderLSB): number {
+	return ((bsr.decode(8) << 24) | (bsr.decode(8) << 16) | (bsr.decode(8) << 8) | (bsr.decode(8) << 0)) >>> 0;
+};
+
 export function deflate(buffer: ArrayBuffer): Uint8Array {
-	throw new Error(`Not yet implemented!`);
+	let bytes = new Uint8Array(buffer);
+	let bsw = getInitializedBSW();
+	bsw.encode(1, 1);
+	bsw.encode(EncodingMethod.STATIC, 2);
+	for (let match of generateMatches(bytes)) {
+		if (typeof match === "number") {
+			let key = STATIC_LITERALS.keys[match];
+			for (let bit of key) {
+				bsw.encode(bit === "1" ? 1 : 0, 1);
+			}
+		} else {
+			let length_index = getOffsetIndex(match.length, LENGTH_OFFSETS);
+			let length_offset = LENGTH_OFFSETS[length_index];
+			let length_extra_bits = LENGTH_EXTRA_BITS[length_index];
+			let length_key = STATIC_LITERALS.keys[257 + length_index];
+			for (let bit of length_key) {
+				bsw.encode(bit === "1" ? 1 : 0, 1);
+			}
+			if (length_extra_bits > 0) {
+				bsw.encode(match.length - length_offset, length_extra_bits);
+			}
+			let distance_index = getOffsetIndex(match.distance, DISTANCE_OFFSETS);
+			let distance_offset = DISTANCE_OFFSETS[distance_index];
+			let distance_extra_bits = DISTANCE_EXTRA_BITS[distance_index];
+			let distance_key = STATIC_DISTANCES.keys[distance_index];
+			for (let bit of distance_key) {
+				bsw.encode(bit === "1" ? 1 : 0, 1);
+			}
+			if (distance_extra_bits > 0) {
+				bsw.encode(match.distance - distance_offset, distance_extra_bits);
+			}
+		}
+	}
+	let key = STATIC_LITERALS.keys[256];
+	for (let bit of key) {
+		bsw.encode(bit === "1" ? 1 : 0, 1);
+	}
+	bsw.skipToByteBoundary();
+	let checksum = computeAdler32(bytes);
+	writeAdler32Checksum(bsw, checksum);
+	return bsw.getBuffer();
 };
 
 export function inflate(buffer: ArrayBuffer): Uint8Array {
@@ -183,5 +366,12 @@ export function inflate(buffer: ArrayBuffer): Uint8Array {
 			throw new Error(`Expected a non-reserved encoding method!`);
 		}
 	}
-	return Uint8Array.from(bytes);
+	bsr.skipToByteBoundary();
+	let result = Uint8Array.from(bytes);
+	let computed_checksum = computeAdler32(result);
+	let checksum = readAdler32Checksum(bsr);
+	if (checksum !== computed_checksum) {
+		throw new Error(`Expected a valid checksum!`);
+	}
+	return result;
 };
