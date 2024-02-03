@@ -238,7 +238,8 @@ export const ImageStyle: autoguard.serialization.MessageGuard<ImageStyle> = auto
 		autoguard.guards.StringLiteral.of("fill"),
 		autoguard.guards.StringLiteral.of("cover"),
 		autoguard.guards.StringLiteral.of("contain")
-	)
+	),
+	"dpi": new autoguard.guards.IntegerGuard(1, undefined)
 });
 
 export type ImageStyle = autoguard.guards.Object<{}, {
@@ -247,7 +248,8 @@ export type ImageStyle = autoguard.guards.Object<{}, {
 		autoguard.guards.StringLiteral<"fill">,
 		autoguard.guards.StringLiteral<"cover">,
 		autoguard.guards.StringLiteral<"contain">
-	]>
+	]>,
+	"dpi": autoguard.guards.Integer
 }>;
 
 export const ImageNodeStyle: autoguard.serialization.MessageGuard<ImageNodeStyle> = autoguard.guards.Intersection.of(

@@ -14,10 +14,12 @@ export class ImageNode extends ChildNode {
 		style = style ?? {};
 		let image = style.image ?? "default";
 		let fit = style.fit ?? "contain";
+		let dpi = style.dpi ?? 96;
 		this.entry = image_handler.getEntry(image);
 		this.style = {
 			image,
-			fit
+			fit,
+			dpi
 		};
 	}
 
@@ -38,8 +40,8 @@ export class ImageNode extends ChildNode {
 	}
 
 	protected createBoxSegment(segment_size: Size, segment_left: Size, target_size: Partial<Size>): Atom {
-		let image_width = AbsoluteLength.getComputedLength(this.entry.width, "px");
-		let image_height = AbsoluteLength.getComputedLength(this.entry.height, "px");
+		let image_width = AbsoluteLength.getComputedLength(this.entry.width, "px") * 96 / this.style.dpi;
+		let image_height = AbsoluteLength.getComputedLength(this.entry.height, "px") * 96 / this.style.dpi;
 		let box_width = image_width;
 		let box_height = image_height;
 		if (target_size.w != null && target_size.h != null) {

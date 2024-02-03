@@ -64,7 +64,8 @@ guard ParentNode: ChildNode & {
 
 guard ImageStyle: {
 	image?: string,
-	fit?: "fill" | "cover" | "contain"
+	fit?: "fill" | "cover" | "contain",
+	dpi?: integer(1, *)
 };
 
 guard ImageNodeStyle: Style & NodeStyle & ImageStyle;

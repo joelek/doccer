@@ -405,6 +405,12 @@ The name of the image used for the image node may be specified through the `imag
 
 The image fitting mode of the image node may be specified through the `fit` attribute. The attribute should when present be specified as a string assuming either the value "fill", the value "cover" or the value "contain". The default value is "contain".
 
+**dpi**
+
+The natural size of the image may be adjusted through the `dpi` attribute. The attribute should when present be specified as an integer greater than 1. The default value is 96.
+
+Please note that this setting only has an effect when both the width and the height of the image are sized intrinsically.
+
 #### Text nodes
 
 Text nodes are identified through the type attribute of a node being set to the value `text`. Text nodes are child nodes and may not contain any children of their own. The text content of a text node must be specified through the `content` attribute.
