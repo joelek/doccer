@@ -685,10 +685,10 @@ export class PDFFile extends PDFEntity {
 		lines.push(`%\x80\x80\x80\x80`);
 		let offsets = [] as Array<number>;
 		for (let object of this.objects) {
-			offsets.push(lines.join(" ").length);
+			offsets.push(lines.join(" ").length + 1);
 			lines.push(`${object.tokenize().join(" ")}`);
 		}
-		let xref_offset = lines.join(" ").length;
+		let xref_offset = lines.join(" ").length + 1;
 		lines.push(`xref`);
 		lines.push(`0 ${this.objects.length + 1}`);
 		lines.push(`0000000000 65535 f `);
