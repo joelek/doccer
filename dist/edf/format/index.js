@@ -52,7 +52,8 @@ exports.ParentNode = autoguard.guards.Intersection.of(autoguard.guards.Reference
 }));
 exports.ImageStyle = autoguard.guards.Object.of({}, {
     "image": autoguard.guards.String,
-    "fit": autoguard.guards.Union.of(autoguard.guards.StringLiteral.of("fill"), autoguard.guards.StringLiteral.of("cover"), autoguard.guards.StringLiteral.of("contain"))
+    "fit": autoguard.guards.Union.of(autoguard.guards.StringLiteral.of("fill"), autoguard.guards.StringLiteral.of("cover"), autoguard.guards.StringLiteral.of("contain")),
+    "dpi": new autoguard.guards.IntegerGuard(1, undefined)
 });
 exports.ImageNodeStyle = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => exports.Style), autoguard.guards.Reference.of(() => exports.NodeStyle), autoguard.guards.Reference.of(() => exports.ImageStyle));
 exports.ImageNode = autoguard.guards.Intersection.of(autoguard.guards.Reference.of(() => exports.ChildNode), autoguard.guards.Object.of({

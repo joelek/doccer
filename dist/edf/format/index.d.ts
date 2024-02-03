@@ -122,6 +122,7 @@ export type ImageStyle = autoguard.guards.Object<{}, {
         autoguard.guards.StringLiteral<"cover">,
         autoguard.guards.StringLiteral<"contain">
     ]>;
+    "dpi": autoguard.guards.Integer;
 }>;
 export declare const ImageNodeStyle: autoguard.serialization.MessageGuard<ImageNodeStyle>;
 export type ImageNodeStyle = autoguard.guards.Intersection<[
@@ -349,6 +350,7 @@ export declare namespace Autoguard {
         ImageStyle: autoguard.guards.ReferenceGuard<{
             image?: string | undefined;
             fit?: "fill" | "cover" | "contain" | undefined;
+            dpi?: number | undefined;
         }>;
         ImageNodeStyle: autoguard.guards.ReferenceGuard<{
             template?: string | undefined;
@@ -359,6 +361,7 @@ export declare namespace Autoguard {
             width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm" | "px"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
             image?: string | undefined;
             fit?: "fill" | "cover" | "contain" | undefined;
+            dpi?: number | undefined;
         }>;
         ImageNode: autoguard.guards.ReferenceGuard<{
             type: "image";
@@ -371,6 +374,7 @@ export declare namespace Autoguard {
                 width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm" | "px"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 image?: string | undefined;
                 fit?: "fill" | "cover" | "contain" | undefined;
+                dpi?: number | undefined;
             } | undefined;
         }>;
         TextStyle: autoguard.guards.ReferenceGuard<{
@@ -661,6 +665,7 @@ export declare namespace Autoguard {
                 width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm" | "px"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                 image?: string | undefined;
                 fit?: "fill" | "cover" | "contain" | undefined;
+                dpi?: number | undefined;
             }> | undefined;
             text?: autoguard.guards.Record<{
                 template?: string | undefined;
@@ -761,6 +766,7 @@ export declare namespace Autoguard {
                     width?: number | [number, "cm" | "pt" | "in" | "pc" | "mm" | "px"] | [number, "%"] | [number, "fr"] | "intrinsic" | "extrinsic" | undefined;
                     image?: string | undefined;
                     fit?: "fill" | "cover" | "contain" | undefined;
+                    dpi?: number | undefined;
                 }> | undefined;
                 text?: autoguard.guards.Record<{
                     template?: string | undefined;

@@ -11,10 +11,12 @@ class ImageNode extends shared_1.ChildNode {
         style = style ?? {};
         let image = style.image ?? "default";
         let fit = style.fit ?? "contain";
+        let dpi = style.dpi ?? 96;
         this.entry = image_handler.getEntry(image);
         this.style = {
             image,
-            fit
+            fit,
+            dpi
         };
     }
     createPrefixCommands(path) {
@@ -32,8 +34,8 @@ class ImageNode extends shared_1.ChildNode {
         ];
     }
     createBoxSegment(segment_size, segment_left, target_size) {
-        let image_width = shared_1.AbsoluteLength.getComputedLength(this.entry.width, "px");
-        let image_height = shared_1.AbsoluteLength.getComputedLength(this.entry.height, "px");
+        let image_width = shared_1.AbsoluteLength.getComputedLength(this.entry.width, "px") * 96 / this.style.dpi;
+        let image_height = shared_1.AbsoluteLength.getComputedLength(this.entry.height, "px") * 96 / this.style.dpi;
         let box_width = image_width;
         let box_height = image_height;
         if (target_size.w != null && target_size.h != null) {
