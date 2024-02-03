@@ -154,7 +154,7 @@ function parsePNGData(buffer) {
 exports.parsePNGData = parsePNGData;
 ;
 function averagePredictor(left, top) {
-    return (left + top) >> 2;
+    return (left + top) >> 1;
 }
 exports.averagePredictor = averagePredictor;
 ;
