@@ -136,7 +136,7 @@ export function parsePNGData(buffer: ArrayBuffer) {
 export type PNGData = ReturnType<typeof parsePNGData>;
 
 export function averagePredictor(left: number, top: number): number {
-	return (left + top) >> 2;
+	return (left + top) >> 1;
 };
 
 export function paethPredictor(left: number, top: number, top_left: number): number {
