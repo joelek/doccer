@@ -237,13 +237,13 @@ export function createScanlineData(ihdr: IHDRChunk, data: Uint8Array): Uint8Arra
 	let bytes = [] as Array<number>;
 	let offset = 0;
 	function getLeftByte(x: number, y: number): number {
-		return x >= x_delta ? bytes[(y) * bytes_per_scanline + (x - x_delta)] : 0;
+		return x >= x_delta ? data[(y) * bytes_per_scanline + (x - x_delta)] : 0;
 	}
 	function getTopByte(x: number, y: number): number {
-		return y >= y_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x)] : 0;
+		return y >= y_delta ? data[(y - y_delta) * bytes_per_scanline + (x)] : 0;
 	}
 	function getTopLeftByte(x: number, y: number): number {
-		return y >= y_delta && x >= x_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x - x_delta)] : 0;
+		return y >= y_delta && x >= x_delta ? data[(y - y_delta) * bytes_per_scanline + (x - x_delta)] : 0;
 	}
 	let predictors = [] as Array<Predictor>;
 	predictors.push((x, y) => {
