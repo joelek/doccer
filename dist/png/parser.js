@@ -265,13 +265,13 @@ function createScanlineData(ihdr, data) {
     let bytes = [];
     let offset = 0;
     function getLeftByte(x, y) {
-        return x >= x_delta ? bytes[(y) * bytes_per_scanline + (x - x_delta)] : 0;
+        return x >= x_delta ? data[(y) * bytes_per_scanline + (x - x_delta)] : 0;
     }
     function getTopByte(x, y) {
-        return y >= y_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x)] : 0;
+        return y >= y_delta ? data[(y - y_delta) * bytes_per_scanline + (x)] : 0;
     }
     function getTopLeftByte(x, y) {
-        return y >= y_delta && x >= x_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x - x_delta)] : 0;
+        return y >= y_delta && x >= x_delta ? data[(y - y_delta) * bytes_per_scanline + (x - x_delta)] : 0;
     }
     let predictors = [];
     predictors.push((x, y) => {
