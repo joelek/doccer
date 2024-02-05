@@ -23,7 +23,8 @@ const RFC_EXAMPLE: huffman.HuffmanRecord = {
 		6: "1110",
 		7: "1111"
 	},
-	max_bit_length: 4
+	max_bit_length: 4,
+	tree: [-1, -1, -1, 5, -1, -1, -1, -1, -1, 0, 1, 2, 3, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 6, 7, -1]
 };
 
 wtf.test(`HuffmanRecord should be properly created from the example in the RFC.`, (assert) => {
