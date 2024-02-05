@@ -33,7 +33,7 @@ export class BitstreamReader {
 					}
 				}
 			}
-			let bits_to_decode = Math.min(this.bits_left_in_byte, bits_left);
+			let bits_to_decode = this.bits_left_in_byte < bits_left ? this.bits_left_in_byte : bits_left;
 			let byte = this.bytes[this.byte_index];
 			let mask = (1 << bits_to_decode) - 1;
 			let right_shift = this.bits_left_in_byte - bits_to_decode;
@@ -85,7 +85,7 @@ export class BitstreamReaderLSB extends BitstreamReader {
 					}
 				}
 			}
-			let bits_to_decode = Math.min(this.bits_left_in_byte, bits_left);
+			let bits_to_decode = this.bits_left_in_byte < bits_left ? this.bits_left_in_byte : bits_left;
 			let byte = this.bytes[this.byte_index];
 			let mask = (1 << bits_to_decode) - 1;
 			let right_shift = 8 - this.bits_left_in_byte;
@@ -122,9 +122,15 @@ export class BitstreamWriter {
 				this.bits_left_in_byte = 8;
 			}
 			let byte = this.bytes[this.bytes.length - 1];
-			let bits_to_encode = Math.min(this.bits_left_in_byte, bits_left);
-			let right_shift = Math.max(0, bits_left - this.bits_left_in_byte);
-			let left_shift = Math.max(0, this.bits_left_in_byte - bits_left);
+			let bits_to_encode = this.bits_left_in_byte < bits_left ? this.bits_left_in_byte : bits_left;
+			let right_shift = bits_left - this.bits_left_in_byte;
+			if (right_shift < 0) {
+				right_shift = 0;
+			}
+			let left_shift = this.bits_left_in_byte - bits_left;
+			if (left_shift < 0) {
+				left_shift = 0;
+			}
 			let value = ((code >> right_shift) << left_shift);
 			let mask = (1 << this.bits_left_in_byte) - 1;
 			byte = (byte & ~mask) | (value & mask);
@@ -166,7 +172,7 @@ export class BitstreamWriterLSB extends BitstreamWriter {
 				this.bits_left_in_byte = 8;
 			}
 			let byte = this.bytes[this.bytes.length - 1];
-			let bits_to_encode = Math.min(this.bits_left_in_byte, bits_left);
+			let bits_to_encode = this.bits_left_in_byte < bits_left ? this.bits_left_in_byte : bits_left;
 			let bits_used_in_byte = 8 - this.bits_left_in_byte;
 			let bits_encoded = bit_length - bits_left;
 			let right_shift = bits_encoded;
