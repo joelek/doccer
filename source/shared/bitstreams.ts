@@ -5,12 +5,12 @@ export class StreamEndError extends Error {
 };
 
 export class BitstreamReader {
-	protected bytes: Array<number>;
+	protected bytes: Uint8Array;
 	protected byte_index: number;
 	protected bits_left_in_byte;
 
 	constructor(bytes: Uint8Array) {
-		this.bytes = Array.from(bytes);
+		this.bytes = bytes;
 		this.byte_index = 0;
 		this.bits_left_in_byte = bytes.length > 0 ? 8 : 0;
 	}
