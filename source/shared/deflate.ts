@@ -198,15 +198,22 @@ export function getInitializedBSW(): BitstreamWriterLSB {
 	return bsw;
 };
 
-export const ADLER32_MODULO = 65521;
-
 export function computeAdler32(buffer: Uint8Array): number {
+	let modulo = 65521;
 	let a = 1;
 	let b = 0;
-	for (let byte of buffer) {
-		a = (a + byte) % ADLER32_MODULO;
-		b = (b + a) % ADLER32_MODULO;
+	for (let i = 0, l = buffer.length; i < l;) {
+		// Process buffer in chunks of at most 2654 bytes.
+		let k = l - i < 2654 ? l - i : 2654;
+		for (let j = i + k; i < j; i++) {
+			a += buffer[i];
+			b += a;
+		}
+		a = 15 * (a >>> 16) + (a & 0xFFFF);
+		b = 15 * (b >>> 16) + (b & 0xFFFF);
 	}
+	a %= modulo;
+	b %= modulo;
 	return ((b << 16) | a) >>> 0;
 };
 
