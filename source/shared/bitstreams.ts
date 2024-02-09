@@ -7,7 +7,7 @@ export class StreamEndError extends Error {
 export class BitstreamReader {
 	protected bytes: Uint8Array;
 	protected byte_index: number;
-	protected bits_left_in_byte;
+	protected bits_left_in_byte: number;
 
 	constructor(bytes: Uint8Array) {
 		this.bytes = bytes;
@@ -101,7 +101,7 @@ export class BitstreamReaderLSB extends BitstreamReader {
 
 export class BitstreamWriter {
 	protected bytes: Array<number>;
-	protected bits_left_in_byte;
+	protected bits_left_in_byte: number;
 
 	constructor() {
 		this.bytes = [];
