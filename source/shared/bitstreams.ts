@@ -53,13 +53,6 @@ export class BitstreamReader {
 	skipToByteBoundary(): void {
 		this.bits_left_in_byte = 0;
 	}
-
-	skipBytes(bytes: number): void {
-		if (this.bits_left_in_byte !== 0) {
-			throw new Error(`Expected bitstream to be positioned at a byte boundary!`);
-		}
-		this.byte_index += bytes;
-	}
 };
 
 export class BitstreamReaderLSB extends BitstreamReader {
