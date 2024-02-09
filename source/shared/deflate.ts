@@ -273,21 +273,22 @@ export function inflate(buffer: ArrayBuffer): Uint8Array {
 	}
 	let bytes = [] as Array<number>;
 	let last_block = false;
+	let decodeSymbolLSB = HuffmanRecord.decodeSymbolLSB;
 	function decodeHuffmanSequence(literals: HuffmanRecord, distances: HuffmanRecord): void {
 		while (true) {
-			let literal_symbol = HuffmanRecord.decodeSymbol(literals, bsr);
-			if (literal_symbol < 256) {
-				bytes.push(literal_symbol);
-			} else if (literal_symbol === 256) {
+			let code = decodeSymbolLSB(literals, bsr);
+			if (code < 256) {
+				bytes.push(code);
+			} else if (code === 256) {
 				break;
-			} else if (literal_symbol <= 285) {
-				literal_symbol -= 257;
+			} else if (code <= 285) {
+				let literal_symbol = code - 257;
 				let length = LENGTH_OFFSETS[literal_symbol];
 				let length_extra_bits = LENGTH_EXTRA_BITS[literal_symbol];
 				if (length_extra_bits > 0) {
 					length += bsr.decode(length_extra_bits);
 				}
-				let distance_symbol = HuffmanRecord.decodeSymbol(distances, bsr);
+				let distance_symbol = decodeSymbolLSB(distances, bsr);
 				if (distance_symbol <= 29) {
 					let distance = DISTANCE_OFFSETS[distance_symbol];
 					let distance_extra_bits = DISTANCE_EXTRA_BITS[distance_symbol];
@@ -331,7 +332,7 @@ export function inflate(buffer: ArrayBuffer): Uint8Array {
 			let lengths = HuffmanRecord.create(lengths_bit_lengths);
 			let bit_lengths = [] as Array<number>;
 			while (bit_lengths.length < number_of_literal_bit_lengths + number_of_distance_bit_lengths) {
-				let bit_length_symbol = HuffmanRecord.decodeSymbol(lengths, bsr);
+				let bit_length_symbol = decodeSymbolLSB(lengths, bsr);
 				if (bit_length_symbol < 16) {
 					bit_lengths.push(bit_length_symbol);
 				} else if (bit_length_symbol === 16) {
