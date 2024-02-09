@@ -2,18 +2,21 @@ export declare class StreamEndError extends Error {
     constructor(message?: string);
 }
 export declare class BitstreamReader {
-    protected bytes: Array<number>;
+    protected bytes: Uint8Array;
     protected byte_index: number;
     protected bits_left_in_byte: number;
     constructor(bytes: Uint8Array);
     decode(bit_length: number): number;
     getDecodedBitCount(): number;
     skipToByteBoundary(): void;
-    skipBytes(bytes: number): void;
 }
 export declare class BitstreamReaderLSB extends BitstreamReader {
+    protected buffer: number;
+    protected bits_in_buffer: number;
     constructor(bytes: Uint8Array);
     decode(bit_length: number): number;
+    getDecodedBitCount(): number;
+    skipToByteBoundary(): void;
 }
 export declare class BitstreamWriter {
     protected bytes: Array<number>;

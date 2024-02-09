@@ -37,7 +37,6 @@ export type MatchOptions = {
 export declare function getDistanceFromIndex(active_length: number, index: number, top_of_stack: number): number;
 export declare function generateMatches(bytes: Uint8Array, options?: Partial<MatchOptions>): Generator<number | Match>;
 export declare function getInitializedBSW(): BitstreamWriterLSB;
-export declare const ADLER32_MODULO = 65521;
 export declare function computeAdler32(buffer: Uint8Array): number;
 export declare function writeAdler32Checksum(bsw: BitstreamWriterLSB, checksum: number): void;
 export declare function readAdler32Checksum(bsr: BitstreamReaderLSB): number;

@@ -13,7 +13,7 @@ class BitstreamReader {
     byte_index;
     bits_left_in_byte;
     constructor(bytes) {
-        this.bytes = Array.from(bytes);
+        this.bytes = bytes;
         this.byte_index = 0;
         this.bits_left_in_byte = bytes.length > 0 ? 8 : 0;
     }
@@ -36,7 +36,7 @@ class BitstreamReader {
                     }
                 }
             }
-            let bits_to_decode = Math.min(this.bits_left_in_byte, bits_left);
+            let bits_to_decode = this.bits_left_in_byte < bits_left ? this.bits_left_in_byte : bits_left;
             let byte = this.bytes[this.byte_index];
             let mask = (1 << bits_to_decode) - 1;
             let right_shift = this.bits_left_in_byte - bits_to_decode;
@@ -54,49 +54,42 @@ class BitstreamReader {
     skipToByteBoundary() {
         this.bits_left_in_byte = 0;
     }
-    skipBytes(bytes) {
-        if (this.bits_left_in_byte !== 0) {
-            throw new Error(`Expected bitstream to be positioned at a byte boundary!`);
-        }
-        this.byte_index += bytes;
-    }
 }
 exports.BitstreamReader = BitstreamReader;
 ;
 class BitstreamReaderLSB extends BitstreamReader {
+    buffer;
+    bits_in_buffer;
     constructor(bytes) {
         super(bytes);
+        this.buffer = 0;
+        this.bits_in_buffer = 0;
     }
     decode(bit_length) {
         if (bit_length < 1 || bit_length > 24) {
             throw new Error(`Expected bit length to be at least 1 and at most 24!`);
         }
-        let bits_left = bit_length;
-        let code = 0;
-        while (bits_left > 0) {
-            if (this.bits_left_in_byte === 0) {
-                this.byte_index += 1;
-                this.bits_left_in_byte = 8;
-                if (this.byte_index >= this.bytes.length) {
-                    if (bits_left === bit_length) {
-                        throw new StreamEndError();
-                    }
-                    else {
-                        throw new Error(`Expected stream to contain additional bits!`);
-                    }
-                }
+        while (this.bits_in_buffer < bit_length) {
+            let byte = this.bytes[this.byte_index++];
+            if (byte == null) {
+                throw new StreamEndError();
             }
-            let bits_to_decode = Math.min(this.bits_left_in_byte, bits_left);
-            let byte = this.bytes[this.byte_index];
-            let mask = (1 << bits_to_decode) - 1;
-            let right_shift = 8 - this.bits_left_in_byte;
-            let left_shift = bit_length - bits_left;
-            let bits_to_embed = ((byte >> right_shift) & mask) << left_shift;
-            code |= bits_to_embed;
-            bits_left -= bits_to_decode;
-            this.bits_left_in_byte -= bits_to_decode;
+            this.buffer |= (byte << this.bits_in_buffer);
+            this.bits_in_buffer += 8;
         }
+        let mask = (1 << bit_length) - 1;
+        let code = this.buffer & mask;
+        this.buffer >>>= bit_length;
+        this.bits_in_buffer -= bit_length;
         return code;
+    }
+    getDecodedBitCount() {
+        return (this.byte_index << 3) - this.bits_in_buffer;
+    }
+    skipToByteBoundary() {
+        let bits_to_skip = this.bits_in_buffer & 7;
+        this.buffer >>>= bits_to_skip;
+        this.bits_in_buffer -= bits_to_skip;
     }
 }
 exports.BitstreamReaderLSB = BitstreamReaderLSB;
@@ -122,9 +115,15 @@ class BitstreamWriter {
                 this.bits_left_in_byte = 8;
             }
             let byte = this.bytes[this.bytes.length - 1];
-            let bits_to_encode = Math.min(this.bits_left_in_byte, bits_left);
-            let right_shift = Math.max(0, bits_left - this.bits_left_in_byte);
-            let left_shift = Math.max(0, this.bits_left_in_byte - bits_left);
+            let bits_to_encode = this.bits_left_in_byte < bits_left ? this.bits_left_in_byte : bits_left;
+            let right_shift = bits_left - this.bits_left_in_byte;
+            if (right_shift < 0) {
+                right_shift = 0;
+            }
+            let left_shift = this.bits_left_in_byte - bits_left;
+            if (left_shift < 0) {
+                left_shift = 0;
+            }
             let value = ((code >> right_shift) << left_shift);
             let mask = (1 << this.bits_left_in_byte) - 1;
             byte = (byte & ~mask) | (value & mask);
@@ -163,7 +162,7 @@ class BitstreamWriterLSB extends BitstreamWriter {
                 this.bits_left_in_byte = 8;
             }
             let byte = this.bytes[this.bytes.length - 1];
-            let bits_to_encode = Math.min(this.bits_left_in_byte, bits_left);
+            let bits_to_encode = this.bits_left_in_byte < bits_left ? this.bits_left_in_byte : bits_left;
             let bits_used_in_byte = 8 - this.bits_left_in_byte;
             let bits_encoded = bit_length - bits_left;
             let right_shift = bits_encoded;

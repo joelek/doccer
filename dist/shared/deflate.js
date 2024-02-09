@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.inflate = exports.deflate = exports.readAdler32Checksum = exports.writeAdler32Checksum = exports.computeAdler32 = exports.ADLER32_MODULO = exports.getInitializedBSW = exports.generateMatches = exports.getDistanceFromIndex = exports.readDeflateHeader = exports.CompressionLevel = exports.CompressionMethod = exports.EncodingMethod = exports.STATIC_DISTANCES = exports.STATIC_LITERALS = exports.CODE_LENGTH_CODES_ORDER = void 0;
+exports.inflate = exports.deflate = exports.readAdler32Checksum = exports.writeAdler32Checksum = exports.computeAdler32 = exports.getInitializedBSW = exports.generateMatches = exports.getDistanceFromIndex = exports.readDeflateHeader = exports.CompressionLevel = exports.CompressionMethod = exports.EncodingMethod = exports.STATIC_DISTANCES = exports.STATIC_LITERALS = exports.CODE_LENGTH_CODES_ORDER = void 0;
 const bitstreams_1 = require("./bitstreams");
 const huffman_1 = require("./huffman");
 exports.CODE_LENGTH_CODES_ORDER = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
@@ -189,14 +189,22 @@ function getInitializedBSW() {
 }
 exports.getInitializedBSW = getInitializedBSW;
 ;
-exports.ADLER32_MODULO = 65521;
 function computeAdler32(buffer) {
+    let modulo = 65521;
     let a = 1;
     let b = 0;
-    for (let byte of buffer) {
-        a = (a + byte) % exports.ADLER32_MODULO;
-        b = (b + a) % exports.ADLER32_MODULO;
+    for (let i = 0, l = buffer.length; i < l;) {
+        // Process buffer in chunks of at most 2654 bytes.
+        let k = l - i < 2654 ? l - i : 2654;
+        for (let j = i + k; i < j; i++) {
+            a += buffer[i];
+            b += a;
+        }
+        a = 15 * (a >>> 16) + (a & 0xFFFF);
+        b = 15 * (b >>> 16) + (b & 0xFFFF);
     }
+    a %= modulo;
+    b %= modulo;
     return ((b << 16) | a) >>> 0;
 }
 exports.computeAdler32 = computeAdler32;
@@ -268,23 +276,24 @@ function inflate(buffer) {
     }
     let bytes = [];
     let last_block = false;
+    let decodeSymbolLSB = huffman_1.HuffmanRecord.decodeSymbolLSB;
     function decodeHuffmanSequence(literals, distances) {
         while (true) {
-            let literal_symbol = huffman_1.HuffmanRecord.decodeSymbol(literals, bsr);
-            if (literal_symbol < 256) {
-                bytes.push(literal_symbol);
+            let code = decodeSymbolLSB(literals, bsr);
+            if (code < 256) {
+                bytes.push(code);
             }
-            else if (literal_symbol === 256) {
+            else if (code === 256) {
                 break;
             }
-            else if (literal_symbol <= 285) {
-                literal_symbol -= 257;
+            else if (code <= 285) {
+                let literal_symbol = code - 257;
                 let length = LENGTH_OFFSETS[literal_symbol];
                 let length_extra_bits = LENGTH_EXTRA_BITS[literal_symbol];
                 if (length_extra_bits > 0) {
                     length += bsr.decode(length_extra_bits);
                 }
-                let distance_symbol = huffman_1.HuffmanRecord.decodeSymbol(distances, bsr);
+                let distance_symbol = decodeSymbolLSB(distances, bsr);
                 if (distance_symbol <= 29) {
                     let distance = DISTANCE_OFFSETS[distance_symbol];
                     let distance_extra_bits = DISTANCE_EXTRA_BITS[distance_symbol];
@@ -332,7 +341,7 @@ function inflate(buffer) {
             let lengths = huffman_1.HuffmanRecord.create(lengths_bit_lengths);
             let bit_lengths = [];
             while (bit_lengths.length < number_of_literal_bit_lengths + number_of_distance_bit_lengths) {
-                let bit_length_symbol = huffman_1.HuffmanRecord.decodeSymbol(lengths, bsr);
+                let bit_length_symbol = decodeSymbolLSB(lengths, bsr);
                 if (bit_length_symbol < 16) {
                     bit_lengths.push(bit_length_symbol);
                 }
