@@ -31,6 +31,12 @@ const RFC_EXAMPLE: huffman.HuffmanRecord = {
 		1: 5,
 		2: 4,
 		3: 6
+	},
+	start_offsets_msb: {
+		0: 3,
+		1: 4,
+		2: 5,
+		3: 6
 	}
 };
 

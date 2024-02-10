@@ -7,6 +7,7 @@ export type HuffmanRecord = {
 	max_bit_length: number;
 	tree: Array<number>;
 	start_offsets_lsb: Record<number, number>;
+	start_offsets_msb: Record<number, number>;
 };
 
 export const HuffmanRecord = {
@@ -61,13 +62,30 @@ export const HuffmanRecord = {
 			}
 			start_offsets_lsb[i] = tree_index;
 		}
+		let start_offsets_msb = {} as Record<number, number>;
+		for (let i = 0; i < (1 << min_bit_length); i++) {
+			let tree_index = 0;
+			let bits = i;
+			let mask = 1 << (min_bit_length - 1);
+			for (let j = 0; j < min_bit_length; j++) {
+				let bit = (bits & mask) === mask;
+				if (bit) {
+					tree_index = (tree_index + 1) << 1;
+				} else {
+					tree_index = (tree_index << 1) + 1;
+				}
+				mask >>= 1;
+			}
+			start_offsets_msb[i] = tree_index;
+		}
 		return {
 			symbols,
 			keys,
 			min_bit_length,
 			max_bit_length,
 			tree,
-			start_offsets_lsb
+			start_offsets_lsb,
+			start_offsets_msb
 		};
 	},
 
@@ -95,19 +113,9 @@ export const HuffmanRecord = {
 	},
 
 	decodeSymbolMSB(record: HuffmanRecord, bsr: BitstreamReader): number {
-		let tree_index = 0;
-		let { tree, min_bit_length, max_bit_length } = record;
+		let { tree, min_bit_length, max_bit_length, start_offsets_msb } = record;
 		let bits = bsr.decode(min_bit_length);
-		let mask = (1 << (min_bit_length - 1));
-		for (let i = 0; i < min_bit_length; i++) {
-			let bit = (bits & mask) === mask;
-			if (bit) {
-				tree_index = (tree_index + 1) << 1;
-			} else {
-				tree_index = (tree_index << 1) + 1;
-			}
-			mask >>= 1;
-		}
+		let tree_index = start_offsets_msb[bits];
 		let symbol = tree[tree_index];
 		if (symbol !== -1) {
 			return symbol;
