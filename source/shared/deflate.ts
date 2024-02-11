@@ -292,8 +292,8 @@ export function inflate(buffer: ArrayBuffer): Uint8Array {
 					if (distance_extra_bits > 0) {
 						distance += bsr.decode(distance_extra_bits);
 					}
-					for (let i = 0; i < length; i++) {
-						bytes.push(bytes[bytes.length - distance]);
+					for (let i = bytes.length - distance, e = i + length; i < e; i++) {
+						bytes.push(bytes[i]);
 					}
 				} else {
 					throw new Error(`Expected a distance symbol <= 29!`);
