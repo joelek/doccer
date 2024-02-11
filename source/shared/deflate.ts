@@ -114,8 +114,8 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 	let head_indices = new Array<number>(256).fill(-1);
 	let tail_indices = new Array<number>(256).fill(-1);
 	let top_of_stack = 0;
-	for (let i = 0; i < bytes.length;) {
-		let match: Match | undefined
+	for (let i = 0, l = bytes.length; i < l;) {
+		let match: Match | undefined;
 		let byte = bytes[i];
 		let index = head_indices[byte];
 		while (index !== -1) {
@@ -123,7 +123,7 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 			let distance = ((active_length - 1 - index + top_of_stack) % active_length) + 1;
 			let length = 1;
 			for (; length < max_length; length++) {
-				if (i + length >= bytes.length) {
+				if (i + length >= l) {
 					break;
 				}
 				if (bytes[i - distance + length] !== bytes[i + length]) {
