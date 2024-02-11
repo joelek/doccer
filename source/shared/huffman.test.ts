@@ -3,41 +3,14 @@ import * as huffman from "./huffman";
 import { BitstreamReaderMSB, BitstreamReaderLSB } from "./bitstreams";
 
 const RFC_EXAMPLE: huffman.HuffmanRecord = {
-	symbols: {
-		"010": 0,
-		"011": 1,
-		"100": 2,
-		"101": 3,
-		"110": 4,
-		"00": 5,
-		"1110": 6,
-		"1111": 7
-	},
-	keys: {
-		0: "010",
-		1: "011",
-		2: "100",
-		3: "101",
-		4: "110",
-		5: "00",
-		6: "1110",
-		7: "1111"
-	},
+	bit_lengths: [3, 3, 3, 3, 3, 2, 4, 4],
+	codes_lsb: [2, 6, 1, 5, 3, 0, 7, 15],
+	codes_msb: [2, 3, 4, 5, 6, 0, 14, 15],
 	min_bit_length: 2,
 	max_bit_length: 4,
 	tree: [-1, -1, -1, 5, -1, -1, -1, -1, -1, 0, 1, 2, 3, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 6, 7, -1],
-	start_offsets_lsb: {
-		0: 3,
-		1: 5,
-		2: 4,
-		3: 6
-	},
-	start_offsets_msb: {
-		0: 3,
-		1: 4,
-		2: 5,
-		3: 6
-	}
+	start_offsets_lsb: [3, 5, 4, 6],
+	start_offsets_msb: [3, 4, 5, 6]
 };
 
 wtf.test(`HuffmanRecord should be properly created from the example in the RFC.`, (assert) => {

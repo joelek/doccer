@@ -233,39 +233,28 @@ export function deflate(buffer: ArrayBuffer): Uint8Array {
 	let bsw = getInitializedBSW();
 	bsw.encode(1, 1);
 	bsw.encode(EncodingMethod.STATIC, 2);
+	let encodeSymbolLSB = HuffmanRecord.encodeSymbolLSB;
 	for (let match of generateMatches(bytes)) {
 		if (typeof match === "number") {
-			let key = STATIC_LITERALS.keys[match];
-			for (let bit of key) {
-				bsw.encode(bit === "1" ? 1 : 0, 1);
-			}
+			encodeSymbolLSB(STATIC_LITERALS, bsw, match);
 		} else {
 			let length_index = getOffsetIndex(match.length, LENGTH_OFFSETS);
 			let length_offset = LENGTH_OFFSETS[length_index];
 			let length_extra_bits = LENGTH_EXTRA_BITS[length_index];
-			let length_key = STATIC_LITERALS.keys[257 + length_index];
-			for (let bit of length_key) {
-				bsw.encode(bit === "1" ? 1 : 0, 1);
-			}
+			encodeSymbolLSB(STATIC_LITERALS, bsw, 257 + length_index);
 			if (length_extra_bits > 0) {
 				bsw.encode(match.length - length_offset, length_extra_bits);
 			}
 			let distance_index = getOffsetIndex(match.distance, DISTANCE_OFFSETS);
 			let distance_offset = DISTANCE_OFFSETS[distance_index];
 			let distance_extra_bits = DISTANCE_EXTRA_BITS[distance_index];
-			let distance_key = STATIC_DISTANCES.keys[distance_index];
-			for (let bit of distance_key) {
-				bsw.encode(bit === "1" ? 1 : 0, 1);
-			}
+			encodeSymbolLSB(STATIC_DISTANCES, bsw, distance_index);
 			if (distance_extra_bits > 0) {
 				bsw.encode(match.distance - distance_offset, distance_extra_bits);
 			}
 		}
 	}
-	let key = STATIC_LITERALS.keys[256];
-	for (let bit of key) {
-		bsw.encode(bit === "1" ? 1 : 0, 1);
-	}
+	encodeSymbolLSB(STATIC_LITERALS, bsw, 256);
 	bsw.skipToByteBoundary();
 	let checksum = computeAdler32(bytes);
 	writeAdler32Checksum(bsw, checksum);

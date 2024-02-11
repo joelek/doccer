@@ -67,10 +67,7 @@ wtf.test(`Inflate should inflate zlib streams containing blocks encoding using s
 	let length = 257;
 	let bytes = range(0, 1, length).map((index) => index % 256);
 	for (let byte of [...bytes, 256]) {
-		let key = STATIC_LITERALS.keys[byte];
-		for (let bit of key) {
-			bsw.encode(bit === "1" ? 1 : 0, 1);
-		}
+		HuffmanRecord.encodeSymbolLSB(STATIC_LITERALS, bsw, byte);
 	}
 	bsw.skipToByteBoundary();
 	writeAdler32Checksum(bsw, computeAdler32(Uint8Array.from(bytes)));
@@ -98,22 +95,13 @@ wtf.test(`Inflate should inflate zlib streams containing blocks encoding using d
 		bsw.encode(lengths_bit_lengths[index], 3);
 	}
 	for (let literals_bit_length of literals_bit_lengths) {
-		let key = lengths.keys[literals_bit_length];
-		for (let bit of key) {
-			bsw.encode(bit === "1" ? 1 : 0, 1);
-		}
+		HuffmanRecord.encodeSymbolLSB(lengths, bsw, literals_bit_length);
 	}
 	for (let distances_bit_length of distances_bit_lengths) {
-		let key = lengths.keys[distances_bit_length];
-		for (let bit of key) {
-			bsw.encode(bit === "1" ? 1 : 0, 1);
-		}
+		HuffmanRecord.encodeSymbolLSB(lengths, bsw, distances_bit_length);
 	}
 	for (let byte of [...bytes, 256]) {
-		let key = literals.keys[byte];
-		for (let bit of key) {
-			bsw.encode(bit === "1" ? 1 : 0, 1);
-		}
+		HuffmanRecord.encodeSymbolLSB(literals, bsw, byte);
 	}
 	bsw.skipToByteBoundary();
 	writeAdler32Checksum(bsw, computeAdler32(Uint8Array.from(bytes)));
