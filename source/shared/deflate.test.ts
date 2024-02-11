@@ -14,28 +14,28 @@ function range(first_value: number, delta_value: number, steps: number): Array<n
 };
 
 wtf.test(`Distances should be properly computed from indices.`, async (assert) => {
-	assert.equals(getDistanceFromIndex(1, 0, 1), 1);
-	assert.equals(getDistanceFromIndex(2, 0, 2), 2);
-	assert.equals(getDistanceFromIndex(2, 1, 2), 1);
+	assert.equals(getDistanceFromIndex(1, 0, 3), 1);
+	assert.equals(getDistanceFromIndex(2, 0, 3), 2);
+	assert.equals(getDistanceFromIndex(2, 1, 3), 1);
 	assert.equals(getDistanceFromIndex(3, 0, 3), 3);
 	assert.equals(getDistanceFromIndex(3, 1, 3), 2);
 	assert.equals(getDistanceFromIndex(3, 2, 3), 1);
-	assert.equals(getDistanceFromIndex(4, 0, 0), 4);
-	assert.equals(getDistanceFromIndex(4, 1, 0), 3);
-	assert.equals(getDistanceFromIndex(4, 2, 0), 2);
-	assert.equals(getDistanceFromIndex(4, 3, 0), 1);
-	assert.equals(getDistanceFromIndex(4, 1, 1), 4);
-	assert.equals(getDistanceFromIndex(4, 2, 1), 3);
-	assert.equals(getDistanceFromIndex(4, 3, 1), 2);
-	assert.equals(getDistanceFromIndex(4, 0, 1), 1);
-	assert.equals(getDistanceFromIndex(4, 2, 2), 4);
-	assert.equals(getDistanceFromIndex(4, 3, 2), 3);
-	assert.equals(getDistanceFromIndex(4, 0, 2), 2);
-	assert.equals(getDistanceFromIndex(4, 1, 2), 1);
-	assert.equals(getDistanceFromIndex(4, 3, 3), 4);
-	assert.equals(getDistanceFromIndex(4, 0, 3), 3);
-	assert.equals(getDistanceFromIndex(4, 1, 3), 2);
-	assert.equals(getDistanceFromIndex(4, 2, 3), 1);
+	assert.equals(getDistanceFromIndex(4, 0, 3), 4);
+	assert.equals(getDistanceFromIndex(4, 1, 3), 3);
+	assert.equals(getDistanceFromIndex(4, 2, 3), 2);
+	assert.equals(getDistanceFromIndex(4, 3, 3), 1);
+	assert.equals(getDistanceFromIndex(5, 0, 3), 1);
+	assert.equals(getDistanceFromIndex(5, 1, 3), 4);
+	assert.equals(getDistanceFromIndex(5, 2, 3), 3);
+	assert.equals(getDistanceFromIndex(5, 3, 3), 2);
+	assert.equals(getDistanceFromIndex(6, 0, 3), 2);
+	assert.equals(getDistanceFromIndex(6, 1, 3), 1);
+	assert.equals(getDistanceFromIndex(6, 2, 3), 4);
+	assert.equals(getDistanceFromIndex(6, 3, 3), 3);
+	assert.equals(getDistanceFromIndex(7, 0, 3), 3);
+	assert.equals(getDistanceFromIndex(7, 1, 3), 2);
+	assert.equals(getDistanceFromIndex(7, 2, 3), 1);
+	assert.equals(getDistanceFromIndex(7, 3, 3), 4);
 });
 
 wtf.test(`Inflate should inflate zlib streams containing raw blocks.`, (assert) => {

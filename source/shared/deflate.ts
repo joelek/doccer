@@ -101,13 +101,14 @@ export type MatchOptions = {
 	max_length: number;
 };
 
-export function getDistanceFromIndex(active_length: number, index: number, top_of_stack: number): number {
-	return ((active_length - 1 - index + top_of_stack) % active_length) + 1;
+export function getDistanceFromIndex(i: number, index: number, max_distance_mask: number): number {
+	return ((i - (index + 1)) & max_distance_mask) + 1;
 };
 
 export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOptions>): Generator<number | Match> {
 	let max_distance_bits = options?.max_distance_bits ?? 15;
 	let max_distance = (1 << max_distance_bits);
+	let max_distance_mask = max_distance - 1;
 	let min_length = options?.min_length ?? 3;
 	let max_length = options?.max_length ?? 258
 	let jump_table = new Array<number>(max_distance).fill(-1);
@@ -119,14 +120,12 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 		let byte = bytes[i];
 		let index = head_indices[byte];
 		while (index !== -1) {
-			let active_length = i >= max_distance ? max_distance : i;
-			let distance = ((active_length - 1 - index + top_of_stack) % active_length) + 1;
+			let distance = ((i - (index + 1)) & max_distance_mask) + 1;
+			let j = i - distance;
 			let length = 1;
-			for (; length < max_length; length++) {
-				if (i + length >= l) {
-					break;
-				}
-				if (bytes[i - distance + length] !== bytes[i + length]) {
+			let max_local_length = l - j;
+			for (let l = max_local_length < max_length ? max_local_length : max_length; length < l; length++) {
+				if (bytes[j + length] !== bytes[i + length]) {
 					break;
 				}
 			}
