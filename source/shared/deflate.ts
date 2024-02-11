@@ -96,7 +96,7 @@ export type Match = {
 };
 
 export type MatchOptions = {
-	max_distance: number;
+	max_distance_bits: number;
 	min_length: number;
 	max_length: number;
 };
@@ -106,7 +106,8 @@ export function getDistanceFromIndex(active_length: number, index: number, top_o
 };
 
 export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOptions>): Generator<number | Match> {
-	let max_distance = options?.max_distance ?? 32768;
+	let max_distance_bits = options?.max_distance_bits ?? 15;
+	let max_distance = (1 << max_distance_bits);
 	let min_length = options?.min_length ?? 3;
 	let max_length = options?.max_length ?? 258
 	let jump_table = new Array<number>(max_distance).fill(-1);
