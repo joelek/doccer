@@ -188,7 +188,7 @@ export function getInitializedBSW(): BitstreamWriterLSB {
 	bsw.encode(checksum, 5);
 	bsw.encode(0, 1);
 	bsw.encode(CompressionLevel.DEFAULT, 2);
-	let bytes = bsw.getBuffer();
+	let bytes = bsw.createBuffer();
 	let integer = (bytes[0] << 8) | (bytes[1] << 0);
 	let remainder = integer % 31;
 	if (remainder !== 0) {
@@ -269,7 +269,7 @@ export function deflate(buffer: ArrayBuffer): Uint8Array {
 	bsw.skipToByteBoundary();
 	let checksum = computeAdler32(bytes);
 	writeAdler32Checksum(bsw, checksum);
-	return bsw.getBuffer();
+	return bsw.createBuffer();
 };
 
 export function inflate(buffer: ArrayBuffer): Uint8Array {

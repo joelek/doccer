@@ -1,4 +1,4 @@
-import { BitstreamReader, BitstreamWriter, StreamEndError } from "../../shared";
+import { BitstreamReaderMSB, BitstreamWriterMSB, StreamEndError } from "../../shared";
 
 const CLEAR_TABLE = 256;
 const END_OF_DATA = 257;
@@ -49,7 +49,7 @@ export const LZW = {
 			}
 		}
 		clearTable();
-		let bsr = new BitstreamReader(source);
+		let bsr = new BitstreamReaderMSB(source);
 		let keys = [] as Array<string>;
 		let last_key = "";
 		let should_clear = false;
@@ -125,7 +125,7 @@ export const LZW = {
 				}
 			}
 		}
-		let bsw = new BitstreamWriter();
+		let bsw = new BitstreamWriterMSB();
 		bsw.encode(CLEAR_TABLE, bit_length);
 		clearTable();
 		if (DEBUG) console.log(`Encoded CLEAR_TABLE using ${bit_length} bits with a total of ${bsw.getEncodedBitCount()} bits encoded.`);
@@ -155,6 +155,6 @@ export const LZW = {
 		}
 		bsw.encode(END_OF_DATA, bit_length);
 		if (DEBUG) console.log(`Encoded END_OF_DATA using ${bit_length} bits with a total of ${bsw.getEncodedBitCount()} bits encoded.`);
-		return bsw.getBuffer();
+		return bsw.createBuffer();
 	}
 };

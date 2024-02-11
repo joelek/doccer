@@ -1,4 +1,4 @@
-import { BitstreamReader, BitstreamReaderLSB } from "./bitstreams";
+import { BitstreamReaderMSB, BitstreamReaderLSB } from "./bitstreams";
 
 export type HuffmanRecord = {
 	symbols: Record<string, number>;
@@ -112,7 +112,7 @@ export const HuffmanRecord = {
 		throw new Error(`Expected a matching symbol for the huffman code!`);
 	},
 
-	decodeSymbolMSB(record: HuffmanRecord, bsr: BitstreamReader): number {
+	decodeSymbolMSB(record: HuffmanRecord, bsr: BitstreamReaderMSB): number {
 		let { tree, min_bit_length, max_bit_length, start_offsets_msb } = record;
 		let bits = bsr.decode(min_bit_length);
 		let tree_index = start_offsets_msb[bits];

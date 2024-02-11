@@ -4,7 +4,7 @@ export class StreamEndError extends Error {
 	}
 };
 
-export class BitstreamReader {
+export class BitstreamReaderMSB {
 	protected bytes: Uint8Array;
 	protected byte_index: number;
 	protected bits_left_in_byte: number;
@@ -55,12 +55,15 @@ export class BitstreamReader {
 	}
 };
 
-export class BitstreamReaderLSB extends BitstreamReader {
+export class BitstreamReaderLSB {
+	protected bytes: Uint8Array;
+	protected byte_index: number;
 	protected buffer: number;
 	protected bits_in_buffer: number;
 
 	constructor(bytes: Uint8Array) {
-		super(bytes);
+		this.bytes = bytes;
+		this.byte_index = 0;
 		this.buffer = 0;
 		this.bits_in_buffer = 0;
 	}
@@ -95,13 +98,17 @@ export class BitstreamReaderLSB extends BitstreamReader {
 	}
 };
 
-export class BitstreamWriter {
+export class BitstreamWriterMSB {
 	protected bytes: Array<number>;
 	protected bits_left_in_byte: number;
 
 	constructor() {
 		this.bytes = [];
 		this.bits_left_in_byte = 0;
+	}
+
+	createBuffer(): Uint8Array {
+		return Uint8Array.from(this.bytes);
 	}
 
 	encode(code: number, bit_length: number): void {
@@ -136,10 +143,6 @@ export class BitstreamWriter {
 		}
 	}
 
-	getBuffer(): Uint8Array {
-		return Uint8Array.from(this.bytes);
-	}
-
 	getEncodedBitCount(): number {
 		return this.bytes.length * 8 - this.bits_left_in_byte;
 	}
@@ -149,9 +152,17 @@ export class BitstreamWriter {
 	}
 };
 
-export class BitstreamWriterLSB extends BitstreamWriter {
+export class BitstreamWriterLSB {
+	protected bytes: Array<number>;
+	protected bits_left_in_byte: number;
+
 	constructor() {
-		super();
+		this.bytes = [];
+		this.bits_left_in_byte = 0;
+	}
+
+	createBuffer(): Uint8Array {
+		return Uint8Array.from(this.bytes);
 	}
 
 	encode(code: number, bit_length: number): void {
@@ -179,5 +190,13 @@ export class BitstreamWriterLSB extends BitstreamWriter {
 			this.bits_left_in_byte -= bits_to_encode;
 			bits_left -= bits_to_encode;
 		}
+	}
+
+	getEncodedBitCount(): number {
+		return this.bytes.length * 8 - this.bits_left_in_byte;
+	}
+
+	skipToByteBoundary(): void {
+		this.bits_left_in_byte = 0;
 	}
 };

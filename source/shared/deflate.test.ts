@@ -55,7 +55,7 @@ wtf.test(`Inflate should inflate zlib streams containing raw blocks.`, (assert) 
 	}
 	bsw.skipToByteBoundary();
 	writeAdler32Checksum(bsw, computeAdler32(Uint8Array.from(bytes)));
-	let observed = inflate(bsw.getBuffer().buffer);
+	let observed = inflate(bsw.createBuffer().buffer);
 	let expected = Uint8Array.from(bytes);
 	assert.equals(observed, expected);
 });
@@ -74,7 +74,7 @@ wtf.test(`Inflate should inflate zlib streams containing blocks encoding using s
 	}
 	bsw.skipToByteBoundary();
 	writeAdler32Checksum(bsw, computeAdler32(Uint8Array.from(bytes)));
-	let observed = inflate(bsw.getBuffer().buffer);
+	let observed = inflate(bsw.createBuffer().buffer);
 	let expected = Uint8Array.from(bytes);
 	assert.equals(observed, expected);
 });
@@ -117,7 +117,7 @@ wtf.test(`Inflate should inflate zlib streams containing blocks encoding using d
 	}
 	bsw.skipToByteBoundary();
 	writeAdler32Checksum(bsw, computeAdler32(Uint8Array.from(bytes)));
-	let observed = inflate(bsw.getBuffer().buffer);
+	let observed = inflate(bsw.createBuffer().buffer);
 	let expected = Uint8Array.from(bytes);
 	assert.equals(observed, expected);
 });
@@ -127,7 +127,7 @@ wtf.test(`Inflate should throw an error when attempting to decode blocks with a 
 	bsw.encode(1, 1);
 	bsw.encode(EncodingMethod.RESERVED, 2);
 	await assert.throws(() => {
-		inflate(bsw.getBuffer().buffer);
+		inflate(bsw.createBuffer().buffer);
 	});
 });
 
