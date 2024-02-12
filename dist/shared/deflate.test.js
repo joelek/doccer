@@ -116,14 +116,16 @@ wtf.test(`Inflate should throw an error when attempting to decode blocks with a 
     });
 });
 wtf.test(`Matches should be generated into the lookahead buffer ("AABABABAAB").`, async (assert) => {
-    let observed = Array.from((0, deflate_1.generateMatches)(chunk_1.Chunk.fromString("AABABABAAB", "binary"), { max_distance_bits: 2 }));
+    let observed = (0, deflate_1.generateMatches)(chunk_1.Chunk.fromString("AABABABAAB", "binary"), { max_distance_bits: 2 });
     let expected = [65, 65, 66, { distance: 2, length: 5 }, 65, 66];
-    assert.equals(observed, expected);
+    assert.equals(observed.byte_count, 10);
+    assert.equals(observed.matches, expected);
 });
 wtf.test(`Matches should not be generated past the max distance ("ABCDEABCDE").`, async (assert) => {
-    let observed = Array.from((0, deflate_1.generateMatches)(chunk_1.Chunk.fromString("ABCDEABCDE", "binary"), { max_distance_bits: 2 }));
+    let observed = (0, deflate_1.generateMatches)(chunk_1.Chunk.fromString("ABCDEABCDE", "binary"), { max_distance_bits: 2 });
     let expected = [65, 66, 67, 68, 69, 65, 66, 67, 68, 69];
-    assert.equals(observed, expected);
+    assert.equals(observed.byte_count, 10);
+    assert.equals(observed.matches, expected);
 });
 wtf.test(`Deflate should deflate strings lacking long repeated sequences ("hello").`, async (assert) => {
     let buffer = chunk_1.Chunk.fromString("hello", "binary");
@@ -137,7 +139,7 @@ wtf.test(`Deflate should deflate strings containing long repeated sequences ("he
     let expected = Uint8Array.of(0x78, 0x9C, 0xCB, 0x48, 0xCD, 0xC9, 0xC9, 0x57, 0x00, 0x93, 0x00, 0x19, 0x91, 0x04, 0x49);
     assert.equals(observed, expected);
 });
-wtf.test(`Strings lacking long repeated sequences ("hello") shold be deflated and inflated properly.`, async (assert) => {
+wtf.test(`Strings lacking long repeated sequences ("hello") should be deflated and inflated properly.`, async (assert) => {
     let expected = "hello";
     let observed = chunk_1.Chunk.toString((0, deflate_1.inflate)((0, deflate_1.deflate)(chunk_1.Chunk.fromString(expected, "binary").buffer)), "binary");
     assert.equals(observed, expected);
@@ -145,5 +147,60 @@ wtf.test(`Strings lacking long repeated sequences ("hello") shold be deflated an
 wtf.test(`Strings containing long repeated sequences ("hello hello") should be deflated and inflated properly.`, async (assert) => {
     let expected = "hello hello";
     let observed = chunk_1.Chunk.toString((0, deflate_1.inflate)((0, deflate_1.deflate)(chunk_1.Chunk.fromString(expected, "binary").buffer)), "binary");
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [2, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([2, 1]);
+    let expected = [1, 1];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [3, 1, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([3, 1, 1]);
+    let expected = [1, 2, 2];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [4, 1, 1, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([4, 1, 1, 1]);
+    let expected = [1, 2, 3, 3];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([1]);
+    let expected = [1];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [1, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([1, 1]);
+    let expected = [1, 1];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([1, 1, 1]);
+    let expected = [1, 2, 2];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([1, 1, 1, 1]);
+    let expected = [2, 2, 2, 2];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([1, 1, 1, 1, 1]);
+    let expected = [2, 2, 2, 3, 3];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1, 1, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([1, 1, 1, 1, 1, 1]);
+    let expected = [2, 2, 3, 3, 3, 3];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1, 1, 1, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([1, 1, 1, 1, 1, 1, 1]);
+    let expected = [2, 3, 3, 3, 3, 3, 3];
+    assert.equals(observed, expected);
+});
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1, 1, 1, 1, 1].`, async (assert) => {
+    let observed = (0, deflate_1.getBitLengthsFromHistogram)([1, 1, 1, 1, 1, 1, 1, 1]);
+    let expected = [3, 3, 3, 3, 3, 3, 3, 3];
     assert.equals(observed, expected);
 });

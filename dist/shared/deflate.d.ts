@@ -36,12 +36,21 @@ export type MatchOptions = {
     max_searches: number;
     great_match_length: number;
     good_match_length: number;
+    max_matches_per_block: number;
 };
 export declare function getDistanceFromIndex(i: number, index: number, max_distance_mask: number): number;
-export declare function generateMatches(bytes: Uint8Array, options?: Partial<MatchOptions>): Generator<number | Match>;
+export declare function generateMatches(bytes: Uint8Array, options?: Partial<MatchOptions>): {
+    matches: Array<number | Match>;
+    byte_count: number;
+};
 export declare function getInitializedBSW(): BitstreamWriterLSB;
 export declare function computeAdler32(buffer: Uint8Array): number;
 export declare function writeAdler32Checksum(bsw: BitstreamWriterLSB, checksum: number): void;
 export declare function readAdler32Checksum(bsr: BitstreamReaderLSB): number;
+export declare function getBitLengthsFromHistogram(histogram: Array<number>): Array<number>;
+export declare function createBitLengthEncoding(bit_lengths: Array<number>): Array<number | {
+    code: 16 | 17 | 18;
+    length: number;
+}>;
 export declare function deflate(buffer: ArrayBuffer): Uint8Array;
 export declare function inflate(buffer: ArrayBuffer): Uint8Array;
