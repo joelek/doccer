@@ -15,6 +15,12 @@ export const HuffmanRecord = {
 	create(bit_lengths: Array<number>): HuffmanRecord {
 		let min_bit_length = bit_lengths.reduce((min, bit_length) => bit_length === 0 ? min : Math.min(min, bit_length), 0 + Infinity);
 		let max_bit_length = bit_lengths.reduce((max, bit_length) => bit_length === 0 ? max : Math.max(max, bit_length), 0 - Infinity);
+		if (!Number.isFinite(min_bit_length)) {
+			min_bit_length = 1;
+		}
+		if (!Number.isFinite(max_bit_length)) {
+			max_bit_length = 1;
+		}
 		let symbol_count_for_bit_length = new Array<number>(max_bit_length + 1).fill(0);
 		for (let bit_length of bit_lengths) {
 			if (bit_length > 0) {
