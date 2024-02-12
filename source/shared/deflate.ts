@@ -114,76 +114,80 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 	let max_distance_mask = max_distance - 1;
 	let min_length = options?.min_length ?? 3;
 	let max_length = options?.max_length ?? 258
-	let max_searches = options?.max_searches ?? 65536;
+	let max_searches = options?.max_searches ?? 256;
 	let great_match_length = options?.great_match_length ?? 16;
 	let good_match_length = options?.good_match_length ?? 8;
 	let jump_table = new Array<number>(max_distance).fill(-1);
-	let head_indices = new Array<number>(256).fill(-1);
-	let tail_indices = new Array<number>(256).fill(-1);
+	let head_indices = new Array<number>(65536).fill(-1);
+	let tail_indices = new Array<number>(65536).fill(-1);
 	let top_of_stack = 0;
 	let i = 0;
 	function updateSearchIndices(): void {
 		// Data will always be overwritten once the history buffer is completely full.
 		if (i >= max_distance) {
-			let byte = bytes[i - max_distance];
-			let head_index = head_indices[byte];
-			head_indices[byte] = jump_table[head_index];
-			let tail_index = tail_indices[byte];
+			let j = i - max_distance;
+			let byte_a = bytes[j];
+			let byte_b = bytes[j + 1];
+			let hash = (byte_a << 8) | byte_b;
+			let head_index = head_indices[hash];
+			head_indices[hash] = jump_table[head_index];
+			let tail_index = tail_indices[hash];
 			if (tail_index === head_index) {
-				tail_indices[byte] = -1;
+				tail_indices[hash] = -1;
 			}
 		}
 		jump_table[top_of_stack] = -1;
-		let byte = bytes[i];
-		let tail_index = tail_indices[byte];
+		let byte_a = bytes[i];
+		let byte_b = bytes[i + 1];
+		let hash = (byte_a << 8) | byte_b;
+		let tail_index = tail_indices[hash];
 		if (tail_index !== -1) {
 			jump_table[tail_index] = top_of_stack;
 		} else {
-			head_indices[byte] = top_of_stack;
+			head_indices[hash] = top_of_stack;
 		}
-		tail_indices[byte] = top_of_stack;
+		tail_indices[hash] = top_of_stack;
 		i += 1;
 		top_of_stack = i & max_distance_mask;
 	}
 	for (let l = bytes.length - min_length + 1; i < l;) {
 		let match: Match | undefined;
-		let byte = bytes[i];
-		let index = head_indices[byte];
+		let byte_a = bytes[i];
+		let byte_b = bytes[i + 1];
+		let hash = (byte_a << 8) | byte_b;
+		let index = head_indices[hash];
 		let searches = 0;
 		let active_max_searches = max_searches;
 		while (index !== -1 && searches < active_max_searches) {
 			let distance = ((i - (index + 1)) & max_distance_mask) + 1;
-			let length = 1;
+			let length = 2;
 			let j = i - distance;
 			if (bytes[j + length] === bytes[i + length]) {
 				length += 1;
-				if (bytes[j + length] === bytes[i + length]) {
-					length += 1;
-					let max_local_length = bytes.length - j;
-					let active_max_length = max_local_length < max_length ? max_local_length : max_length;
-					for (; length < active_max_length; length++) {
-						if (bytes[j + length] !== bytes[i + length]) {
-							break;
+				let max_local_length = bytes.length - j;
+				let active_max_length = max_local_length < max_length ? max_local_length : max_length;
+				for (; length < active_max_length; length++) {
+					if (bytes[j + length] !== bytes[i + length]) {
+						break;
+					}
+				}
+				if (length >= min_length) {
+					if (match == null) {
+						match = {
+							distance,
+							length
+						};
+					} else {
+						if (length > match.length) {
+							match.distance = distance;
+							match.length = length;
 						}
 					}
-					if (length >= min_length) {
-						if (match == null) {
-							match = {
-								distance,
-								length
-							};
-						} else {
-							if (length > match.length) {
-								match.distance = distance;
-								match.length = length;
-							}
-						}
-						if (length >= great_match_length) {
-							break;
-						}
-						if (length >= good_match_length) {
-							active_max_searches >>= 1;
-						}
+					if (length >= great_match_length) {
+						break;
+					}
+					if (length >= good_match_length) {
+						active_max_searches >>= 1;
 					}
 				}
 			}
@@ -191,7 +195,7 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 			searches += 1;
 		}
 		if (match == null) {
-			yield byte;
+			yield byte_a;
 			updateSearchIndices();
 		} else {
 			yield match;
