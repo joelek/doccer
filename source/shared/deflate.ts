@@ -175,7 +175,7 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 			}
 			tail_indices[byte] = top_of_stack;
 			i += 1;
-			top_of_stack = i % max_distance;
+			top_of_stack = i & max_distance_mask;
 		}
 	}
 };
