@@ -30,11 +30,14 @@ export type Match = {
     length: number;
 };
 export type MatchOptions = {
-    max_distance: number;
+    max_distance_bits: number;
     min_length: number;
     max_length: number;
+    max_searches: number;
+    great_match_length: number;
+    good_match_length: number;
 };
-export declare function getDistanceFromIndex(active_length: number, index: number, top_of_stack: number): number;
+export declare function getDistanceFromIndex(i: number, index: number, max_distance_mask: number): number;
 export declare function generateMatches(bytes: Uint8Array, options?: Partial<MatchOptions>): Generator<number | Match>;
 export declare function getInitializedBSW(): BitstreamWriterLSB;
 export declare function computeAdler32(buffer: Uint8Array): number;

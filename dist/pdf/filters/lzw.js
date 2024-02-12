@@ -52,7 +52,7 @@ exports.LZW = {
             }
         }
         clearTable();
-        let bsr = new shared_1.BitstreamReader(source);
+        let bsr = new shared_1.BitstreamReaderMSB(source);
         let keys = [];
         let last_key = "";
         let should_clear = false;
@@ -136,7 +136,7 @@ exports.LZW = {
                 }
             }
         }
-        let bsw = new shared_1.BitstreamWriter();
+        let bsw = new shared_1.BitstreamWriterMSB();
         bsw.encode(CLEAR_TABLE, bit_length);
         clearTable();
         if (DEBUG)
@@ -170,6 +170,6 @@ exports.LZW = {
         bsw.encode(END_OF_DATA, bit_length);
         if (DEBUG)
             console.log(`Encoded END_OF_DATA using ${bit_length} bits with a total of ${bsw.getEncodedBitCount()} bits encoded.`);
-        return bsw.getBuffer();
+        return bsw.createBuffer();
     }
 };

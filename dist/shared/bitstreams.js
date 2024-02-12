@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BitstreamWriterLSB = exports.BitstreamWriter = exports.BitstreamReaderLSB = exports.BitstreamReader = exports.StreamEndError = void 0;
+exports.BitstreamWriterLSB = exports.BitstreamWriterMSB = exports.BitstreamReaderLSB = exports.BitstreamReaderMSB = exports.StreamEndError = void 0;
 class StreamEndError extends Error {
     constructor(message) {
         super(message);
@@ -8,7 +8,7 @@ class StreamEndError extends Error {
 }
 exports.StreamEndError = StreamEndError;
 ;
-class BitstreamReader {
+class BitstreamReaderMSB {
     bytes;
     byte_index;
     bits_left_in_byte;
@@ -55,13 +55,16 @@ class BitstreamReader {
         this.bits_left_in_byte = 0;
     }
 }
-exports.BitstreamReader = BitstreamReader;
+exports.BitstreamReaderMSB = BitstreamReaderMSB;
 ;
-class BitstreamReaderLSB extends BitstreamReader {
+class BitstreamReaderLSB {
+    bytes;
+    byte_index;
     buffer;
     bits_in_buffer;
     constructor(bytes) {
-        super(bytes);
+        this.bytes = bytes;
+        this.byte_index = 0;
         this.buffer = 0;
         this.bits_in_buffer = 0;
     }
@@ -94,12 +97,15 @@ class BitstreamReaderLSB extends BitstreamReader {
 }
 exports.BitstreamReaderLSB = BitstreamReaderLSB;
 ;
-class BitstreamWriter {
+class BitstreamWriterMSB {
     bytes;
     bits_left_in_byte;
     constructor() {
         this.bytes = [];
         this.bits_left_in_byte = 0;
+    }
+    createBuffer() {
+        return Uint8Array.from(this.bytes);
     }
     encode(code, bit_length) {
         if (code < 0 || code > (1 << bit_length) - 1) {
@@ -132,9 +138,6 @@ class BitstreamWriter {
             bits_left -= bits_to_encode;
         }
     }
-    getBuffer() {
-        return Uint8Array.from(this.bytes);
-    }
     getEncodedBitCount() {
         return this.bytes.length * 8 - this.bits_left_in_byte;
     }
@@ -142,11 +145,17 @@ class BitstreamWriter {
         this.bits_left_in_byte = 0;
     }
 }
-exports.BitstreamWriter = BitstreamWriter;
+exports.BitstreamWriterMSB = BitstreamWriterMSB;
 ;
-class BitstreamWriterLSB extends BitstreamWriter {
+class BitstreamWriterLSB {
+    bytes;
+    bits_left_in_byte;
     constructor() {
-        super();
+        this.bytes = [];
+        this.bits_left_in_byte = 0;
+    }
+    createBuffer() {
+        return Uint8Array.from(this.bytes);
     }
     encode(code, bit_length) {
         if (code < 0 || code > (1 << bit_length) - 1) {
@@ -173,6 +182,12 @@ class BitstreamWriterLSB extends BitstreamWriter {
             this.bits_left_in_byte -= bits_to_encode;
             bits_left -= bits_to_encode;
         }
+    }
+    getEncodedBitCount() {
+        return this.bytes.length * 8 - this.bits_left_in_byte;
+    }
+    skipToByteBoundary() {
+        this.bits_left_in_byte = 0;
     }
 }
 exports.BitstreamWriterLSB = BitstreamWriterLSB;

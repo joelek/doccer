@@ -15,28 +15,28 @@ function range(first_value, delta_value, steps) {
 }
 ;
 wtf.test(`Distances should be properly computed from indices.`, async (assert) => {
-    assert.equals((0, deflate_1.getDistanceFromIndex)(1, 0, 1), 1);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(2, 0, 2), 2);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(2, 1, 2), 1);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(1, 0, 3), 1);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(2, 0, 3), 2);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(2, 1, 3), 1);
     assert.equals((0, deflate_1.getDistanceFromIndex)(3, 0, 3), 3);
     assert.equals((0, deflate_1.getDistanceFromIndex)(3, 1, 3), 2);
     assert.equals((0, deflate_1.getDistanceFromIndex)(3, 2, 3), 1);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 0, 0), 4);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 1, 0), 3);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 2, 0), 2);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 3, 0), 1);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 1, 1), 4);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 2, 1), 3);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 3, 1), 2);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 0, 1), 1);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 2, 2), 4);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 3, 2), 3);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 0, 2), 2);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 1, 2), 1);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 3, 3), 4);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 0, 3), 3);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 1, 3), 2);
-    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 2, 3), 1);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 0, 3), 4);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 1, 3), 3);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 2, 3), 2);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(4, 3, 3), 1);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(5, 0, 3), 1);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(5, 1, 3), 4);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(5, 2, 3), 3);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(5, 3, 3), 2);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(6, 0, 3), 2);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(6, 1, 3), 1);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(6, 2, 3), 4);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(6, 3, 3), 3);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(7, 0, 3), 3);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(7, 1, 3), 2);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(7, 2, 3), 1);
+    assert.equals((0, deflate_1.getDistanceFromIndex)(7, 3, 3), 4);
 });
 wtf.test(`Inflate should inflate zlib streams containing raw blocks.`, (assert) => {
     let bsw = (0, deflate_1.getInitializedBSW)();
@@ -55,7 +55,7 @@ wtf.test(`Inflate should inflate zlib streams containing raw blocks.`, (assert) 
     }
     bsw.skipToByteBoundary();
     (0, deflate_1.writeAdler32Checksum)(bsw, (0, deflate_1.computeAdler32)(Uint8Array.from(bytes)));
-    let observed = (0, deflate_1.inflate)(bsw.getBuffer().buffer);
+    let observed = (0, deflate_1.inflate)(bsw.createBuffer().buffer);
     let expected = Uint8Array.from(bytes);
     assert.equals(observed, expected);
 });
@@ -66,14 +66,11 @@ wtf.test(`Inflate should inflate zlib streams containing blocks encoding using s
     let length = 257;
     let bytes = range(0, 1, length).map((index) => index % 256);
     for (let byte of [...bytes, 256]) {
-        let key = deflate_1.STATIC_LITERALS.keys[byte];
-        for (let bit of key) {
-            bsw.encode(bit === "1" ? 1 : 0, 1);
-        }
+        huffman_1.HuffmanRecord.encodeSymbolLSB(deflate_1.STATIC_LITERALS, bsw, byte);
     }
     bsw.skipToByteBoundary();
     (0, deflate_1.writeAdler32Checksum)(bsw, (0, deflate_1.computeAdler32)(Uint8Array.from(bytes)));
-    let observed = (0, deflate_1.inflate)(bsw.getBuffer().buffer);
+    let observed = (0, deflate_1.inflate)(bsw.createBuffer().buffer);
     let expected = Uint8Array.from(bytes);
     assert.equals(observed, expected);
 });
@@ -96,26 +93,17 @@ wtf.test(`Inflate should inflate zlib streams containing blocks encoding using d
         bsw.encode(lengths_bit_lengths[index], 3);
     }
     for (let literals_bit_length of literals_bit_lengths) {
-        let key = lengths.keys[literals_bit_length];
-        for (let bit of key) {
-            bsw.encode(bit === "1" ? 1 : 0, 1);
-        }
+        huffman_1.HuffmanRecord.encodeSymbolLSB(lengths, bsw, literals_bit_length);
     }
     for (let distances_bit_length of distances_bit_lengths) {
-        let key = lengths.keys[distances_bit_length];
-        for (let bit of key) {
-            bsw.encode(bit === "1" ? 1 : 0, 1);
-        }
+        huffman_1.HuffmanRecord.encodeSymbolLSB(lengths, bsw, distances_bit_length);
     }
     for (let byte of [...bytes, 256]) {
-        let key = literals.keys[byte];
-        for (let bit of key) {
-            bsw.encode(bit === "1" ? 1 : 0, 1);
-        }
+        huffman_1.HuffmanRecord.encodeSymbolLSB(literals, bsw, byte);
     }
     bsw.skipToByteBoundary();
     (0, deflate_1.writeAdler32Checksum)(bsw, (0, deflate_1.computeAdler32)(Uint8Array.from(bytes)));
-    let observed = (0, deflate_1.inflate)(bsw.getBuffer().buffer);
+    let observed = (0, deflate_1.inflate)(bsw.createBuffer().buffer);
     let expected = Uint8Array.from(bytes);
     assert.equals(observed, expected);
 });
@@ -124,16 +112,16 @@ wtf.test(`Inflate should throw an error when attempting to decode blocks with a 
     bsw.encode(1, 1);
     bsw.encode(deflate_1.EncodingMethod.RESERVED, 2);
     await assert.throws(() => {
-        (0, deflate_1.inflate)(bsw.getBuffer().buffer);
+        (0, deflate_1.inflate)(bsw.createBuffer().buffer);
     });
 });
 wtf.test(`Matches should be generated into the lookahead buffer ("AABABABAAB").`, async (assert) => {
-    let observed = Array.from((0, deflate_1.generateMatches)(chunk_1.Chunk.fromString("AABABABAAB", "binary"), { max_distance: 4 }));
+    let observed = Array.from((0, deflate_1.generateMatches)(chunk_1.Chunk.fromString("AABABABAAB", "binary"), { max_distance_bits: 2 }));
     let expected = [65, 65, 66, { distance: 2, length: 5 }, 65, 66];
     assert.equals(observed, expected);
 });
 wtf.test(`Matches should not be generated past the max distance ("ABCDEABCDE").`, async (assert) => {
-    let observed = Array.from((0, deflate_1.generateMatches)(chunk_1.Chunk.fromString("ABCDEABCDE", "binary"), { max_distance: 4 }));
+    let observed = Array.from((0, deflate_1.generateMatches)(chunk_1.Chunk.fromString("ABCDEABCDE", "binary"), { max_distance_bits: 2 }));
     let expected = [65, 66, 67, 68, 69, 65, 66, 67, 68, 69];
     assert.equals(observed, expected);
 });
