@@ -120,15 +120,17 @@ wtf.test(`Inflate should throw an error when attempting to decode blocks with a 
 });
 
 wtf.test(`Matches should be generated into the lookahead buffer ("AABABABAAB").`, async (assert) => {
-	let observed = Array.from(generateMatches(Chunk.fromString("AABABABAAB", "binary"), { max_distance_bits: 2 }));
+	let observed = generateMatches(Chunk.fromString("AABABABAAB", "binary"), { max_distance_bits: 2 });
 	let expected = [65, 65, 66, { distance: 2, length: 5 }, 65, 66];
-	assert.equals(observed, expected);
+	assert.equals(observed.byte_count, 10);
+	assert.equals(observed.matches, expected);
 });
 
 wtf.test(`Matches should not be generated past the max distance ("ABCDEABCDE").`, async (assert) => {
-	let observed = Array.from(generateMatches(Chunk.fromString("ABCDEABCDE", "binary"), { max_distance_bits: 2 }));
+	let observed = generateMatches(Chunk.fromString("ABCDEABCDE", "binary"), { max_distance_bits: 2 });
 	let expected = [65, 66, 67, 68, 69, 65, 66, 67, 68, 69];
-	assert.equals(observed, expected);
+	assert.equals(observed.byte_count, 10);
+	assert.equals(observed.matches, expected);
 });
 
 wtf.test(`Deflate should deflate strings lacking long repeated sequences ("hello").`, async (assert) => {

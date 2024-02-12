@@ -102,13 +102,14 @@ export type MatchOptions = {
 	max_searches: number;
 	great_match_length: number;
 	good_match_length: number;
+	max_matches_per_block: number;
 };
 
 export function getDistanceFromIndex(i: number, index: number, max_distance_mask: number): number {
 	return ((i - (index + 1)) & max_distance_mask) + 1;
 };
 
-export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOptions>): Generator<number | Match> {
+export function generateMatches(bytes: Uint8Array, options?: Partial<MatchOptions>): { matches: Array<number | Match>; byte_count: number; } {
 	let max_distance_bits = options?.max_distance_bits ?? 15;
 	let max_distance = (1 << max_distance_bits);
 	let max_distance_mask = max_distance - 1;
@@ -117,11 +118,14 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 	let max_searches = options?.max_searches ?? 256;
 	let great_match_length = options?.great_match_length ?? 16;
 	let good_match_length = options?.good_match_length ?? 8;
+	let max_matches_per_block = options?.max_matches_per_block ?? 16384;
 	let jump_table = new Array<number>(max_distance).fill(-1);
 	let head_indices = new Array<number>(65536).fill(-1);
 	let tail_indices = new Array<number>(65536).fill(-1);
 	let top_of_stack = 0;
 	let i = 0;
+	let matches = [] as Array<number | Match>;
+	let byte_count = 0;
 	function updateSearchIndices(): void {
 		// Data will always be overwritten once the history buffer is completely full.
 		if (i >= max_distance) {
@@ -195,10 +199,18 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 			searches += 1;
 		}
 		if (match == null) {
-			yield byte_a;
+			matches.push(byte_a);
+			byte_count += 1;
+			if (matches.length >= max_matches_per_block) {
+				return { matches, byte_count };
+			}
 			updateSearchIndices();
 		} else {
-			yield match;
+			matches.push(match);
+			byte_count += match.length;
+			if (matches.length >= max_matches_per_block) {
+				return { matches, byte_count };
+			}
 			for (let j = 0, l = match.length; j < l; j++) {
 				updateSearchIndices();
 			}
@@ -206,8 +218,13 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 	}
 	for (let l = bytes.length; i < l;) {
 		let byte = bytes[i++];
-		yield byte;
+		matches.push(byte);
+		byte_count += 1;
+		if (matches.length >= max_matches_per_block) {
+			return { matches, byte_count };
+		}
 	}
+	return { matches, byte_count };
 };
 
 export function getInitializedBSW(): BitstreamWriterLSB {
@@ -259,32 +276,45 @@ export function readAdler32Checksum(bsr: BitstreamReaderLSB): number {
 };
 
 export function deflate(buffer: ArrayBuffer): Uint8Array {
+	let encodeSymbolLSB = HuffmanRecord.encodeSymbolLSB;
 	let bytes = new Uint8Array(buffer);
 	let bsw = getInitializedBSW();
-	bsw.encode(1, 1);
-	bsw.encode(EncodingMethod.STATIC, 2);
-	let encodeSymbolLSB = HuffmanRecord.encodeSymbolLSB;
-	for (let match of generateMatches(bytes)) {
-		if (typeof match === "number") {
-			encodeSymbolLSB(STATIC_LITERALS, bsw, match);
-		} else {
-			let length_index = getOffsetIndex(match.length, LENGTH_OFFSETS);
-			let length_offset = LENGTH_OFFSETS[length_index];
-			let length_extra_bits = LENGTH_EXTRA_BITS[length_index];
-			encodeSymbolLSB(STATIC_LITERALS, bsw, 257 + length_index);
-			if (length_extra_bits > 0) {
-				bsw.encode(match.length - length_offset, length_extra_bits);
-			}
-			let distance_index = getOffsetIndex(match.distance, DISTANCE_OFFSETS);
-			let distance_offset = DISTANCE_OFFSETS[distance_index];
-			let distance_extra_bits = DISTANCE_EXTRA_BITS[distance_index];
-			encodeSymbolLSB(STATIC_DISTANCES, bsw, distance_index);
-			if (distance_extra_bits > 0) {
-				bsw.encode(match.distance - distance_offset, distance_extra_bits);
+	function flushMatches(matches: Array<number | Match>, last_block: boolean): void {
+		bsw.encode(last_block ? 1 : 0, 1);
+		bsw.encode(EncodingMethod.STATIC, 2);
+		for (let i = 0, l = matches.length; i < l; i++) {
+			let match = matches[i];
+			if (typeof match === "number") {
+				encodeSymbolLSB(STATIC_LITERALS, bsw, match);
+			} else {
+				let length_index = getOffsetIndex(match.length, LENGTH_OFFSETS);
+				let length_offset = LENGTH_OFFSETS[length_index];
+				let length_extra_bits = LENGTH_EXTRA_BITS[length_index];
+				encodeSymbolLSB(STATIC_LITERALS, bsw, 257 + length_index);
+				if (length_extra_bits > 0) {
+					bsw.encode(match.length - length_offset, length_extra_bits);
+				}
+				let distance_index = getOffsetIndex(match.distance, DISTANCE_OFFSETS);
+				let distance_offset = DISTANCE_OFFSETS[distance_index];
+				let distance_extra_bits = DISTANCE_EXTRA_BITS[distance_index];
+				encodeSymbolLSB(STATIC_DISTANCES, bsw, distance_index);
+				if (distance_extra_bits > 0) {
+					bsw.encode(match.distance - distance_offset, distance_extra_bits);
+				}
 			}
 		}
+		encodeSymbolLSB(STATIC_LITERALS, bsw, 256);
 	}
-	encodeSymbolLSB(STATIC_LITERALS, bsw, 256);
+	if (bytes.length > 0) {
+		let byte_index = 0;
+		for (let l = bytes.length; byte_index < l;) {
+			let { matches, byte_count } = generateMatches(bytes.subarray(byte_index));
+			byte_index += byte_count;
+			flushMatches(matches, byte_index >= l);
+		}
+	} else {
+		flushMatches([], true);
+	}
 	bsw.skipToByteBoundary();
 	let checksum = computeAdler32(bytes);
 	writeAdler32Checksum(bsw, checksum);
