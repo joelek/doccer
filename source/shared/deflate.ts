@@ -122,6 +122,29 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 	let tail_indices = new Array<number>(256).fill(-1);
 	let top_of_stack = 0;
 	let i = 0;
+	function updateSearchIndices(): void {
+		// Data will always be overwritten once the history buffer is completely full.
+		if (i >= max_distance) {
+			let byte = bytes[i - max_distance];
+			let head_index = head_indices[byte];
+			head_indices[byte] = jump_table[head_index];
+			let tail_index = tail_indices[byte];
+			if (tail_index === head_index) {
+				tail_indices[byte] = -1;
+			}
+		}
+		jump_table[top_of_stack] = -1;
+		let byte = bytes[i];
+		let tail_index = tail_indices[byte];
+		if (tail_index !== -1) {
+			jump_table[tail_index] = top_of_stack;
+		} else {
+			head_indices[byte] = top_of_stack;
+		}
+		tail_indices[byte] = top_of_stack;
+		i += 1;
+		top_of_stack = i & max_distance_mask;
+	}
 	for (let l = bytes.length - min_length + 1; i < l;) {
 		let match: Match | undefined;
 		let byte = bytes[i];
@@ -167,36 +190,14 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 			index = jump_table[index];
 			searches += 1;
 		}
-		let number_of_bytes_encoded = 0;
 		if (match == null) {
-			number_of_bytes_encoded = 1;
 			yield byte;
+			updateSearchIndices();
 		} else {
-			number_of_bytes_encoded = match.length;
 			yield match;
-		}
-		for (let j = 0; j < number_of_bytes_encoded; j++) {
-			// Data will always be overwritten once the history buffer is completely full.
-			if (i >= max_distance) {
-				let byte = bytes[i - max_distance];
-				let head_index = head_indices[byte];
-				head_indices[byte] = jump_table[head_index];
-				let tail_index = tail_indices[byte];
-				if (tail_index === head_index) {
-					tail_indices[byte] = -1;
-				}
+			for (let j = 0, l = match.length; j < l; j++) {
+				updateSearchIndices();
 			}
-			jump_table[top_of_stack] = -1;
-			let byte = bytes[i];
-			let tail_index = tail_indices[byte];
-			if (tail_index !== -1) {
-				jump_table[tail_index] = top_of_stack;
-			} else {
-				head_indices[byte] = top_of_stack;
-			}
-			tail_indices[byte] = top_of_stack;
-			i += 1;
-			top_of_stack = i & max_distance_mask;
 		}
 	}
 	for (let l = bytes.length; i < l;) {
