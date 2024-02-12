@@ -132,29 +132,36 @@ export function * generateMatches(bytes: Uint8Array, options?: Partial<MatchOpti
 			let distance = ((i - (index + 1)) & max_distance_mask) + 1;
 			let length = 1;
 			let j = i - distance;
-			let max_local_length = l - j;
-			for (let l = max_local_length < max_length ? max_local_length : max_length; length < l; length++) {
-				if (bytes[j + length] !== bytes[i + length]) {
-					break;
-				}
-			}
-			if (length >= min_length) {
-				if (match == null) {
-					match = {
-						distance,
-						length
-					};
-				} else {
-					if (length > match.length) {
-						match.distance = distance;
-						match.length = length;
+			if (bytes[j + length] === bytes[i + length]) {
+				length += 1;
+				if (bytes[j + length] === bytes[i + length]) {
+					length += 1;
+					let max_local_length = bytes.length - j;
+					let active_max_length = max_local_length < max_length ? max_local_length : max_length;
+					for (; length < active_max_length; length++) {
+						if (bytes[j + length] !== bytes[i + length]) {
+							break;
+						}
 					}
-				}
-				if (length >= great_match_length) {
-					break;
-				}
-				if (length >= good_match_length) {
-					active_max_searches >>= 1;
+					if (length >= min_length) {
+						if (match == null) {
+							match = {
+								distance,
+								length
+							};
+						} else {
+							if (length > match.length) {
+								match.distance = distance;
+								match.length = length;
+							}
+						}
+						if (length >= great_match_length) {
+							break;
+						}
+						if (length >= good_match_length) {
+							active_max_searches >>= 1;
+						}
+					}
 				}
 			}
 			index = jump_table[index];
