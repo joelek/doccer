@@ -3,6 +3,10 @@ import { HuffmanRecord } from "./huffman";
 
 export const CODE_LENGTH_CODES_ORDER = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
 
+const CODE_LENGTH_CODES_EXTRA_BITS = [2, 3, 7];
+
+const CODE_LENGTH_CODES_OFFSETS = [3, 3, 11];
+
 function computeOffsets(first_offset: number, bit_lengths: Array<number>): Array<number> {
 	let offsets = [] as Array<number>;
 	let next_offset = first_offset;
@@ -310,35 +314,165 @@ export function getBitLengthsFromHistogram(histogram: Array<number>): Array<numb
 	return bit_lengths;
 };
 
+export function createBitLengthEncoding(bit_lengths: Array<number>): Array<number | { code: 16 | 17 | 18; length: number; }> {
+	let encoding = [] as Array<number | { code: 16 | 17 | 18; length: number; }>;
+	for (let i = 0, l = bit_lengths.length; i < l;) {
+		let bit_length = bit_lengths[i];
+		let length = 1;
+		let min_length = bit_length === 0 ? 3 : 4;
+		let max_length = bit_length === 0 ? 138 : 6;
+		let max_local_length = l - i;
+		let active_max_length = max_local_length < max_length ? max_local_length : max_length;
+		for (; length < active_max_length; length++) {
+			if (bit_lengths[i + length] !== bit_length) {
+				break;
+			}
+		}
+		if (length >= min_length) {
+			if (bit_length === 0) {
+				if (length >= 11) {
+					encoding.push({ code: 18, length: length });
+				} else {
+					encoding.push({ code: 17, length: length });
+				}
+			} else {
+				encoding.push(bit_length);
+				encoding.push({ code: 16, length: length - 1 });
+			}
+		} else {
+			for (let j = 0; j < length; j++) {
+				encoding.push(bit_length);
+			}
+		}
+		i += length;
+	}
+	return encoding;
+};
+
 export function deflate(buffer: ArrayBuffer): Uint8Array {
 	let encodeSymbolLSB = HuffmanRecord.encodeSymbolLSB;
 	let bytes = new Uint8Array(buffer);
 	let bsw = getInitializedBSW();
-	function flushMatches(matches: Array<number | Match>, last_block: boolean): void {
-		bsw.encode(last_block ? 1 : 0, 1);
-		bsw.encode(EncodingMethod.STATIC, 2);
+	function encodeMatches(matches: Array<number | Match>, bsw: BitstreamWriterLSB, literals: HuffmanRecord, distances: HuffmanRecord): void {
 		for (let i = 0, l = matches.length; i < l; i++) {
 			let match = matches[i];
 			if (typeof match === "number") {
-				encodeSymbolLSB(STATIC_LITERALS, bsw, match);
+				encodeSymbolLSB(literals, bsw, match);
 			} else {
 				let length_index = getOffsetIndex(match.length, LENGTH_OFFSETS);
 				let length_offset = LENGTH_OFFSETS[length_index];
 				let length_extra_bits = LENGTH_EXTRA_BITS[length_index];
-				encodeSymbolLSB(STATIC_LITERALS, bsw, 257 + length_index);
+				encodeSymbolLSB(literals, bsw, 257 + length_index);
 				if (length_extra_bits > 0) {
 					bsw.encode(match.length - length_offset, length_extra_bits);
 				}
 				let distance_index = getOffsetIndex(match.distance, DISTANCE_OFFSETS);
 				let distance_offset = DISTANCE_OFFSETS[distance_index];
 				let distance_extra_bits = DISTANCE_EXTRA_BITS[distance_index];
-				encodeSymbolLSB(STATIC_DISTANCES, bsw, distance_index);
+				encodeSymbolLSB(distances, bsw, distance_index);
 				if (distance_extra_bits > 0) {
 					bsw.encode(match.distance - distance_offset, distance_extra_bits);
 				}
 			}
 		}
-		encodeSymbolLSB(STATIC_LITERALS, bsw, 256);
+		encodeSymbolLSB(literals, bsw, 256);
+	}
+	function flushMatches(matches: Array<number | Match>, last_block: boolean): void {
+		let literals_histogram = new Array<number>(257 + LENGTH_OFFSETS.length).fill(0);
+		let distances_histogram = new Array<number>(DISTANCE_OFFSETS.length).fill(0);
+		let dynamic_bit_count = 3 + 5 + 5 + 4;
+		for (let i = 0, l = matches.length; i < l; i++) {
+			let match = matches[i];
+			if (typeof match === "number") {
+				literals_histogram[match] += 1;
+			} else {
+				let length_index = getOffsetIndex(match.length, LENGTH_OFFSETS);
+				let length_extra_bits = LENGTH_EXTRA_BITS[length_index];
+				dynamic_bit_count += length_extra_bits;
+				literals_histogram[257 + length_index] += 1;
+				let distance_index = getOffsetIndex(match.distance, DISTANCE_OFFSETS);
+				let distance_extra_bits = DISTANCE_EXTRA_BITS[distance_index];
+				dynamic_bit_count += distance_extra_bits;
+				distances_histogram[distance_index] += 1;
+			}
+		}
+		literals_histogram[256] += 1;
+		let literals_bit_lengths = getBitLengthsFromHistogram(literals_histogram);
+		dynamic_bit_count += literals_histogram.reduce((sum, frequency, index) => sum + frequency * literals_bit_lengths[index], 0);
+		let number_of_literal_bit_lengths = 257;
+		for (let i = number_of_literal_bit_lengths, l = literals_bit_lengths.length; i < l; i++) {
+			if (literals_bit_lengths[i] !== 0) {
+				number_of_literal_bit_lengths = i + 1;
+			}
+		}
+		let distances_bit_lengths = getBitLengthsFromHistogram(distances_histogram);
+		dynamic_bit_count += distances_histogram.reduce((sum, frequency, index) => sum + frequency * distances_bit_lengths[index], 0);
+		let number_of_distance_bit_lengths = 1;
+		for (let i = number_of_distance_bit_lengths, l = distances_bit_lengths.length; i < l; i++) {
+			if (distances_bit_lengths[i] !== 0) {
+				number_of_distance_bit_lengths = i + 1;
+			}
+		}
+		let bit_lengths = [
+			...literals_bit_lengths.slice(0, number_of_literal_bit_lengths),
+			...distances_bit_lengths.slice(0, number_of_distance_bit_lengths)
+		];
+		let bit_lengths_encoding = createBitLengthEncoding(bit_lengths);
+		let bit_lengths_histogram = new Array<number>(CODE_LENGTH_CODES_ORDER.length).fill(0);
+		for (let i = 0, l = bit_lengths_encoding.length; i < l; i++) {
+			let encoding = bit_lengths_encoding[i];
+			if (typeof encoding === "number") {
+				bit_lengths_histogram[encoding] += 1;
+			} else {
+				let index = encoding.code - 16;
+				dynamic_bit_count += CODE_LENGTH_CODES_EXTRA_BITS[index];
+				bit_lengths_histogram[encoding.code] += 1;
+			}
+		}
+		let lengths_bit_lengths = getBitLengthsFromHistogram(bit_lengths_histogram);
+		dynamic_bit_count += bit_lengths_histogram.reduce((sum, frequency, index) => sum + frequency * lengths_bit_lengths[index], 0);
+		let number_of_length_bit_lengths = 4;
+		for (let i = number_of_length_bit_lengths, l = lengths_bit_lengths.length; i < l; i++) {
+			if (lengths_bit_lengths[CODE_LENGTH_CODES_ORDER[i]] !== 0) {
+				number_of_length_bit_lengths = i + 1;
+			}
+		}
+		dynamic_bit_count += number_of_length_bit_lengths + number_of_length_bit_lengths + number_of_length_bit_lengths;
+		let static_bit_count = 3;
+		static_bit_count += literals_histogram.reduce((sum, frequency, index) => sum + frequency * STATIC_LITERALS_BIT_LENGTHS[index], 0);
+		static_bit_count += distances_histogram.reduce((sum, frequency, index) => sum + frequency * STATIC_DISTANCES_BIT_LENGTHS[index], 0);
+		if (dynamic_bit_count < static_bit_count) {
+			let literals = HuffmanRecord.create(literals_bit_lengths);
+			let distances = HuffmanRecord.create(distances_bit_lengths);
+			let lengths = HuffmanRecord.create(lengths_bit_lengths);
+			bsw.encode(last_block ? 1 : 0, 1);
+			bsw.encode(EncodingMethod.DYNAMIC, 2);
+			bsw.encode(number_of_literal_bit_lengths - 257, 5);
+			bsw.encode(number_of_distance_bit_lengths - 1, 5);
+			bsw.encode(number_of_length_bit_lengths - 4, 4);
+			for (let i = 0, l = number_of_length_bit_lengths; i < l; i++) {
+				bsw.encode(lengths_bit_lengths[CODE_LENGTH_CODES_ORDER[i]], 3);
+			}
+			for (let i = 0, l = bit_lengths_encoding.length; i < l; i++) {
+				let encoding = bit_lengths_encoding[i];
+				if (typeof encoding === "number") {
+					encodeSymbolLSB(lengths, bsw, encoding);
+				} else {
+					let index = encoding.code - 16;
+					let offset = CODE_LENGTH_CODES_OFFSETS[index];
+					let extra_bits = CODE_LENGTH_CODES_EXTRA_BITS[index];
+					encodeSymbolLSB(lengths, bsw, encoding.code);
+					if (extra_bits > 0) {
+						bsw.encode(encoding.length - offset, extra_bits);
+					}
+				}
+			}
+			encodeMatches(matches, bsw, literals, distances);
+		} else {
+			bsw.encode(last_block ? 1 : 0, 1);
+			bsw.encode(EncodingMethod.STATIC, 2);
+			encodeMatches(matches, bsw, STATIC_LITERALS, STATIC_DISTANCES);
+		}
 	}
 	if (bytes.length > 0) {
 		let byte_index = 0;
