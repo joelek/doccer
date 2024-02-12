@@ -275,6 +275,41 @@ export function readAdler32Checksum(bsr: BitstreamReaderLSB): number {
 	return ((bsr.decode(8) << 24) | (bsr.decode(8) << 16) | (bsr.decode(8) << 8) | (bsr.decode(8) << 0)) >>> 0;
 };
 
+export function getBitLengthsFromHistogram(histogram: Array<number>): Array<number> {
+	let entries = histogram.map((frequency, index) => ({
+		index,
+		frequency
+	}));
+	entries = entries.filter((entry) => entry.frequency > 0);
+	entries = entries.sort((one, two) => two.frequency - one.frequency);
+	let bit_lengths = new Array<number>(histogram.length).fill(0);
+	let active_bit_length = 1;
+	let free_slots_at_level = 2;
+	let total_remaining = entries.reduce((sum, entry) => sum + entry.frequency, 0);
+	for (let i = 0, l = entries.length; i < l;) {
+		let { index, frequency } = entries[i];
+		let entries_left = l - i;
+		let free_slots_at_next_level = free_slots_at_level << 1;
+		let slots_available_at_level = free_slots_at_next_level - entries_left;
+		let entry_is_dense = frequency >= total_remaining - frequency;
+		if (free_slots_at_level > 1 && entry_is_dense) {
+			bit_lengths[index] = active_bit_length;
+			total_remaining -= frequency;
+			i += 1;
+			free_slots_at_level -= 1;
+		} else if (slots_available_at_level > 0) {
+			bit_lengths[index] = active_bit_length;
+			total_remaining -= frequency;
+			i += 1;
+			free_slots_at_level -= 1;
+		} else {
+			active_bit_length += 1;
+			free_slots_at_level <<= 1;
+		}
+	}
+	return bit_lengths;
+};
+
 export function deflate(buffer: ArrayBuffer): Uint8Array {
 	let encodeSymbolLSB = HuffmanRecord.encodeSymbolLSB;
 	let bytes = new Uint8Array(buffer);

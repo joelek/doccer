@@ -1,6 +1,6 @@
 import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
 import * as wtf from "@joelek/wtf";
-import { CODE_LENGTH_CODES_ORDER, EncodingMethod, STATIC_LITERALS, computeAdler32, deflate, generateMatches, getDistanceFromIndex, getInitializedBSW, inflate, writeAdler32Checksum } from "./deflate";
+import { CODE_LENGTH_CODES_ORDER, EncodingMethod, STATIC_LITERALS, computeAdler32, deflate, generateMatches, getBitLengthsFromHistogram, getDistanceFromIndex, getInitializedBSW, inflate, writeAdler32Checksum } from "./deflate";
 import { HuffmanRecord } from "./huffman";
 
 function range(first_value: number, delta_value: number, steps: number): Array<number> {
@@ -147,7 +147,7 @@ wtf.test(`Deflate should deflate strings containing long repeated sequences ("he
 	assert.equals(observed, expected);
 });
 
-wtf.test(`Strings lacking long repeated sequences ("hello") shold be deflated and inflated properly.`, async (assert) => {
+wtf.test(`Strings lacking long repeated sequences ("hello") should be deflated and inflated properly.`, async (assert) => {
 	let expected = "hello";
 	let observed = Chunk.toString(inflate(deflate(Chunk.fromString(expected, "binary").buffer)), "binary");
 	assert.equals(observed, expected);
@@ -156,5 +156,71 @@ wtf.test(`Strings lacking long repeated sequences ("hello") shold be deflated an
 wtf.test(`Strings containing long repeated sequences ("hello hello") should be deflated and inflated properly.`, async (assert) => {
 	let expected = "hello hello";
 	let observed = Chunk.toString(inflate(deflate(Chunk.fromString(expected, "binary").buffer)), "binary");
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [2, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([2, 1]);
+	let expected = [1, 1];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [3, 1, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([3, 1, 1]);
+	let expected = [1, 2, 2];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [4, 1, 1, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([4, 1, 1, 1]);
+	let expected = [1, 2, 3, 3];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([1]);
+	let expected = [1];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [1, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([1, 1]);
+	let expected = [1, 1];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([1, 1, 1]);
+	let expected = [1, 2, 2];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([1, 1, 1, 1]);
+	let expected = [2, 2, 2, 2];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([1, 1, 1, 1, 1]);
+	let expected = [2, 2, 2, 3, 3];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1, 1, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([1, 1, 1, 1, 1, 1]);
+	let expected = [2, 2, 3, 3, 3, 3];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1, 1, 1, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([1, 1, 1, 1, 1, 1, 1]);
+	let expected = [2, 3, 3, 3, 3, 3, 3];
+	assert.equals(observed, expected);
+});
+
+wtf.test(`Bit lengths should be computed from histogram [1, 1, 1, 1, 1, 1, 1, 1].`, async (assert) => {
+	let observed = getBitLengthsFromHistogram([1, 1, 1, 1, 1, 1, 1, 1]);
+	let expected = [3, 3, 3, 3, 3, 3, 3, 3];
 	assert.equals(observed, expected);
 });
