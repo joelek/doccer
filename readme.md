@@ -617,8 +617,10 @@ NB: This project targets TypeScript 4 in strict mode.
 * Add support for the EarlyChange=0 LZW option.
 * Add command for stream extraction from PDF files to CLI.
 * Fix issue with poor deflate performance.
-	Deflating 1MB takes about 1200ms of which most is spent in `generateMatches()`.
-	Need to implement rolling hashes for all three-byte sequences encountered and good enough matching.
+	Deflating 1MB takes about 95ms vs 18s for native zlib.
+	Need to mangle code and remove classes to further optimize.
 * Fix issue with poor inflate performance.
 	Inflating 1MB takes about 35ms vs 3ms for native zlib.
 	Need to mangle code and remove classes to further optimize.
+* Fix issue with poor compression rate.
+	Need to implement 16k literal buffer and adaptive encoding (may improve speed as well).
