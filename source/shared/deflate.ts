@@ -381,6 +381,7 @@ export function deflate(buffer: ArrayBuffer): Uint8Array {
 		let literals_histogram = new Array<number>(257 + LENGTH_OFFSETS.length).fill(0);
 		let distances_histogram = new Array<number>(DISTANCE_OFFSETS.length).fill(0);
 		let dynamic_bit_count = 3 + 5 + 5 + 4;
+		let static_bit_count = 3;
 		for (let i = 0, l = matches.length; i < l; i++) {
 			let match = matches[i];
 			if (typeof match === "number") {
@@ -389,10 +390,12 @@ export function deflate(buffer: ArrayBuffer): Uint8Array {
 				let length_index = getOffsetIndex(match.length, LENGTH_OFFSETS);
 				let length_extra_bits = LENGTH_EXTRA_BITS[length_index];
 				dynamic_bit_count += length_extra_bits;
+				static_bit_count += length_extra_bits;
 				literals_histogram[257 + length_index] += 1;
 				let distance_index = getOffsetIndex(match.distance, DISTANCE_OFFSETS);
 				let distance_extra_bits = DISTANCE_EXTRA_BITS[distance_index];
 				dynamic_bit_count += distance_extra_bits;
+				static_bit_count += distance_extra_bits;
 				distances_histogram[distance_index] += 1;
 			}
 		}
@@ -437,8 +440,7 @@ export function deflate(buffer: ArrayBuffer): Uint8Array {
 				number_of_length_bit_lengths = i + 1;
 			}
 		}
-		dynamic_bit_count += number_of_length_bit_lengths + number_of_length_bit_lengths + number_of_length_bit_lengths;
-		let static_bit_count = 3;
+		dynamic_bit_count += number_of_length_bit_lengths * 3;
 		static_bit_count += literals_histogram.reduce((sum, frequency, index) => sum + frequency * STATIC_LITERALS_BIT_LENGTHS[index], 0);
 		static_bit_count += distances_histogram.reduce((sum, frequency, index) => sum + frequency * STATIC_DISTANCES_BIT_LENGTHS[index], 0);
 		if (dynamic_bit_count < static_bit_count) {
