@@ -166,11 +166,8 @@ export enum PredictorType {
 };
 
 export function decodeImageData(png: PNGData): Uint8Array {
-	let idats = png.chunks.filter((chunk) => chunk.type === "IDAT");
-	if (idats.length !== 1) {
-		throw new Error(`Expected exactly one IDAT chunk!`);
-	}
-	let deflated_idat = idats[0].data;
+	let idat = Chunk.concat(png.chunks.filter((chunk) => chunk.type === "IDAT").map((idat) => new Uint8Array(idat.data)));
+	let deflated_idat = idat.buffer;
 	let inflated_idat = inflate(deflated_idat);
 	let bits_per_pixel = getBitsPerPixel(png.ihdr);
 	let x_delta = Math.ceil(bits_per_pixel / 8);
