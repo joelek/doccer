@@ -613,6 +613,5 @@ NB: This project targets TypeScript 4 in strict mode.
 * Investigate possibility to support segmentation for nodes with non-intrinsic heights (adds support for prefix and suffix nodes).
 * Remove unused segmentation state.
 * Add tests for ImageNode.
-* Add support for interlaced PNG images by re-encoding them.
 * Add support for the EarlyChange=0 LZW option.
 * Add command for stream extraction from PDF files to CLI.
