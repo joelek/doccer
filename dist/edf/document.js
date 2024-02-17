@@ -15,13 +15,7 @@ const images_1 = require("./images");
 const jpg = require("../jpg");
 const png = require("../png");
 function createGrayscalePNGXObjects(data) {
-    let idats = data.chunks.filter((chunk) => chunk.type === "IDAT");
-    if (idats.length !== 1) {
-        throw new Error(`Expected exactly one IDAT chunk!`);
-    }
-    if (data.ihdr.interlace_method !== "NONE") {
-        throw new Error(`Expected a non-interlaced PNG file!`);
-    }
+    let { color } = png.splitImageIntoColorAndAlpha(data);
     let image_xobject = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("XObject")),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Subtype"), new pdf.format.PDFName("Image")),
@@ -30,14 +24,14 @@ function createGrayscalePNGXObjects(data) {
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("ColorSpace"), new pdf.format.PDFName("DeviceGray")),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")),
-        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(idats[0].data.byteLength)),
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(color.idat.byteLength)),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
             new format_2.PDFRecordMember(new format_2.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
             new format_2.PDFRecordMember(new format_2.PDFName("Predictor"), new pdf.format.PDFInteger(15)),
             new format_2.PDFRecordMember(new format_2.PDFName("Columns"), new pdf.format.PDFInteger(data.ihdr.width)),
             new format_2.PDFRecordMember(new format_2.PDFName("Colors"), new pdf.format.PDFInteger(1))
         ]))
-    ]), new pdf.format.PDFStream(new Uint8Array(idats[0].data)));
+    ]), new pdf.format.PDFStream(color.idat));
     return [image_xobject];
 }
 exports.createGrayscalePNGXObjects = createGrayscalePNGXObjects;
@@ -85,13 +79,7 @@ function createGrayscaleAndAlphaPNGXObjects(data) {
 exports.createGrayscaleAndAlphaPNGXObjects = createGrayscaleAndAlphaPNGXObjects;
 ;
 function createTruecolorPNGXObjects(data) {
-    let idats = data.chunks.filter((chunk) => chunk.type === "IDAT");
-    if (idats.length !== 1) {
-        throw new Error(`Expected exactly one IDAT chunk!`);
-    }
-    if (data.ihdr.interlace_method !== "NONE") {
-        throw new Error(`Expected a non-interlaced PNG file!`);
-    }
+    let { color } = png.splitImageIntoColorAndAlpha(data);
     let image_xobject = new pdf.format.PDFStreamObject(new pdf.format.PDFInteger(1), new pdf.format.PDFInteger(0), new pdf.format.PDFRecord([
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Type"), new pdf.format.PDFName("XObject")),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Subtype"), new pdf.format.PDFName("Image")),
@@ -100,14 +88,14 @@ function createTruecolorPNGXObjects(data) {
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("ColorSpace"), new pdf.format.PDFName("DeviceRGB")),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")),
-        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(idats[0].data.byteLength)),
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(color.idat.byteLength)),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
             new format_2.PDFRecordMember(new format_2.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
             new format_2.PDFRecordMember(new format_2.PDFName("Predictor"), new pdf.format.PDFInteger(15)),
             new format_2.PDFRecordMember(new format_2.PDFName("Columns"), new pdf.format.PDFInteger(data.ihdr.width)),
             new format_2.PDFRecordMember(new format_2.PDFName("Colors"), new pdf.format.PDFInteger(3))
         ]))
-    ]), new pdf.format.PDFStream(new Uint8Array(idats[0].data)));
+    ]), new pdf.format.PDFStream(color.idat));
     return [image_xobject];
 }
 exports.createTruecolorPNGXObjects = createTruecolorPNGXObjects;
@@ -155,13 +143,7 @@ function createTruecolorAndAlphaPNGXObjects(data) {
 exports.createTruecolorAndAlphaPNGXObjects = createTruecolorAndAlphaPNGXObjects;
 ;
 function createIndexedPNGXObjects(data) {
-    let idats = data.chunks.filter((chunk) => chunk.type === "IDAT");
-    if (idats.length !== 1) {
-        throw new Error(`Expected exactly one IDAT chunk!`);
-    }
-    if (data.ihdr.interlace_method !== "NONE") {
-        throw new Error(`Expected a non-interlaced PNG file!`);
-    }
+    let { color } = png.splitImageIntoColorAndAlpha(data);
     let pltes = data.chunks.filter((chunk) => chunk.type === "PLTE");
     if (pltes.length !== 1) {
         throw new Error(`Expected exactly one PLTE chunk!`);
@@ -179,14 +161,14 @@ function createIndexedPNGXObjects(data) {
         ])),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("Filter"), new pdf.format.PDFName("FlateDecode")),
-        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(idats[0].data.byteLength)),
+        new pdf.format.PDFRecordMember(new pdf.format.PDFName("Length"), new pdf.format.PDFInteger(color.idat.byteLength)),
         new pdf.format.PDFRecordMember(new pdf.format.PDFName("DecodeParms"), new pdf.format.PDFRecord([
             new format_2.PDFRecordMember(new format_2.PDFName("BitsPerComponent"), new pdf.format.PDFInteger(data.ihdr.bit_depth)),
             new format_2.PDFRecordMember(new format_2.PDFName("Predictor"), new pdf.format.PDFInteger(15)),
             new format_2.PDFRecordMember(new format_2.PDFName("Columns"), new pdf.format.PDFInteger(data.ihdr.width)),
             new format_2.PDFRecordMember(new format_2.PDFName("Colors"), new pdf.format.PDFInteger(1))
         ]))
-    ]), new pdf.format.PDFStream(new Uint8Array(idats[0].data)));
+    ]), new pdf.format.PDFStream(color.idat));
     return [image_xobject];
 }
 exports.createIndexedPNGXObjects = createIndexedPNGXObjects;
