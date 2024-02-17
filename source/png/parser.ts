@@ -1,6 +1,16 @@
 import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
 import { deflate, inflate } from "../shared";
 
+const ADAM7_PASSES = [
+	{ x0: 0, y0: 0, dx: 8, dy: 8 },
+	{ x0: 4, y0: 0, dx: 8, dy: 8 },
+	{ x0: 0, y0: 4, dx: 4, dy: 8 },
+	{ x0: 2, y0: 0, dx: 4, dy: 4 },
+	{ x0: 0, y0: 2, dx: 2, dy: 4 },
+	{ x0: 1, y0: 0, dx: 2, dy: 2 },
+	{ x0: 0, y0: 1, dx: 1, dy: 2 }
+];
+
 export enum ColorType {
 	GRAYSCALE = 0,
 	TRUECOLOR = 2,
@@ -170,58 +180,114 @@ export function decodeImageData(png: PNGData): Uint8Array {
 	let deflated_idat = idat.buffer;
 	let inflated_idat = inflate(deflated_idat);
 	let bits_per_pixel = getBitsPerPixel(png.ihdr);
+	let whole_bytes_per_pixel = (bits_per_pixel >> 3);
 	let x_delta = Math.ceil(bits_per_pixel / 8);
 	let y_delta = 1;
-	let bytes_per_scanline = Math.ceil(bits_per_pixel * png.ihdr.width / 8);
-	let bytes = [] as Array<number>;
 	let offset = 0;
-	function getLeftByte(x: number, y: number): number {
-		return x >= x_delta ? bytes[(y) * bytes_per_scanline + (x - x_delta)] : 0;
-	}
-	function getTopByte(x: number, y: number): number {
-		return y >= y_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x)] : 0;
-	}
-	function getTopLeftByte(x: number, y: number): number {
-		return y >= y_delta && x >= x_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x - x_delta)] : 0;
-	}
-	for (let y = 0; y < png.ihdr.height; y++) {
-		let predictor = inflated_idat[offset++];
-		if (predictor === PredictorType.NONE) {
-			for (let x = 0; x < bytes_per_scanline; x++) {
-				bytes.push(inflated_idat[offset++]);
-			}
-		} else if (predictor === PredictorType.SUB) {
-			for (let x = 0; x < bytes_per_scanline; x++) {
-				let left_byte = getLeftByte(x, y);
-				let byte = modulo(inflated_idat[offset++] + left_byte, 256);
-				bytes.push(byte);
-			}
-		} else if (predictor === PredictorType.UP) {
-			for (let x = 0; x < bytes_per_scanline; x++) {
-				let top_byte = getTopByte(x, y);
-				let byte = modulo(inflated_idat[offset++] + top_byte, 256);
-				bytes.push(byte);
-			}
-		} else if (predictor === PredictorType.AVERAGE) {
-			for (let x = 0; x < bytes_per_scanline; x++) {
-				let left_byte = getLeftByte(x, y);
-				let top_byte = getTopByte(x, y);
-				let byte = modulo(inflated_idat[offset++] + averagePredictor(left_byte, top_byte), 256);
-				bytes.push(byte);
-			}
-		} else if (predictor === PredictorType.PAETH) {
-			for (let x = 0; x < bytes_per_scanline; x++) {
-				let left_byte = getLeftByte(x, y);
-				let top_byte = getTopByte(x, y);
-				let top_left_byte = getTopLeftByte(x, y);
-				let byte = modulo(inflated_idat[offset++] + paethPredictor(left_byte, top_byte, top_left_byte), 256);
-				bytes.push(byte);
-			}
-		} else {
-			throw new Error(`Expected a valid PNG predictor!`);
+	function decodeSubimageData(width: number, height: number): Uint8Array {
+		let bytes_per_scanline = Math.ceil(bits_per_pixel * width / 8);
+		let bytes = [] as Array<number>;
+		function getLeftByte(x: number, y: number): number {
+			return x >= x_delta ? bytes[(y) * bytes_per_scanline + (x - x_delta)] : 0;
 		}
+		function getTopByte(x: number, y: number): number {
+			return y >= y_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x)] : 0;
+		}
+		function getTopLeftByte(x: number, y: number): number {
+			return y >= y_delta && x >= x_delta ? bytes[(y - y_delta) * bytes_per_scanline + (x - x_delta)] : 0;
+		}
+		for (let y = 0; y < height; y++) {
+			let predictor = inflated_idat[offset++];
+			if (predictor === PredictorType.NONE) {
+				for (let x = 0; x < bytes_per_scanline; x++) {
+					bytes.push(inflated_idat[offset++]);
+				}
+			} else if (predictor === PredictorType.SUB) {
+				for (let x = 0; x < bytes_per_scanline; x++) {
+					let left_byte = getLeftByte(x, y);
+					let byte = modulo(inflated_idat[offset++] + left_byte, 256);
+					bytes.push(byte);
+				}
+			} else if (predictor === PredictorType.UP) {
+				for (let x = 0; x < bytes_per_scanline; x++) {
+					let top_byte = getTopByte(x, y);
+					let byte = modulo(inflated_idat[offset++] + top_byte, 256);
+					bytes.push(byte);
+				}
+			} else if (predictor === PredictorType.AVERAGE) {
+				for (let x = 0; x < bytes_per_scanline; x++) {
+					let left_byte = getLeftByte(x, y);
+					let top_byte = getTopByte(x, y);
+					let byte = modulo(inflated_idat[offset++] + averagePredictor(left_byte, top_byte), 256);
+					bytes.push(byte);
+				}
+			} else if (predictor === PredictorType.PAETH) {
+				for (let x = 0; x < bytes_per_scanline; x++) {
+					let left_byte = getLeftByte(x, y);
+					let top_byte = getTopByte(x, y);
+					let top_left_byte = getTopLeftByte(x, y);
+					let byte = modulo(inflated_idat[offset++] + paethPredictor(left_byte, top_byte, top_left_byte), 256);
+					bytes.push(byte);
+				}
+			} else {
+				throw new Error(`Expected a valid PNG predictor!`);
+			}
+		}
+		return Uint8Array.from(bytes);
 	}
-	return Uint8Array.from(bytes);
+	if (png.ihdr.interlace_method === "ADAM7") {
+		let target_bytes_per_scanline = Math.ceil(bits_per_pixel * png.ihdr.width / 8);
+		let target_data = new Uint8Array(png.ihdr.height * target_bytes_per_scanline);
+		for (let { x0, y0, dx, dy } of ADAM7_PASSES) {
+			let w = Math.ceil((png.ihdr.width - x0) / dx);
+			let h = Math.ceil((png.ihdr.height - y0) / dy);
+			if (w > 0 && h > 0) {
+				let source_data = decodeSubimageData(w, h);
+				let source_bytes_per_scanline = Math.ceil(bits_per_pixel * w / 8);
+				for (let sy = 0, ty = y0; sy < h; sy += 1, ty += dy) {
+					for (let sx = 0, tx = x0; sx < w; sx += 1, tx += dx) {
+						let source_scanline_bit_offset = sx * bits_per_pixel;
+						let target_scanline_bit_offset = tx * bits_per_pixel;
+						let source_offset = (sy * source_bytes_per_scanline) + (source_scanline_bit_offset >> 3);
+						let target_offset = (ty * target_bytes_per_scanline) + (target_scanline_bit_offset >> 3);
+						if (bits_per_pixel < 8) {
+							let source_byte = source_data[source_offset];
+							let target_byte = target_data[target_offset];
+							if (bits_per_pixel === 1) {
+								let source_index = source_scanline_bit_offset & 7;
+								let source_shift = 7 - source_index;
+								let target_index = target_scanline_bit_offset & 7;
+								let target_shift = 7 - target_index;
+								target_data[target_offset] = target_byte | ((source_byte >> source_shift) & 1) << target_shift;
+								continue;
+							}
+							if (bits_per_pixel === 2) {
+								let source_index = (source_scanline_bit_offset & 7) >> 1;
+								let source_shift = (3 - source_index) << 1;
+								let target_index = (target_scanline_bit_offset & 7) >> 1;
+								let target_shift = (3 - target_index) << 1;
+								target_data[target_offset] = target_byte | ((source_byte >> source_shift) & 3) << target_shift;
+								continue;
+							}
+							if (bits_per_pixel === 4) {
+								let source_index = (source_scanline_bit_offset & 7) >> 2;
+								let source_shift = (1 - source_index) << 2;
+								let target_index = (target_scanline_bit_offset & 7) >> 2;
+								let target_shift = (1 - target_index) << 2;
+								target_data[target_offset] = target_byte | ((source_byte >> source_shift) & 15) << target_shift;
+								continue;
+							}
+						} else {
+							target_data.set(source_data.subarray(source_offset, source_offset + whole_bytes_per_pixel), target_offset);
+						}
+					}
+				}
+			}
+		}
+		return target_data;
+	} else {
+		return decodeSubimageData(png.ihdr.width, png.ihdr.height);
+	}
 };
 
 export type Predictor = (x: number, y: number) => number;
