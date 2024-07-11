@@ -4,23 +4,38 @@ Tool suite for headless document generation using the JSON-based Electronic Docu
 
 ```json
 {
+	"font": "OpenSans-Regular",
+	"fonts": {
+		"OpenSans-Regular": "./public/OpenSans-Regular.ttf"
+	},
 	"unit": "mm",
 	"size": {
-		"w": 210,
-		"h": 297
+		"w": 100,
+		"h": 50
+	},
+	"colors": {
+		"black": {
+			"r": 0.0,
+			"g": 0.0,
+			"b": 0.0
+		}
 	},
 	"content": {
 		"type": "box",
 		"style": {
-			"padding": 20
+			"padding": 10,
+			"width": "extrinsic"
 		},
 		"children": [
 			{
 				"type": "text",
 				"style": {
-					"font_size": 4
+					"color": "black",
+					"font_size": 4,
+					"line_height": 6,
+					"width": "extrinsic"
 				},
-				"content": "This text contains both pi (π) and rocket emoji (🚀)!"
+				"content": "This text contains pi (π) and supports automatic line breaks!"
 			}
 		]
 	}
