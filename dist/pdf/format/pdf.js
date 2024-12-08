@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PDFFile = exports.PDFStreamObject = exports.PDFStream = exports.PDFObject = exports.PDFArray = exports.PDFReal = exports.PDFInteger = exports.PDFTrue = exports.PDFFalse = exports.PDFVersion = exports.PDFNull = exports.PDFReference = exports.PDFRecord = exports.PDFRecordMember = exports.PDFName = exports.PDFDate = exports.PDFString = exports.PDFBytestring = exports.PDFType = exports.PDFEntity = exports.PDFParser = exports.PDFTokenizer = void 0;
-const stdlib = require("@joelek/ts-stdlib");
+const stdlib = require("@joelek/stdlib");
 const codepages = require("../codepages");
 exports.PDFTokenizer = {
     create() {

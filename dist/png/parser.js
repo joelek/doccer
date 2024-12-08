@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.splitImageIntoColorAndAlpha = exports.encodeImageData = exports.createScanlineData = exports.decodeImageData = exports.PredictorType = exports.modulo = exports.paethPredictor = exports.averagePredictor = exports.parsePNGData = exports.parsePNGChunk = exports.getBitsPerPixel = exports.getNumberOfChannels = exports.getPermittedBitDepths = exports.parseIHDRChunk = exports.InterlaceMethod = exports.FilterMethod = exports.CompressionMethod = exports.ColorType = void 0;
-const chunk_1 = require("@joelek/ts-stdlib/dist/lib/data/chunk");
+const chunk_1 = require("@joelek/stdlib/dist/lib/data/chunk");
 const shared_1 = require("../shared");
 const ADAM7_PASSES = [
     { x0: 0, y0: 0, dx: 8, dy: 8 },

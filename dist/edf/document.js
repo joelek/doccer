@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentUtils = exports.createStream = exports.createUncompressedStream = exports.createDeflateStream = exports.createASCIIHexStream = exports.createASCII85Stream = exports.createRLEStream = exports.createLZWStream = exports.createNodeClasses = exports.makeToUnicode = exports.createPNGXObjects = exports.createIndexedPNGXObjects = exports.createTruecolorAndAlphaPNGXObjects = exports.createTruecolorPNGXObjects = exports.createGrayscaleAndAlphaPNGXObjects = exports.createGrayscalePNGXObjects = void 0;
-const stdlib = require("@joelek/ts-stdlib");
+const stdlib = require("@joelek/stdlib");
 const app = require("../app.json");
 const pdf = require("../pdf");
 const truetype = require("../truetype");

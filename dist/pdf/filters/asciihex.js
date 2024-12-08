@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AsciiHex = void 0;
-const chunk_1 = require("@joelek/ts-stdlib/dist/lib/data/chunk");
+const chunk_1 = require("@joelek/stdlib/dist/lib/data/chunk");
 exports.AsciiHex = {
     decode(encoded) {
         let string = chunk_1.Chunk.toString(encoded, "binary");

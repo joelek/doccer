@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const chunk_1 = require("@joelek/ts-stdlib/dist/lib/data/chunk");
+const chunk_1 = require("@joelek/stdlib/dist/lib/data/chunk");
 const wtf = require("@joelek/wtf");
 const asciihex_1 = require("./asciihex");
 wtf.test(`AsciiHex should encode.`, (assert) => {

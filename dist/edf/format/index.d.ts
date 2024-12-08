@@ -1,4 +1,4 @@
-import * as autoguard from "@joelek/ts-autoguard/dist/lib-shared";
+import * as autoguard from "@joelek/autoguard/dist/lib-shared";
 export declare const PaddedBase64URL: autoguard.serialization.MessageGuard<PaddedBase64URL>;
 export type PaddedBase64URL = autoguard.guards.String;
 export declare const NonNegativeNumber: autoguard.serialization.MessageGuard<NonNegativeNumber>;

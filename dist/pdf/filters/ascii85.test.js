@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const stdlib = require("@joelek/ts-stdlib");
+const stdlib = require("@joelek/stdlib");
 const wtf = require("@joelek/wtf");
 const ascii85_1 = require("./ascii85");
 wtf.test(`Ascii85 should encode "Man sure.".`, (assert) => {
