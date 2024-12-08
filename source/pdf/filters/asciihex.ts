@@ -1,4 +1,4 @@
-import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
+import { Chunk } from "@joelek/stdlib/dist/lib/data/chunk";
 
 export const AsciiHex = {
 	decode(encoded: Uint8Array): Uint8Array {

@@ -3,10 +3,10 @@
 		"doccer": "./dist/cli/index.js"
 	},
 	"dependencies": {
-		"@joelek/ts-stdlib": "github:joelek/ts-stdlib#semver:^1.4"
+		"@joelek/stdlib": "github:joelek/stdlib#semver:^1.4"
 	},
 	"devDependencies": {
-		"@joelek/ts-autoguard": "github:joelek/ts-autoguard#master",
+		"@joelek/autoguard": "github:joelek/autoguard#master",
 		"@joelek/wtf": "github:joelek/wtf#semver:^1.0",
 		"typescript": "^4.7"
 	},

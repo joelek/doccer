@@ -1,6 +1,6 @@
 import * as wtf from "@joelek/wtf";
 import { Deflate } from "./deflate";
-import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
+import { Chunk } from "@joelek/stdlib/dist/lib/data/chunk";
 
 wtf.test(`Deflate should encode strings.`, (assert) => {
 	let observed = Deflate.encode(Chunk.fromString("hello hello", "binary"));

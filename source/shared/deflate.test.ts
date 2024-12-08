@@ -1,4 +1,4 @@
-import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
+import { Chunk } from "@joelek/stdlib/dist/lib/data/chunk";
 import * as wtf from "@joelek/wtf";
 import { CODE_LENGTH_CODES_ORDER, EncodingMethod, STATIC_LITERALS, computeAdler32, deflate, generateMatches, getBitLengthsFromHistogram, getDistanceFromIndex, getInitializedBSW, inflate, writeAdler32Checksum } from "./deflate";
 import { HuffmanRecord } from "./huffman";

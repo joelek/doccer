@@ -1,4 +1,4 @@
-import * as stdlib from "@joelek/ts-stdlib";
+import * as stdlib from "@joelek/stdlib";
 import * as codepages from "../codepages";
 
 export const PDFTokenizer = {

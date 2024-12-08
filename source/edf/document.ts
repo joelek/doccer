@@ -1,4 +1,4 @@
-import * as stdlib from "@joelek/ts-stdlib";
+import * as stdlib from "@joelek/stdlib";
 import * as app from "../app.json";
 import * as pdf from "../pdf";
 import * as truetype from "../truetype";

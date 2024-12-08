@@ -1,4 +1,4 @@
-import * as stdlib from "@joelek/ts-stdlib";
+import * as stdlib from "@joelek/stdlib";
 import * as wtf from "@joelek/wtf";
 import { Ascii85 } from "./ascii85";
 

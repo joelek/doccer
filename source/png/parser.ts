@@ -1,4 +1,4 @@
-import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
+import { Chunk } from "@joelek/stdlib/dist/lib/data/chunk";
 import { deflate, inflate } from "../shared";
 
 const ADAM7_PASSES = [

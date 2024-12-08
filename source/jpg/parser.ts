@@ -1,4 +1,4 @@
-import { Chunk } from "@joelek/ts-stdlib/dist/lib/data/chunk";
+import { Chunk } from "@joelek/stdlib/dist/lib/data/chunk";
 
 enum Markers {
 	START_OF_FRAME_0 = 0xFFC0,
