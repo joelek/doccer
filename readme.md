@@ -622,7 +622,7 @@ NB: This project targets TypeScript 4 in strict mode.
 * Implement font subsetting.
 * Resolve EDF paths relative to document instead of CWD.
 * Add context helper for creating instances of layout nodes.
-* Use precise sizes and positions in layout computations.
+* Use precise sizes and positions in layout computations (push nodes & segmentation threshold).
 * Add support for max text lines to TextNode.
 * Move text content into text node style.
 * Investigate possibility to support segmentation for nodes with non-intrinsic heights (adds support for prefix and suffix nodes).
