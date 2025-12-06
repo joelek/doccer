@@ -328,7 +328,7 @@ The overflow behaviour of the node may be specified through the `overflow` attri
 
 **segmentation**
 
-The segmentation behaviour of the node may be specified through the `segmentation` attribute. The attribute should when present be specified as a string assuming either the value "auto" or the value "none". The default value is "auto" when the height of the node is "intrinsic" and "none" otherwise. It is invalid to specify the segmentation behaviour as "auto" while also specifying the height as "intrinsic". The renderer should display an error and abort the rendering if such a situation arises.
+The segmentation behaviour of the node may be specified through the `segmentation` attribute. The attribute should when present be specified as a string assuming either the value "auto" or the value "none". The default value is "auto" when the height of the node is "intrinsic" and "none" otherwise. It is invalid to specify the segmentation behaviour as "auto" while also specifying the height as non-intrinsic. The renderer should display an error and abort the rendering if such a situation arises.
 
 **segmentation_threshold**
 
