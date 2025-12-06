@@ -395,7 +395,7 @@ export abstract class Node {
 		let segmentation = style.segmentation ?? (height === "intrinsic" ? "auto" : "none");
 		let segmentation_threshold = style.segmentation_threshold ?? 1.0;
 		if (segmentation === "auto" && height !== "intrinsic") {
-			throw new Error();
+			throw new Error(`Unexpected segmentation setting "auto" for node with non-intrinsic height!`);
 		}
 		let width = style.width ?? "intrinsic";
 		this.node_style = {
